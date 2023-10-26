@@ -1,7 +1,7 @@
 # HealthHelp
 
 A medical app for students.
-
+Design inspo from here:https://www.behance.net/gallery/155649951/MedPal-Health-%28App-Responsive-Website%29-Case-Study
 ## Getting Started
 
 This project is a starting point for a Flutter application.
