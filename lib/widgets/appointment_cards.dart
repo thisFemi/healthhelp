@@ -60,7 +60,8 @@ class AppointmentUpcomingCard extends StatelessWidget {
                     ),
                   )
                 : SizedBox.shrink(),
-            SizedBox(
+            SizedBox(  
+
               height: 3,
             ),
             Row(
