@@ -9,6 +9,7 @@ import 'package:rxdart/rxdart.dart';
 import '../helper/utils/Colors.dart';
 import '../models/appointment.dart';
 import '../models/user.dart';
+import '../widgets/empty_list.dart';
 
 class AppointmentScreen extends StatefulWidget {
   const AppointmentScreen({super.key});
@@ -39,21 +40,19 @@ class _AppointmentScreenState extends State<AppointmentScreen>
     super.dispose();
   }
 
-
-
-
   @override
   Widget build(BuildContext context) {
-  List<UserAppointment> upcomingAppointments = [];
-  List<UserAppointment> requestAppointments = [];
-  List<UserAppointment> completedAppointments = [];
-  List<UserAppointment> cancelledAppointments = [];
-  
-  void removeFromRequestList(UserAppointment appointment) {
-    setState(() {
-     // requestAppointments.remove(appointment);
-    });
-  }
+    List<UserAppointment> upcomingAppointments = [];
+    List<UserAppointment> requestAppointments = [];
+    List<UserAppointment> completedAppointments = [];
+    List<UserAppointment> cancelledAppointments = [];
+
+    void removeFromRequestList(UserAppointment appointment) {
+      setState(() {
+        // requestAppointments.remove(appointment);
+      });
+    }
+
     bool isDoctor =
         APIs.userInfo.userType.toLowerCase() == 'doctor' ? true : false;
     return Scaffold(
@@ -202,63 +201,84 @@ class _AppointmentScreenState extends State<AppointmentScreen>
                             child: TabBarView(
                                 controller: _tabController,
                                 children: [
-                              ListView.builder(
-                                  itemCount: upcomingAppointments.length,
-                                  shrinkWrap: true,
-                                  itemBuilder: (context, index) {
-                                    var appointment =
-                                        upcomingAppointments[index];
-                                    var userInfo = userInfos.firstWhere(
-                                        (user) =>
-                                            user.id == appointment.patientId ||
-                                            user.id == appointment.doctorId);
-                                    return AppointmentUpcomingCard(
-                                      appointment: appointment,
-                                      userInfo: userInfo,
-                                    );
-                                  }),
-                              ListView.builder(
-                                  itemCount: completedAppointments.length,
-                                  shrinkWrap: true,
-                                  itemBuilder: (context, index) {
-                                    var appointment =
-                                        completedAppointments[index];
-                                    var userInfo = userInfos.firstWhere(
-                                        (user) =>
-                                            user.id == appointment.patientId ||
-                                            user.id == appointment.doctorId);
-                                    return AppointmentCompletedCard(
-                                      appointment: appointment,
-                                      userInfo: userInfo,
-                                    );
-                                  }),
-                              ListView.builder(
-                                  itemCount: isDoctor
-                                      ? requestAppointments.length
-                                      : cancelledAppointments.length,
-                                  shrinkWrap: true,
-                                  itemBuilder: (context, index) {
-                                    print('l');
-                                    print(requestAppointments.length);
-                                    var appointment = isDoctor
-                                        ? requestAppointments[index]
-                                        : cancelledAppointments[index];
-                                    var userInfo = userInfos.firstWhere(
-                                        (user) =>
-                                            user.id == appointment.patientId ||
-                                            user.id == appointment.doctorId);
-                                    return isDoctor
-                                        ? AppointmentRequestCard(
-                                            appointment: appointment,
-                                            userInfo: userInfo,
-                                            removeFromRequestList:
-                                                removeFromRequestList,
-                                          )
-                                        : AppointmentCancelledCard(
-                                            appointment: appointment,
-                                            userInfo: userInfo,
-                                          );
-                                  }),
+                              upcomingAppointments.isEmpty
+                                  ? EmptyList(
+                                      label: "No Upcoming Appointments",
+                                    )
+                                  : ListView.builder(
+                                      itemCount: upcomingAppointments.length,
+                                      shrinkWrap: true,
+                                      itemBuilder: (context, index) {
+                                        // print('chechking ');
+                                        // print(upcomingAppointments.length);
+                                        var appointment =
+                                            upcomingAppointments[index];
+                                        var userInfo = userInfos.firstWhere(
+                                            (user) =>
+                                                user.id ==
+                                                    appointment.patientId ||
+                                                user.id ==
+                                                    appointment.doctorId);
+                                        return AppointmentUpcomingCard(
+                                          appointment: appointment,
+                                          userInfo: userInfo,
+                                        );
+                                      }),
+                              completedAppointments.isEmpty
+                                  ? EmptyList(
+                                      label: "No Appointments",
+                                    )
+                                  : ListView.builder(
+                                      itemCount: completedAppointments.length,
+                                      shrinkWrap: true,
+                                      itemBuilder: (context, index) {
+                                        var appointment =
+                                            completedAppointments[index];
+                                        var userInfo = userInfos.firstWhere(
+                                            (user) =>
+                                                user.id ==
+                                                    appointment.patientId ||
+                                                user.id ==
+                                                    appointment.doctorId);
+                                        return AppointmentCompletedCard(
+                                          appointment: appointment,
+                                          userInfo: userInfo,
+                                        );
+                                      }),
+                              isDoctor && requestAppointments.isEmpty ||
+                                      !isDoctor && cancelledAppointments.isEmpty
+                                  ? EmptyList(
+                                      label: "No Appointments",
+                                    )
+                                  : ListView.builder(
+                                      itemCount: isDoctor
+                                          ? requestAppointments.length
+                                          : cancelledAppointments.length,
+                                      shrinkWrap: true,
+                                      itemBuilder: (context, index) {
+                                        print('l');
+                                        print(requestAppointments.length);
+                                        var appointment = isDoctor
+                                            ? requestAppointments[index]
+                                            : cancelledAppointments[index];
+                                        var userInfo = userInfos.firstWhere(
+                                            (user) =>
+                                                user.id ==
+                                                    appointment.patientId ||
+                                                user.id ==
+                                                    appointment.doctorId);
+                                        return isDoctor
+                                            ? AppointmentRequestCard(
+                                                appointment: appointment,
+                                                userInfo: userInfo,
+                                                removeFromRequestList:
+                                                    removeFromRequestList,
+                                              )
+                                            : AppointmentCancelledCard(
+                                                appointment: appointment,
+                                                userInfo: userInfo,
+                                              );
+                                      }),
                             ]));
                       });
                 })

@@ -1,6 +1,7 @@
 // ignore_for_file: prefer_const_constructors, must_be_immutable
 
 import 'package:HealthHelp/api/apis.dart';
+import 'package:HealthHelp/screens/add_review_screen.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:expandable/expandable.dart';
 import 'package:flutter/cupertino.dart';
@@ -60,8 +61,7 @@ class AppointmentUpcomingCard extends StatelessWidget {
                     ),
                   )
                 : SizedBox.shrink(),
-            SizedBox(  
-
+            SizedBox(
               height: 3,
             ),
             Row(
@@ -213,7 +213,14 @@ class AppointmentCompletedCard extends StatelessWidget {
               children: [
                 Expanded(
                     child: GestureDetector(
-                  onTap: () {},
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (_) => AddReviewScreen(
+                                  doctor: userInfo,
+                                )));
+                  },
                   child: Container(
                     padding: EdgeInsets.symmetric(vertical: 10),
                     decoration: BoxDecoration(
