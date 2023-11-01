@@ -2,6 +2,7 @@
 
 import 'package:HealthHelp/api/apis.dart';
 import 'package:HealthHelp/screens/add_review_screen.dart';
+import 'package:HealthHelp/screens/doctor_info_sreen.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:expandable/expandable.dart';
 import 'package:flutter/cupertino.dart';
@@ -241,7 +242,14 @@ class AppointmentCompletedCard extends StatelessWidget {
                 ),
                 Expanded(
                     child: GestureDetector(
-                  onTap: () {},
+                  onTap: () {
+                     Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (_) => DoctorInfoScreen(
+                                  doctor: userInfo,
+                                )));
+                  },
                   child: Container(
                     padding: EdgeInsets.symmetric(vertical: 10),
                     decoration: BoxDecoration(
