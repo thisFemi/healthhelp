@@ -47,7 +47,9 @@ class _PractitionerRegistrationScreenState
     }
   }
 
-  void addCertificate() {}
+  void addCertificate() {
+    if
+  }
   List<Certificate> _certificates = [];
   @override
   Widget build(BuildContext context) {
