@@ -61,13 +61,6 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     }
   }
 
-  @override
-  void initState() {
-    super.initState();
-    // _name.text = 'Femi James';
-    // _email.text = 'femiadubuola7@gmail.com';
-    // _password.text = '123456789';
-  }
 
   @override
   Widget build(BuildContext context) {

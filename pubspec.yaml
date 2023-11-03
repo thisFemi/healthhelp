@@ -53,6 +53,7 @@ dependencies:
   multiple_search_selection: ^2.5.3
   dropdown_button2: ^2.3.9
   intl: ^0.18.1
+  calendar_date_picker2: ^0.5.3
 
 
 dev_dependencies:

@@ -2,9 +2,8 @@
 
 import 'package:HealthHelp/models/user.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:calendar_date_picker2/calendar_date_picker2.dart';
 import 'package:flutter/material.dart';
-import 'package:multiple_search_selection/helpers/create_options.dart';
-import 'package:multiple_search_selection/multiple_search_selection.dart';
 
 import '../api/apis.dart';
 import '../helper/utils/Colors.dart';
@@ -22,6 +21,7 @@ class PractitionerRegistrationScreen extends StatefulWidget {
 
 class _PractitionerRegistrationScreenState
     extends State<PractitionerRegistrationScreen> {
+  TextEditingController _dateController = TextEditingController();
   final List<Specialization> specialization = [
     Specialization(title: 'Dentist'),
     Specialization(title: 'Surgeon'),
@@ -210,6 +210,77 @@ class _PractitionerRegistrationScreenState
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                   )),
+              SizedBox(height: 10),
+              GestureDetector(
+                onTap: () async {
+                  var result = await showCalendarDatePicker2Dialog(
+                    context: context,
+
+                    config: CalendarDatePicker2WithActionButtonsConfig(
+                        calendarType: CalendarDatePicker2Type.single,
+                        okButton: Text(
+                          'Select',
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        cancelButton: Text(
+                          'Cancel',
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        )),
+                    dialogSize: Size(Screen.deviceSize(context).width * .9,
+                        Screen.deviceSize(context).height / 2.5),
+                    // value: _dates,
+                    borderRadius: BorderRadius.circular(15),
+                  );
+                  print(result);
+                  if (result != null) {
+                    setState(() {
+                      _dateController.text = result[0].toString();
+                    });
+                  }
+                },
+                child: AbsorbPointer(
+                  child: TextFormField(
+                    controller: _dateController,
+            
+                    decoration: InputDecoration(
+                        enabled: false,
+                        filled: true,
+                        fillColor: Colors.grey[200],
+                        hintStyle: TextStyle(color: color8, fontSize: 12),
+                        hintText: "select  certification date",
+                        counterStyle: TextStyle(height: double.minPositive),
+                        labelStyle: TextStyle(
+                            color: color8,
+                            fontFamily: 'Raleway-SemiBold',
+                            fontSize: 15.0),
+                        border: OutlineInputBorder(
+                            borderSide: BorderSide.none,
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(10.0))),
+                        disabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide.none,
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(10.0))),
+                        focusedBorder: OutlineInputBorder(
+                            borderSide: BorderSide.none,
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(10.0))),
+                        errorBorder: OutlineInputBorder(
+                            borderSide: BorderSide.none,
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(10.0))),
+                        contentPadding: EdgeInsets.all(10),
+                        prefixIcon: Icon(Icons.person),
+                        suffixIcon: Icon(Icons.keyboard_arrow_down_outlined)),
+                    validator: (value) {
+                      if (value == null) {
+                        return 'you need to select a date';
+                      }
+                      return null;
+                    },
+                  ),
+                ),
+              ),
             ],
           ),
         ),
