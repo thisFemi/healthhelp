@@ -1,7 +1,12 @@
 // ignore_for_file: use_key_in_widget_constructors, must_be_immutable, prefer_const_constructors
 
+import 'dart:io';
+import 'dart:ui';
+
 import 'package:HealthHelp/models/user.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:dotted_decoration/dotted_decoration.dart';
 import 'package:calendar_date_picker2/calendar_date_picker2.dart';
 import 'package:flutter/material.dart';
 
@@ -21,31 +26,29 @@ class PractitionerRegistrationScreen extends StatefulWidget {
 
 class _PractitionerRegistrationScreenState
     extends State<PractitionerRegistrationScreen> {
+  TextEditingController _nameController = TextEditingController();
+  TextEditingController _homeController = TextEditingController();
+  TextEditingController _officeController = TextEditingController();
   TextEditingController _dateController = TextEditingController();
-  final List<Specialization> specialization = [
-    Specialization(title: 'Dentist'),
-    Specialization(title: 'Surgeon'),
-    Specialization(title: 'Pharmacist')
-  ];
-
-  final List<String> periods = [
-    'A Month',
-    'Next 3 Month',
-    'Next 6 Months',
-    'Always Available'
-  ];
-  final List<String> workHours = [
-    '9:00 AM',
-    '10:00 AM',
-    '11:00 AM',
-    '12:00 PM',
-    '1:00 PM',
-    '2:00 PM',
-    '3.00 PM',
-    '4.00 PM',
-    '5.00 PM',
-  ];
+  final _keyForm = GlobalKey<FormState>();
+  PlatformFile? pickedfile;
   String? selectedPeriod;
+  void selectFile() async {
+    FilePickerResult? result = await FilePicker.platform.pickFiles();
+
+    if (result != null) {
+      PlatformFile file = (result.files.first);
+      setState(() {
+        pickedfile = file;
+      });
+      debugPrint(file.path);
+    } else {
+      // User canceled the picker
+    }
+  }
+
+  void addCertificate() {}
+  List<Certificate> _certificates = [];
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -127,7 +130,7 @@ class _PractitionerRegistrationScreenState
                 keyboardType: TextInputType.text,
                 // initialValue:
                 //     widget.userInfo.patientContactInfo!.clinicAddress ?? "",
-                maxLines: 2,
+                maxLines: 1,
                 // onSaved: (newValue) => APIs.userInfo.patientContactInfo!
                 //     .clinicAddress = newValue ?? '',
                 autovalidateMode: AutovalidateMode.onUserInteraction,
@@ -171,7 +174,7 @@ class _PractitionerRegistrationScreenState
                 keyboardType: TextInputType.text,
                 // initialValue:
                 //     widget.userInfo.patientContactInfo!.clinicAddress ?? "",
-                maxLines: 2,
+                maxLines: 1,
                 // onSaved: (newValue) => APIs.userInfo.patientContactInfo!
                 //     .clinicAddress = newValue ?? '',
                 autovalidateMode: AutovalidateMode.onUserInteraction,
@@ -206,6 +209,70 @@ class _PractitionerRegistrationScreenState
                 },
               ),
               SizedBox(height: 10),
+              Text(
+                'Upload certificate ',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              SizedBox(height: 10),
+              Container(
+                  height: Screen.deviceSize(context).height * .17,
+                  decoration: DottedDecoration(
+                    dash: [10, 15],
+                    borderRadius: BorderRadius.circular(10),
+                    strokeWidth: 2,
+                    shape: Shape.box,
+                  ),
+                  //             DottedBorder(
+                  //  borderType: BorderType.RRect,
+                  //  radius: Radius.circular(20),
+                  //  dashPattern: [10, 10],
+                  //  color: Colors.black,
+                  //  strokeWidth: 2,
+                  child: Card(
+                    color: color9,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Center(
+                        child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          CupertinoIcons.square_arrow_up,
+                          color: color8,
+                          size: 40,
+                        ),
+                        SizedBox(height: 3),
+                        Text(
+                          '${pickedfile == null ? 'Drag file here to upload' : pickedfile!.name}',
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        SizedBox(height: 3),
+                        Text(
+                          'Alternatively, you can select file by',
+                          style: TextStyle(
+                              fontWeight: FontWeight.w400,
+                              fontSize: 12,
+                              color: color8),
+                        ),
+                        SizedBox(height: 3),
+                        GestureDetector(
+                          onTap: () async {
+                            selectFile();
+                          },
+                          child: Text(
+                            'Clicking here',
+                            style: TextStyle(
+                                fontWeight: FontWeight.w400,
+                                fontSize: 12,
+                                decoration: TextDecoration.underline,
+                                color: Colors.blue),
+                          ),
+                        ),
+                      ],
+                    )),
+                  )),
+              SizedBox(height: 15),
               Text('Certification Date',
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
@@ -218,6 +285,7 @@ class _PractitionerRegistrationScreenState
 
                     config: CalendarDatePicker2WithActionButtonsConfig(
                         calendarType: CalendarDatePicker2Type.single,
+                        lastDate: DateTime.now(),
                         okButton: Text(
                           'Select',
                           style: TextStyle(fontWeight: FontWeight.bold),
@@ -241,7 +309,6 @@ class _PractitionerRegistrationScreenState
                 child: AbsorbPointer(
                   child: TextFormField(
                     controller: _dateController,
-            
                     decoration: InputDecoration(
                         enabled: false,
                         filled: true,
@@ -280,6 +347,35 @@ class _PractitionerRegistrationScreenState
                     },
                   ),
                 ),
+              ),
+              SizedBox(height: 20),
+              Align(
+                alignment: Alignment.centerRight,
+                child: Chip(
+                  label: Text('Add',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                      )),
+                ),
+              ),
+              SizedBox(height: 20),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text('Certificates',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                      )),
+                  Chip(
+                    backgroundColor: color12,
+                    label: Text('Clear All',
+                        style: TextStyle(
+                          color: color7,
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold,
+                        )),
+                  ),
+                ],
               ),
             ],
           ),

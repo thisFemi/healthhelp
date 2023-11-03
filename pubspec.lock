@@ -129,6 +129,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.5"
+  dotted_decoration:
+    dependency: "direct main"
+    description:
+      name: dotted_decoration
+      sha256: a5c5771367690b4f64ebfa7911954ab472b9675f025c373f514e32ac4bb81d5e
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.0.0"
   dropdown_button2:
     dependency: "direct main"
     description:
@@ -185,6 +193,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "6.1.4"
+  file_picker:
+    dependency: "direct main"
+    description:
+      name: file_picker
+      sha256: "903dd4ba13eae7cef64acc480e91bf54c3ddd23b5b90b639c170f3911e489620"
+      url: "https://pub.dev"
+    source: hosted
+    version: "6.0.0"
   file_selector_linux:
     dependency: transitive
     description:

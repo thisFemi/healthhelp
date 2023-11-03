@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class UserInfo {
@@ -314,4 +316,9 @@ extension AvailabilityDurationExtension on AvailabilityDuration {
         return Duration.zero; // No duration
     }
   }
+}
+class Certificate{
+  String date;
+  File fileName;
+Certificate({required this.date, required this.fileName});
 }
