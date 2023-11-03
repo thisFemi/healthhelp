@@ -119,23 +119,30 @@ class _AccountScreenState extends State<AccountScreen> {
                       'Medical License Verification',
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
-                    // trailing: Container(
-                    //   child: APIs.userInfo.doctorContactInfo!.isVerified!
-                    //       ? Chip(label: Text('Verified'))
-                    //       : Row(
-                    //           children: [
-                    //             Chip(
-                    //               label: Text('Not verified'),
-                    //             ),
-                    //             Icon(
-                    //               CupertinoIcons.forward,
-                    //               color: color8,
-                    //             ),
-                    //           ],
-                    //         ),
-                    // ),
+                    trailing: Container(
+                      child: !APIs.userInfo.doctorContactInfo!.isVerified
+                          ? Chip(
+                              backgroundColor: color10,
+                              padding: EdgeInsets.all(5),
+                              label: Text(
+                                'Verified',
+                                style: TextStyle(
+                                    fontSize: 12, fontWeight: FontWeight.bold),
+                              ))
+                          : Chip(
+                              backgroundColor: color12,
+                              padding: EdgeInsets.all(5),
+                              label: Text(
+                                'Not verified',
+                                style: TextStyle(
+                                    color:color7,
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                    ),
                     onTap: () {
-                      if (!(APIs.userInfo.doctorContactInfo!.isVerified!)) {
+                      if ((APIs.userInfo.doctorContactInfo!.isVerified)) {
                         Navigator.push(
                             context,
                             MaterialPageRoute(
