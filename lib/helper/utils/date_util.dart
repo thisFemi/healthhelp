@@ -165,8 +165,14 @@ class DateUtil {
     final formatter = DateFormat('E, MMM, y \'at\' h.mm a');
     return formatter.format(dateTime);
   }
-  static String getBookingDate(DateTime dateTime){
-      final formatter = DateFormat('E, MMM, y');
+
+  static String getBookingDate(DateTime dateTime) {
+    final formatter = DateFormat('E, MMM, y');
+    return formatter.format(dateTime);
+  }
+
+  static String getNormalDate(DateTime dateTime) {
+    final formatter = DateFormat('dd/MM/yyyy');
     return formatter.format(dateTime);
   }
 }

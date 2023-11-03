@@ -7,6 +7,7 @@ import 'package:HealthHelp/screens/edit_profile_screen.dart';
 
 import '../../api/apis.dart';
 import '../../helper/utils/contants.dart';
+import 'patient_registration_screen.dart';
 import 'practitioner_registration_screen.dart';
 
 class AccountScreen extends StatefulWidget {
@@ -27,6 +28,7 @@ class _AccountScreenState extends State<AccountScreen> {
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
+      physics: NeverScrollableScrollPhysics(),
       child: Container(
         height: Screen.deviceSize(context).height,
         color: color6,
@@ -106,9 +108,16 @@ class _AccountScreenState extends State<AccountScreen> {
             }),
             profileTiles(CupertinoIcons.bell, 'Notification', () {}),
             profileTiles(Icons.settings_outlined, 'Security', () {}),
-            APIs.userInfo.userType.toLowerCase() == 'patients'
-                ? profileTiles(
-                    CupertinoIcons.bandage, 'Medical registration', () {})
+            APIs.userInfo.userType.toLowerCase() != 'patient'
+                ? profileTiles(CupertinoIcons.bandage, 'Medical registration',
+                    () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (_) => PatientRegistrationScreen(
+                                  APIs.userInfo,
+                                )));
+                  })
                 : ListTile(
                     minLeadingWidth: 2,
                     leading: Icon(
@@ -135,14 +144,14 @@ class _AccountScreenState extends State<AccountScreen> {
                               label: Text(
                                 'Not verified',
                                 style: TextStyle(
-                                    color:color7,
+                                    color: color7,
                                     fontSize: 12,
                                     fontWeight: FontWeight.bold),
                               ),
                             ),
                     ),
                     onTap: () {
-                      if ((APIs.userInfo.doctorContactInfo!.isVerified)) {
+                      if (!(APIs.userInfo.doctorContactInfo!.isVerified)) {
                         Navigator.push(
                             context,
                             MaterialPageRoute(
@@ -152,11 +161,7 @@ class _AccountScreenState extends State<AccountScreen> {
                       }
                     },
                   ),
-            // : profileTiles(Icons.medical_services_rounded,
-            //     'Medical License Verification', () {
 
-            //   }),
-            // profileTiles(CupertinoIcons.ellipsis_circle, 'Language', () {}),
             profileTiles(CupertinoIcons.phone, 'Help center', () {}),
             // profileTiles(CupertinoIcons.person_3, 'Invite friends', () {}),
             profileTiles(CupertinoIcons.info, 'App info', () {}),

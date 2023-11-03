@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:file_picker/file_picker.dart';
 
 class UserInfo {
   String image;
@@ -317,8 +318,12 @@ extension AvailabilityDurationExtension on AvailabilityDuration {
     }
   }
 }
-class Certificate{
-  String date;
-  File fileName;
-Certificate({required this.date, required this.fileName});
+
+class Certificate {
+  DateTime date;
+  PlatformFile fileName;
+  FileType type;
+  Certificate({required this.type, required this.date, required this.fileName});
 }
+
+enum FileType { img, pdf }

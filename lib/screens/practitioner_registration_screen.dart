@@ -1,9 +1,8 @@
 // ignore_for_file: use_key_in_widget_constructors, must_be_immutable, prefer_const_constructors
 
 import 'dart:io';
-import 'dart:ui';
 
-import 'package:HealthHelp/models/user.dart';
+import 'package:HealthHelp/models/user.dart' as user;
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:dotted_decoration/dotted_decoration.dart';
@@ -11,12 +10,14 @@ import 'package:calendar_date_picker2/calendar_date_picker2.dart';
 import 'package:flutter/material.dart';
 
 import '../api/apis.dart';
+import '../helper/dialogs.dart';
 import '../helper/utils/Colors.dart';
 import '../helper/utils/contants.dart';
+import '../helper/utils/date_util.dart';
 import '../widgets/resuables.dart';
 
 class PractitionerRegistrationScreen extends StatefulWidget {
-  UserInfo userInfo;
+  user.UserInfo userInfo;
   PractitionerRegistrationScreen(this.userInfo);
 
   @override
@@ -33,6 +34,7 @@ class _PractitionerRegistrationScreenState
   final _keyForm = GlobalKey<FormState>();
   PlatformFile? pickedfile;
   String? selectedPeriod;
+  DateTime? selectedDate;
   void selectFile() async {
     FilePickerResult? result = await FilePicker.platform.pickFiles();
 
@@ -47,10 +49,40 @@ class _PractitionerRegistrationScreenState
     }
   }
 
-  void addCertificate() {
-    if
+  user.FileType checkType(PlatformFile file) {
+    if (file.extension == 'jpg' ||
+        file.extension == 'jpeg' ||
+        file.extension == 'png') {
+      return user.FileType.img;
+    } else {
+      return user.FileType.pdf;
+    }
   }
-  List<Certificate> _certificates = [];
+
+  void addCertificate() {
+    if (_dateController == null || _dateController.text.isEmpty) {
+      Dialogs.showSnackbar(context, 'You forgot to select certificate date');
+      return;
+    }
+    if (pickedfile == null) {
+      Dialogs.showSnackbar(
+          context, 'You forgot to select the certificate file');
+      return;
+    }
+
+    final newCert = user.Certificate(
+        type: checkType(pickedfile!),
+        date: selectedDate!,
+        fileName: pickedfile!);
+    _certificates.add(newCert);
+    setState(() {
+      pickedfile = null;
+      selectedDate = null;
+      _dateController.text = '';
+    });
+  }
+
+  List<user.Certificate> _certificates = [];
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -76,310 +108,355 @@ class _PractitionerRegistrationScreenState
         child: Container(
           padding: EdgeInsets.symmetric(
               horizontal: Screen.deviceSize(context).width * .04, vertical: 10),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Full Name',
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
-              SizedBox(height: 10),
-              TextFormField(
-                keyboardType: TextInputType.emailAddress,
-                // initialValue: widget.userInfo.email,
-                // onSaved: (newValue) => APIs.userInfo.email ?? '',
-                // enabled: false,
-                autovalidateMode: AutovalidateMode.onUserInteraction,
-                decoration: InputDecoration(
-                  filled: true,
-                  hintText: 'as it appears on documents',
-                  fillColor: Colors.grey[200],
-                  hintStyle: TextStyle(color: color8),
-                  labelStyle: TextStyle(
-                      color: color8,
-                      fontFamily: 'Raleway-SemiBold',
-                      fontSize: 15.0),
-                  border: OutlineInputBorder(
-                      borderSide: BorderSide.none,
-                      borderRadius: BorderRadius.all(Radius.circular(10.0))),
-                  disabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide.none,
-                      borderRadius: BorderRadius.all(Radius.circular(10.0))),
-                  focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide.none,
-                      borderRadius: BorderRadius.all(Radius.circular(10.0))),
-                  errorBorder: OutlineInputBorder(
-                      borderSide: BorderSide.none,
-                      borderRadius: BorderRadius.all(Radius.circular(10.0))),
-                  contentPadding: EdgeInsets.all(10),
+          child: Form(
+            key: _keyForm,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Full Name',
+                  style: TextStyle(fontWeight: FontWeight.bold),
                 ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return "name can't be empty";
-                  }
-                  return null;
-                },
-              ),
-              SizedBox(
-                height: 10,
-              ),
-              Text(
-                'Home Address ',
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
-              SizedBox(height: 10),
-              TextFormField(
-                keyboardType: TextInputType.text,
-                // initialValue:
-                //     widget.userInfo.patientContactInfo!.clinicAddress ?? "",
-                maxLines: 1,
-                // onSaved: (newValue) => APIs.userInfo.patientContactInfo!
-                //     .clinicAddress = newValue ?? '',
-                autovalidateMode: AutovalidateMode.onUserInteraction,
-                decoration: InputDecoration(
-                  filled: true,
-                  fillColor: Colors.grey[200],
-                  hintStyle: TextStyle(color: color8),
-                  labelStyle: TextStyle(
-                      color: color8,
-                      fontFamily: 'Raleway-SemiBold',
-                      fontSize: 15.0),
-                  border: OutlineInputBorder(
-                      borderSide: BorderSide.none,
-                      borderRadius: BorderRadius.all(Radius.circular(10.0))),
-                  disabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide.none,
-                      borderRadius: BorderRadius.all(Radius.circular(10.0))),
-                  focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide.none,
-                      borderRadius: BorderRadius.all(Radius.circular(10.0))),
-                  errorBorder: OutlineInputBorder(
-                      borderSide: BorderSide.none,
-                      borderRadius: BorderRadius.all(Radius.circular(10.0))),
-                  contentPadding:
-                      EdgeInsets.only(top: 20, left: 10, right: 10, bottom: 20),
-                ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return "address can't be empty";
-                  }
-                  return null;
-                },
-              ),
-              SizedBox(height: 10),
-              Text(
-                'Current Workplace and  Address ',
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
-              SizedBox(height: 10),
-              TextFormField(
-                keyboardType: TextInputType.text,
-                // initialValue:
-                //     widget.userInfo.patientContactInfo!.clinicAddress ?? "",
-                maxLines: 1,
-                // onSaved: (newValue) => APIs.userInfo.patientContactInfo!
-                //     .clinicAddress = newValue ?? '',
-                autovalidateMode: AutovalidateMode.onUserInteraction,
-                decoration: InputDecoration(
-                  filled: true,
-                  fillColor: Colors.grey[200],
-                  hintStyle: TextStyle(color: color8),
-                  labelStyle: TextStyle(
-                      color: color8,
-                      fontFamily: 'Raleway-SemiBold',
-                      fontSize: 15.0),
-                  border: OutlineInputBorder(
-                      borderSide: BorderSide.none,
-                      borderRadius: BorderRadius.all(Radius.circular(10.0))),
-                  disabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide.none,
-                      borderRadius: BorderRadius.all(Radius.circular(10.0))),
-                  focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide.none,
-                      borderRadius: BorderRadius.all(Radius.circular(10.0))),
-                  errorBorder: OutlineInputBorder(
-                      borderSide: BorderSide.none,
-                      borderRadius: BorderRadius.all(Radius.circular(10.0))),
-                  contentPadding:
-                      EdgeInsets.only(top: 20, left: 10, right: 10, bottom: 20),
-                ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return "address can't be empty";
-                  }
-                  return null;
-                },
-              ),
-              SizedBox(height: 10),
-              Text(
-                'Upload certificate ',
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
-              SizedBox(height: 10),
-              Container(
-                  height: Screen.deviceSize(context).height * .17,
-                  decoration: DottedDecoration(
-                    dash: [10, 15],
-                    borderRadius: BorderRadius.circular(10),
-                    strokeWidth: 2,
-                    shape: Shape.box,
+                SizedBox(height: 10),
+                TextFormField(
+                  keyboardType: TextInputType.emailAddress,
+                  // initialValue: widget.userInfo.email,
+                  // onSaved: (newValue) => APIs.userInfo.email ?? '',
+                  // enabled: false,
+                  autovalidateMode: AutovalidateMode.onUserInteraction,
+                  decoration: InputDecoration(
+                    filled: true,
+                    hintText: 'as it appears on documents',
+                    fillColor: Colors.grey[200],
+                    hintStyle: TextStyle(color: color8),
+                    labelStyle: TextStyle(
+                        color: color8,
+                        fontFamily: 'Raleway-SemiBold',
+                        fontSize: 15.0),
+                    border: OutlineInputBorder(
+                        borderSide: BorderSide.none,
+                        borderRadius: BorderRadius.all(Radius.circular(10.0))),
+                    disabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide.none,
+                        borderRadius: BorderRadius.all(Radius.circular(10.0))),
+                    focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide.none,
+                        borderRadius: BorderRadius.all(Radius.circular(10.0))),
+                    errorBorder: OutlineInputBorder(
+                        borderSide: BorderSide.none,
+                        borderRadius: BorderRadius.all(Radius.circular(10.0))),
+                    contentPadding: EdgeInsets.all(10),
                   ),
-                  //             DottedBorder(
-                  //  borderType: BorderType.RRect,
-                  //  radius: Radius.circular(20),
-                  //  dashPattern: [10, 10],
-                  //  color: Colors.black,
-                  //  strokeWidth: 2,
-                  child: Card(
-                    color: color9,
-                    shape: RoundedRectangleBorder(
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return "name can't be empty";
+                    }
+                    return null;
+                  },
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                Text(
+                  'Home Address ',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                SizedBox(height: 10),
+                TextFormField(
+                  keyboardType: TextInputType.text,
+                  // initialValue:
+                  //     widget.userInfo.patientContactInfo!.clinicAddress ?? "",
+                  maxLines: 1,
+                  // onSaved: (newValue) => APIs.userInfo.patientContactInfo!
+                  //     .clinicAddress = newValue ?? '',
+                  autovalidateMode: AutovalidateMode.onUserInteraction,
+                  decoration: InputDecoration(
+                    filled: true,
+                    fillColor: Colors.grey[200],
+                    hintStyle: TextStyle(color: color8),
+                    labelStyle: TextStyle(
+                        color: color8,
+                        fontFamily: 'Raleway-SemiBold',
+                        fontSize: 15.0),
+                    border: OutlineInputBorder(
+                        borderSide: BorderSide.none,
+                        borderRadius: BorderRadius.all(Radius.circular(10.0))),
+                    disabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide.none,
+                        borderRadius: BorderRadius.all(Radius.circular(10.0))),
+                    focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide.none,
+                        borderRadius: BorderRadius.all(Radius.circular(10.0))),
+                    errorBorder: OutlineInputBorder(
+                        borderSide: BorderSide.none,
+                        borderRadius: BorderRadius.all(Radius.circular(10.0))),
+                    contentPadding: EdgeInsets.only(
+                        top: 20, left: 10, right: 10, bottom: 20),
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return "address can't be empty";
+                    }
+                    return null;
+                  },
+                ),
+                SizedBox(height: 10),
+                Text(
+                  'Current Workplace and  Address ',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                SizedBox(height: 10),
+                TextFormField(
+                  keyboardType: TextInputType.text,
+                  // initialValue:
+                  //     widget.userInfo.patientContactInfo!.clinicAddress ?? "",
+                  maxLines: 1,
+                  // onSaved: (newValue) => APIs.userInfo.patientContactInfo!
+                  //     .clinicAddress = newValue ?? '',
+                  autovalidateMode: AutovalidateMode.onUserInteraction,
+                  decoration: InputDecoration(
+                    filled: true,
+                    fillColor: Colors.grey[200],
+                    hintStyle: TextStyle(color: color8),
+                    labelStyle: TextStyle(
+                        color: color8,
+                        fontFamily: 'Raleway-SemiBold',
+                        fontSize: 15.0),
+                    border: OutlineInputBorder(
+                        borderSide: BorderSide.none,
+                        borderRadius: BorderRadius.all(Radius.circular(10.0))),
+                    disabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide.none,
+                        borderRadius: BorderRadius.all(Radius.circular(10.0))),
+                    focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide.none,
+                        borderRadius: BorderRadius.all(Radius.circular(10.0))),
+                    errorBorder: OutlineInputBorder(
+                        borderSide: BorderSide.none,
+                        borderRadius: BorderRadius.all(Radius.circular(10.0))),
+                    contentPadding: EdgeInsets.only(
+                        top: 20, left: 10, right: 10, bottom: 20),
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return "address can't be empty";
+                    }
+                    return null;
+                  },
+                ),
+                SizedBox(height: 10),
+                Text(
+                  'Upload certificate ',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                SizedBox(height: 10),
+                Container(
+                    height: Screen.deviceSize(context).height * .2,
+                    decoration: DottedDecoration(
+                      dash: [10, 15],
                       borderRadius: BorderRadius.circular(10),
+                      strokeWidth: 2,
+                      shape: Shape.box,
                     ),
-                    child: Center(
-                        child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          CupertinoIcons.square_arrow_up,
-                          color: color8,
-                          size: 40,
-                        ),
-                        SizedBox(height: 3),
-                        Text(
-                          '${pickedfile == null ? 'Drag file here to upload' : pickedfile!.name}',
-                          style: TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                        SizedBox(height: 3),
-                        Text(
-                          'Alternatively, you can select file by',
-                          style: TextStyle(
-                              fontWeight: FontWeight.w400,
-                              fontSize: 12,
-                              color: color8),
-                        ),
-                        SizedBox(height: 3),
-                        GestureDetector(
-                          onTap: () async {
-                            selectFile();
-                          },
-                          child: Text(
-                            'Clicking here',
+                    //             DottedBorder(
+                    //  borderType: BorderType.RRect,
+                    //  radius: Radius.circular(20),
+                    //  dashPattern: [10, 10],
+                    //  color: Colors.black,
+                    //  strokeWidth: 2,
+                    child: Card(
+                      color: color9,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Center(
+                          child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            CupertinoIcons.square_arrow_up,
+                            color: color8,
+                            size: 40,
+                          ),
+                          SizedBox(height: 3),
+                          Text(
+                            '${pickedfile == null ? 'Drag file here to upload' : pickedfile!.name}',
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          SizedBox(height: 3),
+                          Text(
+                            'Alternatively, you can select file by',
                             style: TextStyle(
                                 fontWeight: FontWeight.w400,
                                 fontSize: 12,
-                                decoration: TextDecoration.underline,
-                                color: Colors.blue),
+                                color: color8),
                           ),
-                        ),
-                      ],
+                          SizedBox(height: 3),
+                          GestureDetector(
+                            onTap: () async {
+                              selectFile();
+                            },
+                            child: Text(
+                              'Clicking here',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.w400,
+                                  fontSize: 12,
+                                  decoration: TextDecoration.underline,
+                                  color: Colors.blue),
+                            ),
+                          ),
+                        ],
+                      )),
                     )),
-                  )),
-              SizedBox(height: 15),
-              Text('Certification Date',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                  )),
-              SizedBox(height: 10),
-              GestureDetector(
-                onTap: () async {
-                  var result = await showCalendarDatePicker2Dialog(
-                    context: context,
+                SizedBox(height: 15),
+                Text('Certification Date',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                    )),
+                SizedBox(height: 10),
+                GestureDetector(
+                  onTap: () async {
+                    var result = await showCalendarDatePicker2Dialog(
+                      context: context,
 
-                    config: CalendarDatePicker2WithActionButtonsConfig(
-                        calendarType: CalendarDatePicker2Type.single,
-                        lastDate: DateTime.now(),
-                        okButton: Text(
-                          'Select',
-                          style: TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                        cancelButton: Text(
-                          'Cancel',
-                          style: TextStyle(fontWeight: FontWeight.bold),
-                        )),
-                    dialogSize: Size(Screen.deviceSize(context).width * .9,
-                        Screen.deviceSize(context).height / 2.5),
-                    // value: _dates,
-                    borderRadius: BorderRadius.circular(15),
-                  );
-                  print(result);
-                  if (result != null) {
-                    setState(() {
-                      _dateController.text = result[0].toString();
-                    });
-                  }
-                },
-                child: AbsorbPointer(
-                  child: TextFormField(
-                    controller: _dateController,
-                    decoration: InputDecoration(
-                        enabled: false,
-                        filled: true,
-                        fillColor: Colors.grey[200],
-                        hintStyle: TextStyle(color: color8, fontSize: 12),
-                        hintText: "select  certification date",
-                        counterStyle: TextStyle(height: double.minPositive),
-                        labelStyle: TextStyle(
-                            color: color8,
-                            fontFamily: 'Raleway-SemiBold',
-                            fontSize: 15.0),
-                        border: OutlineInputBorder(
-                            borderSide: BorderSide.none,
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(10.0))),
-                        disabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide.none,
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(10.0))),
-                        focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide.none,
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(10.0))),
-                        errorBorder: OutlineInputBorder(
-                            borderSide: BorderSide.none,
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(10.0))),
-                        contentPadding: EdgeInsets.all(10),
-                        prefixIcon: Icon(Icons.person),
-                        suffixIcon: Icon(Icons.keyboard_arrow_down_outlined)),
-                    validator: (value) {
-                      if (value == null) {
-                        return 'you need to select a date';
-                      }
-                      return null;
-                    },
+                      config: CalendarDatePicker2WithActionButtonsConfig(
+                          calendarType: CalendarDatePicker2Type.single,
+                          lastDate: DateTime.now(),
+                          okButton: Text(
+                            'Select',
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          cancelButton: Text(
+                            'Cancel',
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          )),
+                      dialogSize: Size(Screen.deviceSize(context).width * .9,
+                          Screen.deviceSize(context).height / 2.5),
+                      // value: _dates,
+                      borderRadius: BorderRadius.circular(15),
+                    );
+                    print(result);
+                    if (result != null) {
+                      setState(() {
+                        selectedDate = result[0];
+                        _dateController.text =
+                            DateUtil.getNormalDate(selectedDate!);
+                      });
+                    }
+                  },
+                  child: AbsorbPointer(
+                    child: TextFormField(
+                      controller: _dateController,
+                      decoration: InputDecoration(
+                          enabled: false,
+                          filled: true,
+                          fillColor: Colors.grey[200],
+                          hintStyle: TextStyle(color: color8, fontSize: 12),
+                          hintText: "select  certification date",
+                          counterStyle: TextStyle(height: double.minPositive),
+                          labelStyle: TextStyle(
+                              color: color8,
+                              fontFamily: 'Raleway-SemiBold',
+                              fontSize: 15.0),
+                          border: OutlineInputBorder(
+                              borderSide: BorderSide.none,
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(10.0))),
+                          disabledBorder: OutlineInputBorder(
+                              borderSide: BorderSide.none,
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(10.0))),
+                          focusedBorder: OutlineInputBorder(
+                              borderSide: BorderSide.none,
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(10.0))),
+                          errorBorder: OutlineInputBorder(
+                              borderSide: BorderSide.none,
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(10.0))),
+                          contentPadding: EdgeInsets.all(10),
+                          suffixIcon: Icon(CupertinoIcons.calendar)),
+                      validator: (value) {
+                        if (value == null) {
+                          return 'you need to select a date';
+                        }
+                        return null;
+                      },
+                    ),
                   ),
                 ),
-              ),
-              SizedBox(height: 20),
-              Align(
-                alignment: Alignment.centerRight,
-                child: Chip(
-                  label: Text('Add',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                      )),
+                SizedBox(height: 20),
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: GestureDetector(
+                    onTap: () => addCertificate(),
+                    child: Chip(
+                      label: Text('Add',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                          )),
+                    ),
+                  ),
                 ),
-              ),
-              SizedBox(height: 20),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text('Certificates',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                      )),
-                  Chip(
-                    backgroundColor: color12,
-                    label: Text('Clear All',
+                SizedBox(height: 20),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text('Certificates',
                         style: TextStyle(
-                          color: color7,
-                          fontSize: 12,
                           fontWeight: FontWeight.bold,
                         )),
-                  ),
-                ],
-              ),
-            ],
+                    _certificates.isNotEmpty
+                        ? GestureDetector(
+                            onTap: () {
+                              _certificates.clear();
+                              setState(() {});
+                            },
+                            child: Chip(
+                              backgroundColor: color12,
+                              label: Text('Clear All',
+                                  style: TextStyle(
+                                    color: color7,
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.bold,
+                                  )),
+                            ),
+                          )
+                        : SizedBox.shrink(),
+                  ],
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                ListView.builder(
+                    itemCount: _certificates.length,
+                    shrinkWrap: true,
+                    itemBuilder: (context, index) {
+                      final cert = _certificates[index];
+                      return Card(
+                        color: Colors.white,
+                        elevation: .5,
+                        child: ListTile(
+                          leading: Container(
+                            width: 50,
+                            child: Image.asset(
+                                'assets/images/${cert.type == user.FileType.img ? 'img' : "pdf"}_logo.png'),
+                          ),
+                          title: Text(cert.fileName.name),
+                          subtitle: Text(DateUtil.getNormalDate(
+                              _certificates[index].date)),
+                          trailing: IconButton(
+                              onPressed: () {
+                                _certificates.remove(_certificates[index]);
+                                setState(() {});
+                              },
+                              icon:
+                                  Icon(CupertinoIcons.delete, color: color12)),
+                        ),
+                      );
+                    })
+              ],
+            ),
           ),
         ),
       ),
