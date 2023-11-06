@@ -5,6 +5,7 @@ import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 
+import 'package:HealthHelp/providers/DUMMY_DATA.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -13,12 +14,13 @@ import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:HealthHelp/models/message.dart';
 import 'package:HealthHelp/screens/Auth/register.dart';
-import 'package:http/http.dart';
+import 'package:http/http.dart' as http;
 
 import '../helper/dialogs.dart';
 
 import '../helper/utils/prefs.dart';
 import '../models/appointment.dart';
+import '../models/others.dart';
 import '../models/user.dart' as user_model;
 import '../models/user.dart';
 import '../screens/Auth/login.dart';
@@ -71,7 +73,7 @@ class APIs {
         },
         "data": {"some_data": "User ID: ${userInfo.id}"}
       };
-      var response = await post(
+      var response = await http.post(
           Uri.parse('https://fcm.googleapis.com/fcm/send'),
           body: jsonEncode(body),
           headers: {
@@ -835,5 +837,38 @@ class APIs {
     final updatedData = userInfo.toJson();
     await firestore.collection('doctors').doc(doctor.id).update(updatedData);
     print('done');
+  }
+
+  static Future<List<School>> fetchSchools(
+      String searchText, BuildContext context) async {
+    String apiUrl;
+    if (searchText == "") {
+      print('used 1');
+      apiUrl = 'https://universities.hipolabs.com/search?name=';
+    } else {
+      apiUrl = 'https://universities.hipolabs.com/search?name=$searchText';
+    }
+
+    try {
+      final response = await http.get(Uri.parse(apiUrl), headers:{
+         'Content-type': 'application/json',
+        'Accept': 'application/json',
+      });
+      print(response.statusCode);
+      if (response.statusCode == 200) {
+        final List<dynamic> data = json.decode(response.body);
+        print('ater');
+        print(data);
+        return data.map((school) => School.fromJson(school)).toList();
+      } else {
+        throw Exception('Failed to load schools');
+      }
+    } catch (error) {
+      rethrow;
+    }
+  }
+
+  static List<String> fetchAllTest() {
+    return DUMMY_DATA.availableTests;
   }
 }

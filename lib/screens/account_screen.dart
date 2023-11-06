@@ -108,7 +108,7 @@ class _AccountScreenState extends State<AccountScreen> {
             }),
             profileTiles(CupertinoIcons.bell, 'Notification', () {}),
             profileTiles(Icons.settings_outlined, 'Security', () {}),
-            APIs.userInfo.userType.toLowerCase() != 'patient'
+            APIs.userInfo.userType.toLowerCase() == 'patient'
                 ? profileTiles(CupertinoIcons.bandage, 'Medical registration',
                     () {
                     Navigator.push(
@@ -151,7 +151,7 @@ class _AccountScreenState extends State<AccountScreen> {
                             ),
                     ),
                     onTap: () {
-                      if (!(APIs.userInfo.doctorContactInfo!.isVerified)) {
+                      if ((APIs.userInfo.doctorContactInfo!.isVerified)) {
                         Navigator.push(
                             context,
                             MaterialPageRoute(

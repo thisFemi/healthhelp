@@ -26,7 +26,7 @@ class EditProfileScreen extends StatefulWidget {
 
 class _EditProfileScreenState extends State<EditProfileScreen> {
   final _keyForm = GlobalKey<FormState>();
-  bool _isLoading = false;
+  
   String? _image;
   String initialCountry = 'NG';
   PhoneNumber? number;

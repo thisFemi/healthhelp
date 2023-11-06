@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-
+import 'package:HealthHelp/helper/utils/Colors.dart';
 class NotificationIcon extends StatelessWidget {
   final IconData iconData; // Icon to display
   final bool showDot; // Whether to show the red dot indicator
@@ -13,9 +13,13 @@ class NotificationIcon extends StatelessWidget {
   Widget build(BuildContext context) {
     return Stack(
       children: [
-        Icon(
-          iconData,
-          size: 24,
+        Container(
+          padding: EdgeInsets.all(5),
+          decoration:BoxDecoration(color: Colors.grey[200], shape:BoxShape.circle)
+         , child: Icon(
+            iconData,
+            size: 24,
+          ),
         ), // Display the main icon
         if (showDot)
           Positioned(
