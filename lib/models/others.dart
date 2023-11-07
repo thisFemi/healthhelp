@@ -20,11 +20,15 @@ class School {
 }
 
 class Medicals {
+  String patientName;
+  String patientId;
   MedStatus status;
   List<Test> test;
 
   Medicals({
     required this.status,
+    required this.patientId,
+    required this.patientName,
     required this.test,
   });
 
