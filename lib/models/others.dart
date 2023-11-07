@@ -53,7 +53,7 @@ class Medicals {
 enum MedStatus {
   notApplied,
   pending,
-  approved,
+  completed,
 }
 
 class Test {
