@@ -34,11 +34,12 @@ class Medicals {
 
   factory Medicals.fromJson(Map<String, dynamic> json) {
     return Medicals(
-      status: MedStatus.values[json['status']],
-      test: (json['test'] as List<dynamic>)
-          .map((test) => Test.fromJson(test))
-          .toList(),
-    );
+        status: MedStatus.values[json['status']],
+        test: (json['test'] as List<dynamic>)
+            .map((test) => Test.fromJson(test))
+            .toList(),
+        patientId: json['id'],
+        patientName: json['name']);
   }
 
   Map<String, dynamic> toJson() {
