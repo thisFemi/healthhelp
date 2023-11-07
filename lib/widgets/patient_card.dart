@@ -15,18 +15,18 @@ class PatientCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       margin: EdgeInsets.symmetric(
-          horizontal: Screen.deviceSize(context).width * .04, vertical: 4),
+        vertical: 4),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
       elevation: .5,
       child: InkWell(
         borderRadius: BorderRadius.circular(15),
         onTap: () {
-          // Navigator.push(
-          //     context,
-          //     MaterialPageRoute(
-          //         builder: (_) => DoctorInfoScreen(
-          //               doctor: doctor,
-          //             )));
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (_) => DoctorInfoScreen(
+                        doctor: doctor,
+                      )));
         },
         child: ListTile(
           leading: ClipRRect(

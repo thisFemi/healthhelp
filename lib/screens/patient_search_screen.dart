@@ -18,7 +18,19 @@ class ListOfPatientScreen extends StatefulWidget {
 }
 
 class _ListOfPatientScreenState extends State<ListOfPatientScreen> {
-  List<Medicals> list = [];
+  List<Medicals> list = [
+    Medicals(
+        status: MedStatus.pending,
+        patientId: APIs.userId,
+        patientName: 'patientName',
+        test: [
+          Test(
+              comment: 'comment',
+              date: DateTime.now(),
+              docName: 'docName',
+              title: 'title')
+        ])
+  ];
 
   List<Medicals> _searchList = [];
   bool isSearching = false;
@@ -38,7 +50,7 @@ class _ListOfPatientScreenState extends State<ListOfPatientScreen> {
         body: SingleChildScrollView(
           child: Container(
             padding: EdgeInsets.symmetric(
-                horizontal: Screen.deviceSize(context).width * .04,
+                horizontal: 20,
                 vertical: 10),
             child: Column(
               children: [
@@ -74,92 +86,102 @@ class _ListOfPatientScreenState extends State<ListOfPatientScreen> {
                     },
                   ),
                 ),
-                StreamBuilder<List<Medicals>>(
-                    stream: Stream.empty(),
-                    builder: (context, snapshot) {
-                      switch (snapshot.connectionState) {
-                        case ConnectionState.waiting:
-                          return SizedBox();
-                        case ConnectionState.none:
-                        case ConnectionState.active:
-                        case ConnectionState.done:
-                          break;
-                        default:
-                      }
-                      if (snapshot.hasError) {
-                        return Center(
-                          child: Text(
-                              'Error : ${snapshot.error}'), // Display an error message
-                        );
-                      }
-                      if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                        return Center(
-                          child: Text(
-                              'No patient found.'), // Display a message when there are no appointments
-                        );
-                      }
-                      final userStreams = snapshot.data!.map((appointment) {
-                        return APIs.getUserInfoById(appointment.patientId);
-                      }).toList();
-                      for (var med in snapshot.data!) {
-                        list.add(med);
-                      }
-                      final mergedUserStream = Rx.combineLatest(
-                          userStreams,
-                          (List<UserInfo> userList) =>
-                              userList.toSet().toList());
-
-                      return StreamBuilder(
-                          stream: mergedUserStream,
-                          builder: (context, snapshot) {
-                            switch (snapshot.connectionState) {
-                              case ConnectionState.waiting:
-                                return SizedBox();
-                              case ConnectionState.none:
-                                return Center(child: SizedBox());
-
-                              case ConnectionState.active:
-                              case ConnectionState.done:
-                                break;
-                              default:
-                            }
-                            if (snapshot.hasError) {
-                              return Center(
-                                child: Text(
-                                    'Error in feth: ${snapshot.error}'), // Display an error message
-                              );
-                            }
-                            if (!snapshot.hasData) {
-                              return Center(
-                                child: Text(
-                                    'No user details found.'), // Display a message when there are no user details
-                              );
-                            }
-                            if (!snapshot.hasData) {
-                              return Center(
-                                child: Text(
-                                    'No user details found.'), // Display a message when there are no user details
-                              );
-                            }
-                            final userInfos = snapshot.data as List<UserInfo>;
-                            if (list.isNotEmpty && userInfos.isNotEmpty) {
-                              return ListView.builder(
+                ListView.builder(
                                   physics: BouncingScrollPhysics(),
                                   shrinkWrap: true,
                                   padding: EdgeInsets.only(top: 10),
                                   itemCount: list.length,
                                   itemBuilder: (context, index) {
                                     return PatientCard(
-                                        userInfo: userInfos[index],
+                                        userInfo: APIs.userInfo,
                                         medical: list[index]);
-                                  });
-                            } else {
-                              return Center(
-                                child: Text('No Data found.'),
-                              );
-                            }
-                          });
-                    })
+                                  })
+                // StreamBuilder<List<Medicals>>(
+                //     stream: Stream.empty(),
+                //     builder: (context, snapshot) {
+                //       switch (snapshot.connectionState) {
+                //         case ConnectionState.waiting:
+                //           return SizedBox();
+                //         case ConnectionState.none:
+                //         case ConnectionState.active:
+                //         case ConnectionState.done:
+                //           break;
+                //         default:
+                //       }
+                //       if (snapshot.hasError) {
+                //         return Center(
+                //           child: Text(
+                //               'Error : ${snapshot.error}'), // Display an error message
+                //         );
+                //       }
+                //       if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                //         return Center(
+                //           child: Text(
+                //               'No patient found.'), // Display a message when there are no appointments
+                //         );
+                //       }
+                //       final userStreams = snapshot.data!.map((appointment) {
+                //         return APIs.getUserInfoById(appointment.patientId);
+                //       }).toList();
+                //       for (var med in snapshot.data!) {
+                //         list.add(med);
+                //       }
+                //       final mergedUserStream = Rx.combineLatest(
+                //           userStreams,
+                //           (List<UserInfo> userList) =>
+                //               userList.toSet().toList());
+
+                //       return StreamBuilder(
+                //           stream: mergedUserStream,
+                //           builder: (context, snapshot) {
+                //             switch (snapshot.connectionState) {
+                //               case ConnectionState.waiting:
+                //                 return SizedBox();
+                //               case ConnectionState.none:
+                //                 return Center(child: SizedBox());
+
+                //               case ConnectionState.active:
+                //               case ConnectionState.done:
+                //                 break;
+                //               default:
+                //             }
+                //             if (snapshot.hasError) {
+                //               return Center(
+                //                 child: Text(
+                //                     'Error in feth: ${snapshot.error}'), // Display an error message
+                //               );
+                //             }
+                //             if (!snapshot.hasData) {
+                //               return Center(
+                //                 child: Text(
+                //                     'No user details found.'), // Display a message when there are no user details
+                //               );
+                //             }
+                //             if (!snapshot.hasData) {
+                //               return Center(
+                //                 child: Text(
+                //                     'No user details found.'), // Display a message when there are no user details
+                //               );
+                //             }
+                //             final userInfos = snapshot.data as List<UserInfo>;
+                //             if (list.isNotEmpty && userInfos.isNotEmpty) {
+                //               return ListView.builder(
+                //                   physics: BouncingScrollPhysics(),
+                //                   shrinkWrap: true,
+                //                   padding: EdgeInsets.only(top: 10),
+                //                   itemCount: list.length,
+                //                   itemBuilder: (context, index) {
+                //                     return PatientCard(
+                //                         userInfo: APIs.userInfo,
+                //                         medical: list[index]);
+                //                   });
+                //             } else {
+                //               return Center(
+                //                 child: Text('No Data found.'),
+                //               );
+                //             }
+                //           });
+                //     })
               ],
             ),
           ),
