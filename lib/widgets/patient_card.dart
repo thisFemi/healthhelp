@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import '../helper/utils/contants.dart';
 import '../helper/utils/date_util.dart';
 import '../models/user.dart';
+import '../screens/patient_info_screen.dart';
 
 class PatientCard extends StatelessWidget {
   PatientCard({required this.userInfo, required this.medical});
@@ -14,8 +15,7 @@ class PatientCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      margin: EdgeInsets.symmetric(
-        vertical: 4),
+      margin: EdgeInsets.symmetric(vertical: 4),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
       elevation: .5,
       child: InkWell(
@@ -24,8 +24,9 @@ class PatientCard extends StatelessWidget {
           Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (_) => DoctorInfoScreen(
-                        doctor: doctor,
+                  builder: (_) => PatientInfoScreen(
+                        patient: userInfo,
+                        record: medical,
                       )));
         },
         child: ListTile(

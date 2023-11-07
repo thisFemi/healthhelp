@@ -13,6 +13,7 @@ import 'package:multiple_search_selection/multiple_search_selection.dart';
 import '../api/apis.dart';
 import '../helper/dialogs.dart';
 import '../helper/utils/Colors.dart';
+import '../helper/utils/Common.dart';
 import '../helper/utils/contants.dart';
 
 // ignore: must_be_immutable
@@ -26,7 +27,7 @@ class EditProfileScreen extends StatefulWidget {
 
 class _EditProfileScreenState extends State<EditProfileScreen> {
   final _keyForm = GlobalKey<FormState>();
-  
+
   String? _image;
   String initialCountry = 'NG';
   PhoneNumber? number;
@@ -98,23 +99,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     Dialogs.showSnackbar(context, 'Profile Updated Successfully');
 
     Navigator.pop(context, true);
-  }
-
-  PhoneNumber parsePhoneNumber(String phoneNumberString) {
-    // Remove unnecessary characters and split the string to extract values
-    phoneNumberString =
-        phoneNumberString.replaceAll('PhoneNumber(', '').replaceAll(')', '');
-    List<String> parts = phoneNumberString.split(', ');
-
-    String phoneNumber = parts[0].split(': ')[1];
-    String dialCode = parts[1].split(': ')[1];
-    String isoCode = parts[2].split(': ')[1];
-
-    return PhoneNumber(
-      phoneNumber: phoneNumber,
-      dialCode: dialCode,
-      isoCode: isoCode,
-    );
   }
 
   List<Specialization> userSpecilizations = [];

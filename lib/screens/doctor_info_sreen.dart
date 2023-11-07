@@ -1,5 +1,6 @@
 // ignore_for_file: prefer_const_constructors, use_build_context_synchronously
 
+import 'package:HealthHelp/screens/chat_screen.dart';
 import 'package:HealthHelp/screens/reviews_screen.dart';
 import 'package:HealthHelp/widgets/review_card.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -7,7 +8,6 @@ import 'package:expandable/expandable.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
-
 
 import '../api/apis.dart';
 import '../helper/dialogs.dart';
@@ -114,7 +114,14 @@ class _DoctorInfoScreenState extends State<DoctorInfoScreen> {
             Padding(
               padding: const EdgeInsets.only(right: 10.0),
               child: IconButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (_) => ChatScreen(
+                                  user: widget.doctor,
+                                )));
+                  },
                   icon: Icon(CupertinoIcons.chat_bubble_2, color: color3)),
             )
           ],
