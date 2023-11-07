@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import '../helper/utils/contants.dart';
+import '../helper/utils/date_util.dart';
 import '../models/user.dart';
 
 class PatientCard extends StatelessWidget {
@@ -44,6 +45,8 @@ class PatientCard extends StatelessWidget {
               ),
             ),
           ),
+          title: Text(userInfo.name),
+          subtitle: Text('DateUtil.getBookingDate(medica'),
         ),
       ),
     );

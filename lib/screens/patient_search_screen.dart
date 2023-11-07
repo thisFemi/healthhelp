@@ -1,10 +1,13 @@
 import 'package:HealthHelp/api/apis.dart';
+import 'package:HealthHelp/widgets/patient_card.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:rxdart/rxdart.dart';
 
 import '../helper/utils/Colors.dart';
+import '../helper/utils/contants.dart';
 import '../models/others.dart';
+import '../models/user.dart';
 import '../widgets/resuables.dart';
 
 class ListOfPatientScreen extends StatefulWidget {
@@ -34,6 +37,9 @@ class _ListOfPatientScreenState extends State<ListOfPatientScreen> {
         ),
         body: SingleChildScrollView(
           child: Container(
+            padding: EdgeInsets.symmetric(
+                horizontal: Screen.deviceSize(context).width * .04,
+                vertical: 10),
             child: Column(
               children: [
                 Container(
@@ -68,41 +74,91 @@ class _ListOfPatientScreenState extends State<ListOfPatientScreen> {
                     },
                   ),
                 ),
-                StreamBuilder(
-                    stream: APIs.getAllDoctors(),
+                StreamBuilder<List<Medicals>>(
+                    stream: Stream.empty(),
                     builder: (context, snapshot) {
                       switch (snapshot.connectionState) {
                         case ConnectionState.waiting:
-                          return Center(
-                            child: SpinKitFadingCircle(
-                              color: color3,
-                              size: 40,
-                            ),
-                          );
+                          return SizedBox();
                         case ConnectionState.none:
                         case ConnectionState.active:
                         case ConnectionState.done:
                           break;
                         default:
                       }
-                      final data = snapshot.data;
-                      list =
-                          data?.map((e) => Medicals.fromJson(e)).toList() ?? [];
-                      print(list);
-                      if (list.isNotEmpty) {
-                        return ListView.builder(
-                            physics: BouncingScrollPhysics(),
-                            shrinkWrap: true,
-                            padding: EdgeInsets.only(top: 10),
-                            itemCount: list.length,
-                            itemBuilder: (context, index) {
-                              return DoctorCard(list[index]);
-                            });
-                      } else {
+                      if (snapshot.hasError) {
                         return Center(
-                          child: Text('No Data found.'),
+                          child: Text(
+                              'Error : ${snapshot.error}'), // Display an error message
                         );
                       }
+                      if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                        return Center(
+                          child: Text(
+                              'No patient found.'), // Display a message when there are no appointments
+                        );
+                      }
+                      final userStreams = snapshot.data!.map((appointment) {
+                        return APIs.getUserInfoById(appointment.patientId);
+                      }).toList();
+                      for (var med in snapshot.data!) {
+                        list.add(med);
+                      }
+                      final mergedUserStream = Rx.combineLatest(
+                          userStreams,
+                          (List<UserInfo> userList) =>
+                              userList.toSet().toList());
+
+                      return StreamBuilder(
+                          stream: mergedUserStream,
+                          builder: (context, snapshot) {
+                            switch (snapshot.connectionState) {
+                              case ConnectionState.waiting:
+                                return SizedBox();
+                              case ConnectionState.none:
+                                return Center(child: SizedBox());
+
+                              case ConnectionState.active:
+                              case ConnectionState.done:
+                                break;
+                              default:
+                            }
+                            if (snapshot.hasError) {
+                              return Center(
+                                child: Text(
+                                    'Error in feth: ${snapshot.error}'), // Display an error message
+                              );
+                            }
+                            if (!snapshot.hasData) {
+                              return Center(
+                                child: Text(
+                                    'No user details found.'), // Display a message when there are no user details
+                              );
+                            }
+                            if (!snapshot.hasData) {
+                              return Center(
+                                child: Text(
+                                    'No user details found.'), // Display a message when there are no user details
+                              );
+                            }
+                            final userInfos = snapshot.data as List<UserInfo>;
+                            if (list.isNotEmpty && userInfos.isNotEmpty) {
+                              return ListView.builder(
+                                  physics: BouncingScrollPhysics(),
+                                  shrinkWrap: true,
+                                  padding: EdgeInsets.only(top: 10),
+                                  itemCount: list.length,
+                                  itemBuilder: (context, index) {
+                                    return PatientCard(
+                                        userInfo: userInfos[index],
+                                        medical: list[index]);
+                                  });
+                            } else {
+                              return Center(
+                                child: Text('No Data found.'),
+                              );
+                            }
+                          });
                     })
               ],
             ),

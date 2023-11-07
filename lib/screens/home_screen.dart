@@ -1,4 +1,5 @@
 import 'package:HealthHelp/screens/doctors_search_screen.dart';
+import 'package:HealthHelp/screens/patient_search_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -32,7 +33,7 @@ class _HomeScreenState extends State<HomeScreen> {
     bool isDoctor =
         APIs.userInfo.userType.toLowerCase() == 'doctor' ? true : false;
     return Container(
-    //
+      //
       padding: EdgeInsets.only(top: 40, left: 20, right: 20),
       width: Screen.deviceSize(context).width,
       color: color6,
@@ -66,18 +67,15 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   Text(
                     APIs.userInfo.name,
-                    style:
-                        TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                   )
                 ],
               ),
               Spacer(),
               InkWell(
                 onTap: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (_) => NotificationScreen()));
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (_) => NotificationScreen()));
                 },
                 child: NotificationIcon(
                   iconData: Icons.notifications_none_rounded,
@@ -102,13 +100,12 @@ class _HomeScreenState extends State<HomeScreen> {
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(
                               10.0), // Adjust the radius as needed
-                          color: Colors.grey[
-                              200], // Customize the fill color as needed
+                          color: Colors
+                              .grey[200], // Customize the fill color as needed
                         ),
                         child: TextFormField(
                           // controller: _name,
-                          autovalidateMode:
-                              AutovalidateMode.onUserInteraction,
+                          autovalidateMode: AutovalidateMode.onUserInteraction,
                           decoration: InputDecoration(
                             hintText: "Search",
                             border: InputBorder.none,
@@ -120,8 +117,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       )),
                   Text(
                     'Top Services',
-                    style:
-                        TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
                   ),
                   isDoctor
                       ? GridView.builder(
@@ -143,7 +139,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               CupertinoIcons.chat_bubble_2,
                             ];
                             final List<String> titles = [
-                              'Medical Tests',
+                              'Medical Records',
                               'Setup An Appointment',
                               'General Checkup',
                               'Instant Messaging',
@@ -167,14 +163,18 @@ class _HomeScreenState extends State<HomeScreen> {
                               Colors.green,
                             ];
                             final List<Function> functions = [
-                              () {},
+                              () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (_) => ListOfPatientScreen()));
+                              },
                               () {
                                 print('hi');
                                 Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                        builder: (_) =>
-                                            ListOfDoctorsScreen()));
+                                        builder: (_) => ListOfDoctorsScreen()));
                               },
                               () {},
                               () {}
@@ -237,8 +237,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                        builder: (_) =>
-                                            ListOfDoctorsScreen()));
+                                        builder: (_) => ListOfDoctorsScreen()));
                               },
                               () {},
                               () {}
@@ -274,7 +273,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       ],
                     ),
                   ),
-                      Padding(
+                  Padding(
                     padding: const EdgeInsets.symmetric(vertical: 20.0),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
