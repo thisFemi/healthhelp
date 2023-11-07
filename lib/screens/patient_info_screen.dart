@@ -29,8 +29,7 @@ class _PatientInfoScreenState extends State<PatientInfoScreen> {
         leading: Reausables.arrowBackIcon(context),
         title: Text(
           'Patient Record',
-          style: TextStyle(
-              color: color3, fontWeight: FontWeight.bold),
+          style: TextStyle(color: color3, fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
         actions: [
@@ -52,11 +51,19 @@ class _PatientInfoScreenState extends State<PatientInfoScreen> {
       backgroundColor: color7,
       body: SingleChildScrollView(
         child: Container(
-          padding: EdgeInsets.symmetric(
-              horizontal: Screen.deviceSize(context).width * .04, vertical: 10),
+          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              Padding(
+                padding: EdgeInsets.symmetric(
+                  vertical: 10,
+                ),
+                child: Text(
+                  'Patient Information',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+              ),
               Card(
                   elevation: 1,
                   color: Colors.white,
@@ -140,9 +147,23 @@ class _PatientInfoScreenState extends State<PatientInfoScreen> {
                               )
                             ],
                           ),
-                        
                         ],
-                      )))
+                      ))),
+              Padding(
+                padding: EdgeInsets.symmetric(
+                  vertical: 10,
+                ),
+                child: Text(
+                  'Medical Tests',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+              ),
+              ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: widget.record.test.length,
+                  itemBuilder: (ctx, index) {
+                    return;
+                  })
             ],
           ),
         ),
