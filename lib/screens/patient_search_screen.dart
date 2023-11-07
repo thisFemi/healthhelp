@@ -28,6 +28,11 @@ class _ListOfPatientScreenState extends State<ListOfPatientScreen> {
               comment: 'comment',
               date: DateTime.now(),
               docName: 'docName',
+              title: 'title'),
+          Test(
+              comment: 'comment',
+              date: DateTime.now(),
+              docName: 'docName',
               title: 'title')
         ])
   ];
@@ -49,9 +54,7 @@ class _ListOfPatientScreenState extends State<ListOfPatientScreen> {
         ),
         body: SingleChildScrollView(
           child: Container(
-            padding: EdgeInsets.symmetric(
-                horizontal: 20,
-                vertical: 10),
+            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
             child: Column(
               children: [
                 Container(
@@ -87,15 +90,14 @@ class _ListOfPatientScreenState extends State<ListOfPatientScreen> {
                   ),
                 ),
                 ListView.builder(
-                                  physics: BouncingScrollPhysics(),
-                                  shrinkWrap: true,
-                                  padding: EdgeInsets.only(top: 10),
-                                  itemCount: list.length,
-                                  itemBuilder: (context, index) {
-                                    return PatientCard(
-                                        userInfo: APIs.userInfo,
-                                        medical: list[index]);
-                                  })
+                    physics: BouncingScrollPhysics(),
+                    shrinkWrap: true,
+                    padding: EdgeInsets.only(top: 10),
+                    itemCount: list.length,
+                    itemBuilder: (context, index) {
+                      return PatientCard(
+                          userInfo: APIs.userInfo, medical: list[index]);
+                    })
                 // StreamBuilder<List<Medicals>>(
                 //     stream: Stream.empty(),
                 //     builder: (context, snapshot) {

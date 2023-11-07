@@ -1,4 +1,7 @@
+// ignore_for_file: must_be_immutable
+
 import 'package:HealthHelp/screens/chat_screen.dart';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -8,20 +11,17 @@ import '../helper/utils/contants.dart';
 import '../models/others.dart';
 import '../models/user.dart';
 import '../widgets/resuables.dart';
+import '../widgets/test_info_card.dart';
 
-class PatientInfoScreen extends StatefulWidget {
+class PatientInfoScreen extends StatelessWidget {
   PatientInfoScreen({required this.patient, required this.record});
   final UserInfo patient;
   Medicals record;
 
   @override
-  State<PatientInfoScreen> createState() => _PatientInfoScreenState();
-}
-
-class _PatientInfoScreenState extends State<PatientInfoScreen> {
-  @override
   Widget build(BuildContext context) {
-    final number = parsePhoneNumber(widget.patient.phoneNumber);
+    final number = parsePhoneNumber(patient.phoneNumber);
+    print('here');
     return Scaffold(
       appBar: AppBar(
         backgroundColor: color7,
@@ -41,7 +41,7 @@ class _PatientInfoScreenState extends State<PatientInfoScreen> {
                       context,
                       MaterialPageRoute(
                           builder: (_) => ChatScreen(
-                                user: widget.patient,
+                                user: patient,
                               )));
                 },
                 icon: Icon(CupertinoIcons.chat_bubble_2, color: color3)),
@@ -85,7 +85,7 @@ class _PatientInfoScreenState extends State<PatientInfoScreen> {
                                 width: 5,
                               ),
                               Text(
-                                widget.patient.name,
+                                patient.name,
                                 style: TextStyle(fontWeight: FontWeight.w700),
                               )
                             ],
@@ -158,11 +158,19 @@ class _PatientInfoScreenState extends State<PatientInfoScreen> {
                   style: TextStyle(fontWeight: FontWeight.bold),
                 ),
               ),
+              Text(
+                'Medical Tests',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
               ListView.builder(
                   shrinkWrap: true,
-                  itemCount: widget.record.test.length,
+                  itemCount: record.test.length,
                   itemBuilder: (ctx, index) {
-                    return;
+                    var test = record.test[index];
+                    print(
+                      record.test.length,
+                    );
+                    return MedTestCard(test: test);
                   })
             ],
           ),
