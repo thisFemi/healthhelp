@@ -55,14 +55,9 @@ class PatientInfoScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Padding(
-                padding: EdgeInsets.symmetric(
-                  vertical: 10,
-                ),
-                child: Text(
-                  'Patient Information',
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
+              Text(
+                'Patient Information',
+                style: TextStyle(fontWeight: FontWeight.bold),
               ),
               Card(
                   elevation: 1,
@@ -157,10 +152,6 @@ class PatientInfoScreen extends StatelessWidget {
                   'Medical Tests',
                   style: TextStyle(fontWeight: FontWeight.bold),
                 ),
-              ),
-              Text(
-                'Medical Tests',
-                style: TextStyle(fontWeight: FontWeight.bold),
               ),
               ListView.builder(
                   shrinkWrap: true,

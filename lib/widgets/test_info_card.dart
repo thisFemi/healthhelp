@@ -23,76 +23,80 @@ class MedTestCard extends StatelessWidget {
                   scrollOnCollapse: false,
                   child: ExpandablePanel(
                     theme: ExpandableThemeData(
-                      headerAlignment: ExpandablePanelHeaderAlignment.center,
-                      tapBodyToCollapse: true,
-                    ),
+                        headerAlignment: ExpandablePanelHeaderAlignment.center,
+                        tapBodyToCollapse: false,
+                        tapHeaderToExpand: true),
                     header: Padding(
                         padding: EdgeInsets.all(10),
                         child: Text(test.title,
                             style: TextStyle(fontWeight: FontWeight.bold))),
                     collapsed: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [Text('hi ')]),
-                    expanded: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text('Email Address'),
-                          SizedBox(height: 10),
-                          TextFormField(
-                            keyboardType: TextInputType.emailAddress,
-                            // initialValue: widget.userInfo.email,
-                            //  onSaved: (newValue) => APIs.userInfo.email ?? '',
-                            enabled: false,
-                            autovalidateMode:
-                                AutovalidateMode.onUserInteraction,
-                            decoration: InputDecoration(
-                              filled: true,
-                              fillColor: Colors.grey[200],
-                              hintStyle: TextStyle(color: color8),
-                              labelStyle: TextStyle(
-                                  color: color8,
-                                  fontFamily: 'Raleway-SemiBold',
-                                  fontSize: 15.0),
-                              border: OutlineInputBorder(
-                                  borderSide: BorderSide.none,
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(10.0))),
-                              disabledBorder: OutlineInputBorder(
-                                  borderSide: BorderSide.none,
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(10.0))),
-                              focusedBorder: OutlineInputBorder(
-                                  borderSide: BorderSide.none,
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(10.0))),
-                              errorBorder: OutlineInputBorder(
-                                  borderSide: BorderSide.none,
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(10.0))),
-                              contentPadding: EdgeInsets.all(10),
-                            ),
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return "email can't be empty";
-                              } else if (!value.contains('@')) {
-                                return "invalid email";
-                              }
-                              return null;
-                            },
-                          ),
-                          Align(
-                            alignment: Alignment.centerRight,
-                            child: GestureDetector(
-                              onTap: () {},
-                              child: Chip(
-                                label: Text('Add',
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                    )),
+                        children: []),
+                    expanded: Padding(
+                      padding: const EdgeInsets.all(10.0),
+                      child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text('Comment',
+                                style: TextStyle(fontWeight: FontWeight.bold)),
+                            SizedBox(height: 10),
+                            TextFormField(
+                              keyboardType: TextInputType.emailAddress,
+                              // initialValue: widget.userInfo.email,
+                              //  onSaved: (newValue) => APIs.userInfo.email ?? '',
+
+                              maxLines: 3,
+
+                              decoration: InputDecoration(
+                                filled: true,
+                                fillColor: Colors.grey[200],
+                                hintStyle: TextStyle(color: color8),
+                                labelStyle: TextStyle(
+                                    color: color8,
+                                    fontFamily: 'Raleway-SemiBold',
+                                    fontSize: 15.0),
+                                border: OutlineInputBorder(
+                                    borderSide: BorderSide.none,
+                                    borderRadius: BorderRadius.all(
+                                        Radius.circular(10.0))),
+                                disabledBorder: OutlineInputBorder(
+                                    borderSide: BorderSide.none,
+                                    borderRadius: BorderRadius.all(
+                                        Radius.circular(10.0))),
+                                focusedBorder: OutlineInputBorder(
+                                    borderSide: BorderSide.none,
+                                    borderRadius: BorderRadius.all(
+                                        Radius.circular(10.0))),
+                                errorBorder: OutlineInputBorder(
+                                    borderSide: BorderSide.none,
+                                    borderRadius: BorderRadius.all(
+                                        Radius.circular(10.0))),
+                                contentPadding: EdgeInsets.all(10),
                               ),
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return "email can't be empty";
+                                } else if (!value.contains('@')) {
+                                  return "invalid email";
+                                }
+                                return null;
+                              },
                             ),
-                          )
-                        ]),
+                            Align(
+                              alignment: Alignment.centerRight,
+                              child: GestureDetector(
+                                onTap: () {},
+                                child: Chip(
+                                  label: Text('Add',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                      )),
+                                ),
+                              ),
+                            )
+                          ]),
+                    ),
                   ))
             ])));
   }
