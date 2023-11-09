@@ -18,7 +18,20 @@ class Dialogs {
   ) {
     showDialog(
         context: context,
-        builder: (_) => Center(child: CircularProgressIndicator.adaptive()));
+        barrierDismissible: false,
+        useRootNavigator: false,
+        builder: (_) => SimpleDialog(
+            backgroundColor: color7,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            children: [
+          Padding(padding: EdgeInsets.symmetric(vertical:20), child:
+          Column(
+            children:[
+              CircularProgressIndicator.adaptive(),
+              SizedBox(height: 10,),
+              Text('Loading')
+            ]
+            ))]));
   }
 
   static void showSuccessDialog(

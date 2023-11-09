@@ -33,15 +33,18 @@ class _ListOfInstitutionScreenState extends State<ListOfInstitutionScreen> {
     Dialogs.showProgressBar(context);
     final schools = await fetchSchools("");
     print('done');
+setState(() {
+  _allInstitutions = schools;
+  _filteredInstitutions = schools;
+});
 
-    _allInstitutions = schools;
-    _filteredInstitutions = schools;
 
     Navigator.pop(context);
   }
 
   @override
   Widget build(BuildContext context) {
+    print(_filteredInstitutions.length);
  
     return Scaffold(
       appBar: AppBar(
@@ -101,23 +104,32 @@ class _ListOfInstitutionScreenState extends State<ListOfInstitutionScreen> {
       backgroundColor: color7,
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20.0),
-        child: ListView.builder(
+        child:_filteredInstitutions.isEmpty?Center(child: Text('No data found', style: TextStyle(fontWeight: FontWeight.bold),),) :ListView.builder(
             itemCount: _filteredInstitutions.length,
             shrinkWrap: true,
             itemBuilder: (ctx, index) {
               final school = _filteredInstitutions[index];
-              return Card(
+              return InkWell(
+                borderRadius:  BorderRadius.circular(10),
+                onTap: (){
+
+                //  String selectedInstitution = "Selected Institution Name"; // Replace with the actual selected institution
+                  Navigator.pop(context, school.name);
+                },
+                child:
+
+
+                Card(
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10)),
                 elevation: 1,
                 child: ListTile(
+
                   title: Text(school.name),
                   subtitle: Text(school.location),
-                  onTap: () {
-                    Navigator.pop(context);
-                  },
+
                 ),
-              );
+              ));
             }),
       ),
     );
@@ -139,12 +151,17 @@ class _ListOfInstitutionScreenState extends State<ListOfInstitutionScreen> {
   }
 
   Future<List<School>> fetchSchools(String searchText) async {
-    print('searching');
-    try {
-      return APIs.fetchSchools(searchText, context);
-    } catch (e) {
-      Dialogs.showSnackbar(context, e.toString());
-      return [];
+    if(APIs.schoolList.isNotEmpty){
+      return APIs.schoolList;
+    }else{
+
+      try {
+        return APIs.fetchSchools(searchText, context);
+      } catch (e) {
+        Dialogs.showSnackbar(context, e.toString());
+        return [];
+      }
     }
+
   }
 }

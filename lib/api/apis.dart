@@ -838,28 +838,30 @@ class APIs {
     await firestore.collection('doctors').doc(doctor.id).update(updatedData);
     print('done');
   }
-
+  static List<School>schoolList=[];
   static Future<List<School>> fetchSchools(
       String searchText, BuildContext context) async {
     String apiUrl;
     if (searchText == "") {
       print('used 1');
-      apiUrl = 'https://universities.hipolabs.com/search?name=';
+      apiUrl = 'http://universities.hipolabs.com/search?name=';
     } else {
-      apiUrl = 'https://universities.hipolabs.com/search?name=$searchText';
+      apiUrl = 'http://universities.hipolabs.com/search?name=$searchText';
     }
 
     try {
       final response = await http.get(Uri.parse(apiUrl), headers:{
          'Content-type': 'application/json',
         'Accept': 'application/json',
-      });
+      }).timeout(Duration(minutes: 3));
       print(response.statusCode);
       if (response.statusCode == 200) {
         final List<dynamic> data = json.decode(response.body);
         print('ater');
         print(data);
-        return data.map((school) => School.fromJson(school)).toList();
+        final list= data.map((school) => School.fromJson(school)).toList();
+        schoolList=list;
+        return schoolList;
       } else {
         throw Exception('Failed to load schools');
       }
@@ -871,4 +873,120 @@ class APIs {
   static List<String> fetchAllTest() {
     return DUMMY_DATA.availableTests;
   }
+//   static Future<void> docApplication(DocReg doc)async{
+// try{
+// await  firestore.collection('verification').add({
+//   'name': doc.name,
+//   'homeAddress': doc.homeAddress,
+//   'isUniStaff': doc.isUniStaff,
+//   'schoolName': doc.schoolName,
+//   'officeAddress': doc.officeAddress,
+// });
+// }
+//   }
+
+
+ static DocReg? docReg;
+
+  static Future<void> docApplication(DocReg doc) async {
+    print('strted');
+    try {
+
+      var docsCollection = firestore.collection('verification');
+
+
+        await docsCollection.doc(userInfo.id).set({
+        'name': doc.name,
+        'homeAddress': doc.homeAddress,
+        'isUniStaff': doc.isUniStaff,
+        'schoolName': doc.schoolName,
+        'officeAddress': doc.officeAddress,
+      });
+
+      for (Certificate certificate in doc.certificates) {print(userInfo.email);
+        final ext = certificate.fileName.path.split('.').last;
+        Reference storageReference = FirebaseStorage.instance.ref().child('certificates/${userInfo.email}/${DateTime.now().millisecondsSinceEpoch}.$ext');
+
+        UploadTask uploadTask = storageReference.putFile(certificate.fileName);
+print('sent');
+        await uploadTask.whenComplete(() async {
+          String downloadURL = await storageReference.getDownloadURL();
+         // CollectionReference certificatesCollection = docReference.collection('certificates');
+          print('fetched');
+          if(doc!=null){
+            docReg=doc;
+          }
+
+          // Add certificate details along with the download URL to the 'certificates' subcollection
+          // await certificatesCollection.add({
+          //   'type': certificate.type == FileType.img ? 'image' : 'pdf',
+          //   'date': certificate.date.toIso8601String(),
+          //   'downloadURL': downloadURL,
+          // });
+        });
+      }
+    //   final ext = file.path.split('.').last;
+    //   print('Extenson: ${ext}');
+    //   final ref = storage.ref().child(
+    //       'images/${getConversationID(user.id)}/${DateTime.now().millisecondsSinceEpoch}.$ext');
+    //
+    //   await ref
+    //       .putFile(file, SettableMetadata(contentType: 'image/${ext}'))
+    //       .then((p0) {
+    //     print('Date Transffered: ${p0.bytesTransferred / 1000} kb ');
+    //   });
+    } catch (e) {
+      print('Error sending data to Firestore: $e');
+     throw(e);
+
+    }
+  }
+
+  //
+  // static Future<void> docApplication(DocReg doc) async {
+  // try {
+  // // Reference to the Firestore collection
+  // CollectionReference docsCollection = FirebaseFirestore.instance.collection('docs');
+  //
+  // // Add the DocReg object to the 'docs' collection
+  // DocumentReference docReference = await docsCollection.add({
+  // 'name': doc.name,
+  // 'homeAddress': doc.homeAddress,
+  // 'isUniStaff': doc.isUniStaff,
+  // 'schoolName': doc.schoolName,
+  // 'officeAddress': doc.officeAddress,
+  // });
+  //
+  // // Create a subcollection for certificates under the doc
+  // CollectionReference certificatesCollection = docReference.collection('certificates');
+  //
+  // // Upload each certificate file to Firebase Storage
+  // for (Certificate certificate in doc.certificates) {
+  // Reference storageReference = FirebaseStorage.instance.ref().child('certificates/${docReference.id}/${DateTime.now().millisecondsSinceEpoch}');
+  //
+  // if (certificate.fileName != null && certificate.fileName.existsSync()) {
+  // UploadTask uploadTask = storageReference.putFile(certificate.fileName);
+  //
+  // await uploadTask.whenComplete(() async {
+  // String downloadURL = await storageReference.getDownloadURL();
+  //
+  // // Add certificate details along with the download URL to the 'certificates' subcollection
+  // await certificatesCollection.add({
+  // 'type': certificate.type == FileType.img ? 'image' : 'pdf',
+  // 'date': certificate.date.toIso8601String(),
+  // 'downloadURL': downloadURL,
+  // });
+  // });
+  // }
+  // }
+  // } catch (e) {
+  // // Handle errors
+  // print('An Error Occured: $e');
+  // throw(e);
+  // }
+  // }
+  //
+
 }
+
+

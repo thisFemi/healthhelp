@@ -1,3 +1,7 @@
+import 'dart:io';
+
+import 'package:file_picker/file_picker.dart';
+
 class School {
   final String name;
   final String location;
@@ -6,15 +10,15 @@ class School {
 
   factory School.fromJson(Map<String, dynamic> json) {
     return School(
-      name: json['name'] as String,
-      location: json['location'] as String,
+      name: json['name'] ??"",
+      location: json['country'] ??"",
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
       'name': name,
-      'location': location,
+      'country': location,
     };
   }
 }
@@ -90,4 +94,98 @@ class Test {
       'comment': comment,
     };
   }
+}class DocReg {
+  String name;
+  String homeAddress;
+  bool isUniStaff;
+  String? schoolName;
+  ApprovalStatus status;
+  String? officeAddress;
+  List<Certificate> certificates;
+
+  DocReg({
+    required this.name,
+    required this.homeAddress,
+    required this.isUniStaff,
+    required this.certificates,
+    required this.status,
+    this.officeAddress,
+    this.schoolName,
+  });
+
+  // Deserialize from JSON
+  factory DocReg.fromJson(Map<String, dynamic> json) {
+    return DocReg(
+      name: json['name'],
+      homeAddress: json['homeAddress'],
+      isUniStaff: json['isUniStaff'],
+      schoolName: json['schoolName'],
+      status: ApprovalStatus.values[json['status']],
+      officeAddress: json['officeAddress'],
+      certificates: (json['certificates'] as List<dynamic>)
+          .map((cert) => Certificate.fromJson(cert))
+          .toList(),
+    );
+  }
+
+  // Serialize to JSON
+  Map<String, dynamic> toJson() {
+    return {
+      'name': name,
+      'homeAddress': homeAddress,
+      'isUniStaff': isUniStaff,
+      'schoolName': schoolName,
+      'status':status.name,
+      'officeAddress': officeAddress,
+      'certificates': certificates.map((cert) => cert.toJson()).toList(),
+    };
+  }
 }
+
+class Certificate {
+  DateTime date;
+  File fileName;
+  FileType type;
+
+  Certificate({
+    required this.type,
+    required this.date,
+    required this.fileName,
+  });
+
+  // Deserialize from JSON
+  factory Certificate.fromJson(Map<String, dynamic> json) {
+    return Certificate(
+      type: json['type'] == 'image' ? FileType.img : FileType.pdf, // Adjust for more file types.
+      date: DateTime.parse(json['date']),
+      fileName: File(json['fileName']),
+    );
+  }
+
+  // Serialize to JSON
+  Map<String, dynamic> toJson() {
+    return {
+      'type': type == FileType.img ? 'image' : 'pdf', // Adjust for more file types.
+      'date': date.toIso8601String(),
+      'fileName': fileName.path,
+    };
+  }
+}
+
+enum FileType {
+  img,
+  pdf,
+}
+enum ApprovalStatus{
+  approved,
+  pending,
+  rejected,
+}
+
+class ToDoItem {
+   String title;
+   double progress;
+ Function onTap;
+  ToDoItem({required this.title, required this.onTap, required this.progress});
+}
+

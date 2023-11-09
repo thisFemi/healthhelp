@@ -57,6 +57,7 @@ dependencies:
   dotted_decoration: ^2.0.0
   file_picker: ^6.0.0
   simple_circular_progress_bar: ^1.0.2
+  path: ^1.8.3
 
 
 dev_dependencies:

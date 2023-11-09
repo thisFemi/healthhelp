@@ -319,11 +319,4 @@ extension AvailabilityDurationExtension on AvailabilityDuration {
   }
 }
 
-class Certificate {
-  DateTime date;
-  PlatformFile fileName;
-  FileType type;
-  Certificate({required this.type, required this.date, required this.fileName});
-}
 
-enum FileType { img, pdf }

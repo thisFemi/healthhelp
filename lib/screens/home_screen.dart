@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:HealthHelp/screens/doctors_search_screen.dart';
 import 'package:HealthHelp/screens/patient_search_screen.dart';
 import 'package:flutter/cupertino.dart';
@@ -10,10 +12,12 @@ import 'package:HealthHelp/screens/notification_screen.dart';
 
 import '../helper/utils/Colors.dart';
 import '../helper/utils/contants.dart';
+import '../models/others.dart';
 import '../providers/DUMMY_DATA.dart';
 import '../widgets/appointment_banner_card.dart';
 import '../widgets/notification_icon.dart';
 import '../widgets/service_card.dart';
+import '../widgets/to_do_card.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -27,11 +31,37 @@ class _HomeScreenState extends State<HomeScreen> {
     await APIs.auth.signOut();
     await GoogleSignIn().signOut();
   }
+  void initDoc(){
+    if(APIs.docReg!=null){
 
+      _todo.add(ToDoItem(title: 'title', onTap: (){
+
+      }, progress: 20.0));
+    }else if(
+    APIs.docReg!.status==ApprovalStatus.rejected
+    ){
+      _todo.add(ToDoItem(title: 'title', onTap: (){
+
+      }, progress: 30.0));
+
+    }
+    setState(() {
+
+    });
+  }
+List<ToDoItem> _todo=[
+
+];
   @override
   Widget build(BuildContext context) {
+
     bool isDoctor =
         APIs.userInfo.userType.toLowerCase() == 'doctor' ? true : false;
+    if(isDoctor){
+      print('init doc');
+      initDoc();
+
+    }
     return Container(
       //
       padding: EdgeInsets.only(top: 40, left: 20, right: 20),
@@ -61,13 +91,19 @@ class _HomeScreenState extends State<HomeScreen> {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  SizedBox(
+                    width: Screen.deviceSize(context).width/2,
+                    child:
                   Text(
-                    'Welcome back,',
-                    style: TextStyle(fontWeight: FontWeight.w400),
-                  ),
+                    'Hello ${APIs.userInfo.name}',
+                    style: TextStyle(fontWeight: FontWeight.bold,fontSize: 16 ),
+                  ),),
+                  SizedBox(height: 5,),
                   Text(
-                    APIs.userInfo.name,
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                    'Priotize your health',
+                    style: TextStyle(
+                        color: color8,
+                        fontWeight: FontWeight.bold, fontSize: 13),
                   )
                 ],
               ),
@@ -129,6 +165,8 @@ class _HomeScreenState extends State<HomeScreen> {
                             mainAxisSpacing: 1.0,
                             // crossAxisSpacing: 10.0,
                             childAspectRatio: 1.3,
+
+
                           ),
                           itemCount: 2,
                           itemBuilder: (context, index) {
@@ -275,26 +313,29 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 20.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
+                    child:
                         Text(
                           'To Do',
                           style: TextStyle(
                               fontWeight: FontWeight.bold, fontSize: 18),
                         ),
-                        GestureDetector(
-                          onTap: () {},
-                          child: Text(
-                            'See All',
-                            style: TextStyle(
-                                color: Colors.blue,
-                                fontWeight: FontWeight.w600),
-                          ),
-                        )
-                      ],
-                    ),
+
+
+
                   ),
+
+                  Container(height: 150,
+                  child: ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      shrinkWrap: true,
+                      itemCount: _todo.length,
+                      itemBuilder: (context, index){
+                        final todo=_todo[index];
+                        return ToDoCard(onTap:todo.onTap ,title: todo.title, progress: todo.progress,);
+                  }),
+                  )
+
+
                   // Container(
                   //   height: 150,
                   //   child: ListView.builder(

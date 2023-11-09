@@ -38,7 +38,7 @@ class MedTestCard extends StatelessWidget {
                       child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text('Comment',
+                            Text("Doctor's Comment",
                                 style: TextStyle(fontWeight: FontWeight.bold)),
                             SizedBox(height: 10),
                             TextFormField(
@@ -77,8 +77,6 @@ class MedTestCard extends StatelessWidget {
                               validator: (value) {
                                 if (value == null || value.isEmpty) {
                                   return "email can't be empty";
-                                } else if (!value.contains('@')) {
-                                  return "invalid email";
                                 }
                                 return null;
                               },
@@ -88,7 +86,7 @@ class MedTestCard extends StatelessWidget {
                               child: GestureDetector(
                                 onTap: () {},
                                 child: Chip(
-                                  label: Text('Add',
+                                  label: Text('Submit',
                                       style: TextStyle(
                                         fontWeight: FontWeight.bold,
                                       )),
