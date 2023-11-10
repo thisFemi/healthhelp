@@ -6,10 +6,14 @@ import 'package:flutter/material.dart';
 import '../helper/utils/Colors.dart';
 import '../helper/utils/contants.dart';
 import '../models/user.dart';
-
+enum NavigatorType{
+  toDetails,
+  toBioData,
+}
 class DoctorCard extends StatelessWidget {
-  DoctorCard(this.doctor);
+  DoctorCard({required this.doctor, this.navigatorType} );
   final UserInfo doctor;
+  NavigatorType? navigatorType;
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -20,13 +24,20 @@ class DoctorCard extends StatelessWidget {
       child: InkWell(
           borderRadius: BorderRadius.circular(15),
           onTap: () {
+            if(navigatorType==NavigatorType.toDetails){
+
+
             Navigator.push(
                 context,
                 MaterialPageRoute(
                     builder: (_) => DoctorInfoScreen(
                         doctor: doctor,
                         )));
-          },
+          }else{
+              Navigator.pop(context,doctor);
+            }
+
+            },
           child: ListTile(
             leading: ClipRRect(
               borderRadius: BorderRadius.circular(

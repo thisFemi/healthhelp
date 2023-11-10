@@ -1,7 +1,9 @@
 import 'dart:ffi';
 
 import 'package:HealthHelp/screens/doctors_search_screen.dart';
+import 'package:HealthHelp/screens/patient_registration_screen.dart';
 import 'package:HealthHelp/screens/patient_search_screen.dart';
+import 'package:HealthHelp/screens/practitioner_registration_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -15,9 +17,11 @@ import '../helper/utils/contants.dart';
 import '../models/others.dart';
 import '../providers/DUMMY_DATA.dart';
 import '../widgets/appointment_banner_card.dart';
+import '../widgets/doctor_card.dart';
 import '../widgets/notification_icon.dart';
 import '../widgets/service_card.dart';
 import '../widgets/to_do_card.dart';
+import 'edit_profile_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -30,20 +34,76 @@ class _HomeScreenState extends State<HomeScreen> {
   _sigOut() async {
     await APIs.auth.signOut();
     await GoogleSignIn().signOut();
+
   }
-  void initDoc(){
-    if(APIs.docReg!=null){
+  @override
+  void initState() {
 
-      _todo.add(ToDoItem(title: 'title', onTap: (){
+      init();
+    super.initState();
+  }
+  void init(){
+    _todo.clear();
+    print('init');
 
-      }, progress: 20.0));
+    if(APIs.isConnected){
+      if (APIs.userInfo.phoneNumber==""){
+        _todo.add(ToDoItem(title: 'Complete your profile', onTap: ()async{
+          final profileUpdated = await Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (_) => EditProfileScreen(
+                    userInfo: APIs.userInfo,
+                  )));
+          if (profileUpdated == true) {
+            setState(() {});
+          }
+        }, progress: .10));
+      }
+      if(isDoctor){
+    if(APIs.docReg==null){
+print('null true');
+      _todo.add(ToDoItem(title: 'Start Your License Verification', onTap: (){
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (_) => PractitionerRegistrationScreen(
+                  APIs.userInfo,
+                )));
+      }, progress: .05));
     }else if(
-    APIs.docReg!.status==ApprovalStatus.rejected
+    APIs.docReg!.status==ApprovalStatus.rejected || !APIs.userInfo.doctorContactInfo!.isVerified
     ){
-      _todo.add(ToDoItem(title: 'title', onTap: (){
+      _todo.add(ToDoItem(title: 'Continue Your License Verification', onTap: (){
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (_) => PractitionerRegistrationScreen(
+                  APIs.userInfo,
+                )));
+      }, progress: .10));
 
-      }, progress: 30.0));
+    }
 
+  }
+    else{
+      print('cheecjking med');
+      if(APIs.patientBio==null){
+        _todo.add(ToDoItem(title: 'Register your medical information', onTap: (){
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (_) => PatientRegistrationScreen(
+                    APIs.userInfo,
+                  )));
+        }, progress: .05));
+      }
+      }
+
+
+    }
+else{
+  debugPrint('not connected');
     }
     setState(() {
 
@@ -52,16 +112,19 @@ class _HomeScreenState extends State<HomeScreen> {
 List<ToDoItem> _todo=[
 
 ];
+  bool isDoctor =
+  APIs.userInfo.userType.toLowerCase() == 'doctor' ? true : false;
+
   @override
   Widget build(BuildContext context) {
 
-    bool isDoctor =
-        APIs.userInfo.userType.toLowerCase() == 'doctor' ? true : false;
-    if(isDoctor){
-      print('init doc');
-      initDoc();
-
-    }
+    // if(isDoctor){
+    //   print('init doc');
+    //   initDoc();
+    //   print('todo len ${_todo.length}');
+    //
+    // }
+    print(APIs.docReg!.name);
     return Container(
       //
       padding: EdgeInsets.only(top: 40, left: 20, right: 20),
@@ -95,7 +158,7 @@ List<ToDoItem> _todo=[
                     width: Screen.deviceSize(context).width/2,
                     child:
                   Text(
-                    'Hello ${APIs.userInfo.name}',
+                    'Hello ${APIs.userInfo.name} 🎉',
                     style: TextStyle(fontWeight: FontWeight.bold,fontSize: 16 ),
                   ),),
                   SizedBox(height: 5,),
@@ -212,7 +275,7 @@ List<ToDoItem> _todo=[
                                 Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                        builder: (_) => ListOfDoctorsScreen()));
+                                        builder: (_) => ListOfDoctorsScreen(type: NavigatorType.toDetails,)));
                               },
                               () {},
                               () {}
@@ -275,7 +338,7 @@ List<ToDoItem> _todo=[
                                 Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                        builder: (_) => ListOfDoctorsScreen()));
+                                        builder: (_) => ListOfDoctorsScreen(type:NavigatorType.toDetails)));
                               },
                               () {},
                               () {}
@@ -311,29 +374,34 @@ List<ToDoItem> _todo=[
                       ],
                     ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 20.0),
-                    child:
-                        Text(
+
+                  _todo.isNotEmpty?  Text(
                           'To Do',
                           style: TextStyle(
                               fontWeight: FontWeight.bold, fontSize: 18),
-                        ),
+                        ):SizedBox.shrink(),
 
 
 
-                  ),
 
-                  Container(height: 150,
-                  child: ListView.builder(
-                      scrollDirection: Axis.horizontal,
-                      shrinkWrap: true,
-                      itemCount: _todo.length,
-                      itemBuilder: (context, index){
-                        final todo=_todo[index];
-                        return ToDoCard(onTap:todo.onTap ,title: todo.title, progress: todo.progress,);
-                  }),
-                  )
+ ListView.builder(
+    itemCount: _todo.length,
+    shrinkWrap: true,
+    itemBuilder: (context,index){
+      final todo=_todo[index];
+            return ToDoCard(onTap:todo.onTap ,title: todo.title, progress: todo.progress,);
+
+}),
+
+                  // ListView.builder(
+                  //     scrollDirection: Axis.horizontal,
+                  //     shrinkWrap: true,
+                  //     itemCount: _todo.length,
+                  //     itemBuilder: (context, index){
+                  //       final todo=_todo[index];
+                  //       return ToDoCard(onTap:todo.onTap ,title: todo.title, progress: todo.progress,);
+                  // }),
+
 
 
                   // Container(

@@ -1,20 +1,24 @@
 // ignore_for_file: must_be_immutable
 
 import 'package:HealthHelp/providers/DUMMY_DATA.dart';
+import 'package:HealthHelp/screens/doctors_search_screen.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:expandable/expandable.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import '../api/apis.dart';
+import '../helper/dialogs.dart';
+import '../helper/predictive_model.dart';
 import '../helper/utils/Colors.dart';
 import '../helper/utils/contants.dart';
 import '../helper/utils/date_util.dart';
 import '../models/others.dart';
 import '../models/user.dart';
+import '../widgets/doctor_card.dart';
+import '../widgets/error_widget.dart';
 import '../widgets/resuables.dart';
-import 'package:simple_circular_progress_bar/simple_circular_progress_bar.dart';
-
+import 'package:percent_indicator/percent_indicator.dart';
 import 'institution_search_screen.dart';
 
 class PatientRegistrationScreen extends StatefulWidget {
@@ -29,34 +33,47 @@ class PatientRegistrationScreen extends StatefulWidget {
 class _PatientRegistrationScreenState extends State<PatientRegistrationScreen> {
   String? selectedTest;
   TextEditingController _usertType = TextEditingController();
+  TextEditingController _school = TextEditingController();
+  TextEditingController _doctor = TextEditingController();
   bool selectedOthers = false;
   String customTest = "";
   String selectedType = 'No';
-  List<String> userAddedTests = [];
+  List<Test> userAddedTests = [];
   List<String> availableTests = [];
+  UserInfo? doctorInfo;
+  DateTime? closestAvailableDateTime;
   @override
   void initState() {
     super.initState();
     availableTests = APIs.fetchAllTest();
+
+    init()
+;  }
+  bool showReg(){
+   return APIs.patientBio==null?true:false;
+
   }
 
-  List<Test> medTest = [
-    Test(
-        comment: '0+',
-        isDone: true,
-        date: DateTime.now(),
-        docName: 'docName',
-        title: 'blood test'),
-    Test(
-        comment: 'negative',
-        date: DateTime.now(),
-        docName: 'docName',
-        title: 'urine test'),
-  ];
-  bool isApplied = true;
+  List<Test> medTest = [];
+
+  init(){
+
+      if(!showReg()){
+        if(APIs.patientBio!=null){
+          medTest=APIs.patientBio!.test!;
+        }else{
+          medTest=[];
+        }
+
+
+
+    }
+
+  }
   @override
   Widget build(BuildContext context) {
     _usertType.text = selectedType;
+
 
     return Scaffold(
       appBar: AppBar(
@@ -77,495 +94,555 @@ class _PatientRegistrationScreenState extends State<PatientRegistrationScreen> {
           // )
         ],
       ),
-      body: SingleChildScrollView(
+      body:
+
+      APIs.isConnected? SingleChildScrollView(
         child: Container(
           padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-          child: Column(
+          child: !showReg()? Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Card(
-                  elevation: 1,
-                  color: Colors.white,
-                  child: Container(
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 30, vertical: 20),
-                      // height: Screen.deviceSize(context).width * .4,
-                      child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            SimpleCircularProgressBar(
-                              size: 100,
-                              animationDuration: 1,
-                              valueNotifier: ValueNotifier(60),
-                              progressStrokeWidth: 24,
-                              backStrokeWidth: 24,
-                              mergeMode: true,
-                              backColor: Colors.grey.shade200,
-                              // onGetText: (value) {
-                              //   // return Text(
-                              //   //   '${value.toInt()}',
-                              //   //   style: centerTextStyle,
-                              //   // );
-                              // },
-                              progressColors: [color3, color3],
-                            ),
-                            Center(
-                                child: !isApplied
-                                    ? Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.end,
-                                        children: [
-                                          Chip(
-                                              backgroundColor: color15,
-                                              label: Text(
-                                                ' Completed',
-                                                style: TextStyle(
-                                                    fontWeight:
-                                                        FontWeight.bold),
-                                              )),
-                                          SizedBox(
-                                            height: 5,
-                                          ),
-                                          Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.end,
-                                            children: [
-                                              Text(' View Report'),
-                                              SizedBox(
-                                                width: 5,
-                                              ),
-                                              Align(
-                                                alignment: Alignment.topRight,
-                                                child: Icon(Icons
-                                                    .cloud_download_outlined),
-                                              ),
-                                            ],
-                                          )
-                                        ],
-                                      )
-                                    : Chip(
-                                        backgroundColor: color15,
-                                        label: Text(
-                                          'Not yet Applied',
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.bold),
-                                        )))
-                          ]))),
-              !isApplied
-                  ? Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                          SizedBox(height: 20),
-                          ListView.builder(
-                              itemCount: medTest.length,
-                              shrinkWrap: true,
-                              itemBuilder: (ctx, index) {
-                                final test = medTest[index];
-                                return Card(
-                                  elevation: .5,
-                                  shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(10)),
-                                  child: ListTile(
-                                    title: Text("${test.title}"),
-                                    onTap: () {
-                                      showTestDetails(context, test);
-                                    },
-                                    trailing: Chip(
-                                        backgroundColor:
-                                            test.isDone ? color13 : color1,
-                                        label: Text(
-                                            "${test.isDone ? "Completed" : "Pending"}",
+              children: [
+                Card(
+                    elevation: 1,
+                    color: Colors.white,
+                    child: Container(
+                        padding:
+                        EdgeInsets.all(10),
+                        // height: Screen.deviceSize(context).width * .4,
+                        child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              CircularPercentIndicator(
+                                radius: 70.0,
+
+                                curve: Curves.linear,
+                                animation: true,
+                                animationDuration: 1200,
+                                lineWidth: 15.0,
+                                circularStrokeCap: CircularStrokeCap.round,
+                                percent:APIs.patientBio!.status ==null?0.01:APIs.patientBio!.status!,
+                                center: new Text(
+                                  "${APIs.patientBio!.status ==null?0.01*100:APIs.patientBio!.status!*100}%",
+                                  style:
+                                  new TextStyle(fontWeight: FontWeight.bold, fontSize: 20.0),
+                                ),
+
+                                backgroundColor:color7,
+                                progressColor: color3,
+                              ),
+                              !( APIs.patientBio!.status ==null|| APIs.patientBio!.status! <1)?
+                              Center(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                    CrossAxisAlignment.end,
+                                    children: [
+                                      Chip(
+                                          backgroundColor: color15,
+                                          label: Text(
+                                            ' Completed',
                                             style: TextStyle(
-                                                color: test.isDone
-                                                    ? color7
-                                                    : color3))),
-                                  ),
-                                );
-                              })
-                        ])
-                  : Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                                                fontWeight:
+                                                FontWeight.bold),
+                                          )),
+                                      SizedBox(
+                                        height: 5,
+                                      ),
+                                      GestureDetector(
+                                        onTap: (){},
+                                        child: Row(
+                                          mainAxisAlignment:
+                                          MainAxisAlignment.end,
+                                          children: [
+                                            Text(' View Report', style: TextStyle(fontWeight:FontWeight.bold),),
+                                            SizedBox(
+                                              width: 5,
+                                            ),
+                                            Align(
+                                              alignment: Alignment.topRight,
+                                              child: Icon(Icons
+                                                  .cloud_download_outlined),
+                                            ),
+
+                                        ]),
+                                      )
+
+                                    ])
+
+
+                    ):Center(child:Column(
+                                crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
-                        SizedBox(
-                          height: 20,
-                        ),
-                        const Text(
-                          'Are you currently enrolled in an institution?',
-                          style: TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                        SizedBox(height: 5),
-                        GestureDetector(
-                          onTap: () => _showUsertTypes(),
-                          child: AbsorbPointer(
-                            child: TextFormField(
-                              controller: _usertType,
-                              autovalidateMode:
-                                  AutovalidateMode.onUserInteraction,
-                              decoration: InputDecoration(
-                                  enabled: false,
-                                  filled: true,
-                                  fillColor: Colors.grey[200],
-                                  hintStyle:
-                                      TextStyle(color: color8, fontSize: 12),
-                                  hintText: "select answer",
-                                  counterStyle:
-                                      TextStyle(height: double.minPositive),
-                                  labelStyle: TextStyle(
-                                      color: color8,
-                                      fontFamily: 'Raleway-SemiBold',
-                                      fontSize: 15.0),
-                                  border: OutlineInputBorder(
-                                      borderSide: BorderSide.none,
-                                      borderRadius: BorderRadius.all(
-                                          Radius.circular(10.0))),
-                                  disabledBorder: OutlineInputBorder(
-                                      borderSide: BorderSide.none,
-                                      borderRadius: BorderRadius.all(
-                                          Radius.circular(10.0))),
-                                  focusedBorder: OutlineInputBorder(
-                                      borderSide: BorderSide.none,
-                                      borderRadius: BorderRadius.all(
-                                          Radius.circular(10.0))),
-                                  errorBorder: OutlineInputBorder(
-                                      borderSide: BorderSide.none,
-                                      borderRadius: BorderRadius.all(
-                                          Radius.circular(10.0))),
-                                  contentPadding: EdgeInsets.all(10),
-                                  prefixIcon: Icon(Icons.person),
-                                  suffixIcon:
-                                      Icon(Icons.keyboard_arrow_down_outlined)),
-                              validator: (value) {
-                                if (value == null ||
-                                    value.isEmpty ||
-                                    selectedType == '') {
-                                  return 'you need to select a user type';
-                                }
-                                return null;
-                              },
+
+                        Chip(
+                                      backgroundColor: color1,
+                                      label: Text(
+                                        'Overall: Pending',
+
+                                        style: TextStyle(
+                                          color:color3,
+                                            fontWeight:
+                                            FontWeight.bold),
+                                      )),
+                        SizedBox(child: Text("Appointment:\n${DateUtil.formatDateTime(APIs.patientBio!.screeningDate,)}", textAlign: TextAlign.right,
+                            style:TextStyle(fontWeight: FontWeight.bold)))
+                      ],
+                    ),)
+                            ]))),
+
+                                      SizedBox(height: 20),
+                                      ListView.builder(
+                                          itemCount: medTest.length,
+                                          shrinkWrap: true,
+                                          itemBuilder: (ctx, index) {
+                                            final test = medTest[index];
+                                            return Card(
+                                              elevation: .5,
+                                              shape: RoundedRectangleBorder(
+                                                  borderRadius: BorderRadius.circular(10)),
+                                              child: ListTile(
+                                                title: Text("${test.title}"),
+                                                onTap: () {
+                                                  showTestDetails(context, test);
+                                                },
+                                                trailing: Chip(
+                                                    backgroundColor:
+                                                    test.isDone ? color13 : color1,
+                                                    label: Text(
+                                                        "${test.isDone ? "Completed" : "Pending"}",
+                                                        style: TextStyle(
+                                                            color: test.isDone
+                                                                ? color7
+                                                                : color3))),
+                                              ),
+                                            );
+                                          })
+                                    ],
+                                  )
+
+
+                  : Form(
+         key:   _keyForm,
+                    autovalidateMode:AutovalidateMode.onUserInteraction ,
+                    child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          SizedBox(
+                            height: 20,
+                          ),
+                          const Text(
+                            'Are you currently enrolled in an institution?',
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          SizedBox(height: 5),
+                          GestureDetector(
+                            onTap: () => _showUsertTypes(),
+                            child: AbsorbPointer(
+                              child: TextFormField(
+                                controller: _usertType,
+
+                                decoration: InputDecoration(
+
+                                    filled: true,
+                                    fillColor: Colors.grey[200],
+                                    hintStyle:
+                                        TextStyle(color: color8, fontSize: 12),
+
+                                    counterStyle:
+                                        TextStyle(height: double.minPositive),
+                                    labelStyle: TextStyle(
+                                        color: color8,
+                                        fontFamily: 'Raleway-SemiBold',
+                                        fontSize: 15.0),
+                                    border: OutlineInputBorder(
+                                        borderSide: BorderSide.none,
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(10.0))),
+                                    disabledBorder: OutlineInputBorder(
+                                        borderSide: BorderSide.none,
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(10.0))),
+                                    focusedBorder: OutlineInputBorder(
+                                        borderSide: BorderSide.none,
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(10.0))),
+                                    errorBorder: OutlineInputBorder(
+                                        borderSide: BorderSide.none,
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(10.0))),
+                                    contentPadding: EdgeInsets.all(10),
+                                    prefixIcon: Icon(Icons.person),
+                                    suffixIcon:
+                                        Icon(Icons.keyboard_arrow_down_outlined)),
+                                validator: (value) {
+                                  if (value == null ||
+                                      value.isEmpty ||
+                                      selectedType == '') {
+                                    return 'you need to select a user type';
+                                  }
+                                  return null;
+                                },
+                              ),
                             ),
                           ),
-                        ),
+ Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    const SizedBox(
+                                      height: 10,
+                                    ),
+                                     Text(
+                                      '${selectedType == 'Yes'?"Select Institution":"Select Your Doctor"}',
+                                      style:
+                                          TextStyle(fontWeight: FontWeight.bold),
+                                    ),
+                                    const SizedBox(
+                                      height: 10,
+                                    ),
+                                     GestureDetector(
+                                      onTap: () async {
+                                        if(selectedType == 'Yes'){
 
-                        selectedType == 'Yes'
-                            ? Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  const SizedBox(
-                                    height: 10,
-                                  ),
-                                  const Text(
-                                    'Select Institution',
-                                    style:
-                                        TextStyle(fontWeight: FontWeight.bold),
-                                  ),
-                                  const SizedBox(
-                                    height: 10,
-                                  ),
-                                  GestureDetector(
-                                    onTap: () async {
-                                      final profileUpdated = await Navigator.push(
+
+                                        final selectedInstitution = await Navigator.push(
                                           context,
                                           MaterialPageRoute(
-                                              builder: (_) =>
-                                                  ListOfInstitutionScreen()));
-                                      if (profileUpdated == true) {
-                                        setState(() {});
-                                      }
-                                    },
-                                    child: AbsorbPointer(
-                                      child: TextFormField(
-                                        controller: _usertType,
-                                        autovalidateMode:
-                                            AutovalidateMode.onUserInteraction,
-                                        decoration: InputDecoration(
-                                            enabled: false,
-                                            filled: true,
-                                            fillColor: Colors.grey[200],
-                                            hintStyle: TextStyle(
-                                                color: color8, fontSize: 12),
-                                            hintText: "select answer",
-                                            counterStyle: TextStyle(
-                                                height: double.minPositive),
-                                            labelStyle: TextStyle(
-                                                color: color8,
-                                                fontFamily: 'Raleway-SemiBold',
-                                                fontSize: 15.0),
-                                            border: OutlineInputBorder(
-                                                borderSide: BorderSide.none,
-                                                borderRadius: BorderRadius.all(
-                                                    Radius.circular(10.0))),
-                                            disabledBorder: OutlineInputBorder(
-                                                borderSide: BorderSide.none,
-                                                borderRadius: BorderRadius.all(
-                                                    Radius.circular(10.0))),
-                                            focusedBorder: OutlineInputBorder(
-                                                borderSide: BorderSide.none,
-                                                borderRadius: BorderRadius.all(
-                                                    Radius.circular(10.0))),
-                                            errorBorder: OutlineInputBorder(
-                                                borderSide: BorderSide.none,
-                                                borderRadius: BorderRadius.all(
-                                                    Radius.circular(10.0))),
-                                            contentPadding: EdgeInsets.all(10),
-                                            prefixIcon: Icon(
-                                              Icons.person,
-                                            ),
-                                            suffixIcon: Icon(Icons
-                                                .keyboard_arrow_down_outlined)),
-                                        validator: (value) {
-                                          if (value == null ||
-                                              value.isEmpty ||
-                                              selectedType == '') {
-                                            return 'you need to select a user type';
-                                          }
-                                          return null;
-                                        },
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              )
-                            : SizedBox.shrink(),
+                                            builder: (_) => ListOfInstitutionScreen(),
+                                          ),
+                                        );
 
-                        SizedBox(
-                          height: 20,
-                        ),
-                        Text(
-                          'Select your screening tests',
-                          style: TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        SizedBox(
-                          height: 50,
-                          // width: Screen.deviceSize(
-                          //             context)
-                          //         .width *
-                          //     .3,
-                          child: DropdownButton2<String>(
-                            isExpanded: true,
-                            hint: SizedBox(
-                              child: Text('Select your test',
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                  )),
-                            ),
-                            items: DUMMY_DATA.availableTests
-                                .map<DropdownMenuItem<String>>((test) {
-                              return DropdownMenuItem<String>(
-                                  value: test,
-                                  child: SizedBox(
-                                      child: Text(test,
-                                          style: TextStyle(
-                                            fontSize: 11,
-                                          ))));
-                            }).toList(),
-                            value: selectedTest,
-                            onChanged: (value) {
-                              setState(() {
-                                selectedTest = value!;
-                                if (selectedTest != "Others" &&
-                                    selectedTest!.isNotEmpty) {
-                                  userAddedTests.add(selectedTest!);
-                                  DUMMY_DATA.availableTests
-                                      .remove(selectedTest!);
-                                }
-                                if (selectedTest == "Others") {
-                                  selectedOthers = true;
-                                }
-                                selectedTest = null;
-                              });
-                            },
-                            buttonStyleData: ButtonStyleData(
-                                // height: deviceSize.height * .04,
-                                // padding: EdgeInsets.only(left: 10, right: 10),
-                                decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(5),
-                                    border: Border.all(
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .secondary))),
-                          ),
-                        ),
-                        // ListView.builder(
-                        //   itemCount: 10,
-                        //   itemBuilder: (cxt, index){
+                                        if (selectedInstitution != null) {
+                                          List<Medicals> existingMedical=await APIs.getMedicalRecords("", true, selectedInstitution).first;
+                                          print("existingMedical.length");
+                                          print(existingMedical.length);
+                                          MedicalScheduler scheduler = MedicalScheduler(existingMedicals: existingMedical);
 
-                        // }) SizedBox(height: 20),
-                        selectedOthers
-                            ? Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  SizedBox(
-                                    height: 20,
-                                  ),
-                                  Text('Test Title',
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                      )),
-                                  SizedBox(
-                                    height: 10,
-                                  ),
-                                  TextFormField(
-                                    keyboardType: TextInputType.text,
-                                    onChanged: (value) {
-                                      setState(() {
-                                        customTest = value;
-                                      });
-                                    },
-                                    // onSaved: (newValue) => APIs
-                                    //     .userInfo
-                                    //     .doctorContactInfo!
-                                    //     .clinicAddress = newValue ?? '',
-                                    // autovalidateMode:
-                                    //   AutovalidateMode.onUserInteraction,
-                                    decoration: InputDecoration(
-                                      filled: true,
-                                      fillColor: Colors.grey[200],
-                                      hintStyle: TextStyle(color: color8),
-                                      labelStyle: TextStyle(
-                                          color: color8,
-                                          fontFamily: 'Raleway-SemiBold',
-                                          fontSize: 15.0),
-                                      border: OutlineInputBorder(
-                                          borderSide: BorderSide.none,
-                                          borderRadius: BorderRadius.all(
-                                              Radius.circular(10.0))),
-                                      disabledBorder: OutlineInputBorder(
-                                          borderSide: BorderSide.none,
-                                          borderRadius: BorderRadius.all(
-                                              Radius.circular(10.0))),
-                                      focusedBorder: OutlineInputBorder(
-                                          borderSide: BorderSide.none,
-                                          borderRadius: BorderRadius.all(
-                                              Radius.circular(10.0))),
-                                      errorBorder: OutlineInputBorder(
-                                          borderSide: BorderSide.none,
-                                          borderRadius: BorderRadius.all(
-                                              Radius.circular(10.0))),
-                                      contentPadding: EdgeInsets.only(
-                                          top: 20,
-                                          left: 10,
-                                          right: 10,
-                                          bottom: 20),
-                                    ),
-                                    validator: (value) {
-                                      if (value == null || value.isEmpty) {
-                                        return "value can't be empty";
-                                      }
-                                      return null;
-                                    },
-                                  ),
-                                  SizedBox(
-                                    height: 20,
-                                  ),
-                                  Align(
-                                    alignment: Alignment.centerRight,
-                                    child: GestureDetector(
-                                      onTap: () {
-                                        String finalTest = customTest;
-                                        if (finalTest.isNotEmpty) {
-                                          setState(() {
-                                            userAddedTests.add(finalTest);
-                                          });
+
+                                          closestAvailableDateTime = scheduler.getClosestAvailableBookingDateTime();
+
+                                          _school.text = selectedInstitution;
+                                          setState(() {});
                                         }
-                                        customTest = "";
-                                        selectedOthers = false;
-                                      },
-                                      child: Chip(
-                                        label: Text('Add',
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                            )),
+                                      }else{
+                                           doctorInfo = await Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (_) => ListOfDoctorsScreen(type: NavigatorType.toBioData),
+                                            ),
+                                          );
+
+                                          if (doctorInfo != null) {
+
+                                            _doctor.text = doctorInfo!.name;
+                                            List<Medicals> existingMedical=await APIs.getMedicalRecords(doctorInfo!.id, false, null).first;
+                                            print(doctorInfo!.id);
+                                            MedicalScheduler scheduler = MedicalScheduler(existingMedicals: existingMedical);
+
+
+                                            closestAvailableDateTime = scheduler.getClosestAvailableBookingDateTime();
+                                            print("Next Screening is :${closestAvailableDateTime}");
+                                            setState(() {});
+                                          }
+
+
+                                        }
+
+                                        },
+                                      child: AbsorbPointer(
+                                        child: TextFormField(
+                                          controller:selectedType == 'Yes'? _school:_doctor,
+                                          autovalidateMode:
+                                              AutovalidateMode.onUserInteraction,
+                                          decoration: InputDecoration(
+
+                                              filled: true,
+                                              fillColor: Colors.grey[200],
+                                              hintStyle: TextStyle(
+                                                  color: color8, fontSize: 12),
+
+                                              counterStyle: TextStyle(
+                                                  height: double.minPositive),
+                                              labelStyle: TextStyle(
+                                                  color: color8,
+                                                  fontFamily: 'Raleway-SemiBold',
+                                                  fontSize: 15.0),
+                                              border: OutlineInputBorder(
+                                                  borderSide: BorderSide.none,
+                                                  borderRadius: BorderRadius.all(
+                                                      Radius.circular(10.0))),
+                                              disabledBorder: OutlineInputBorder(
+                                                  borderSide: BorderSide.none,
+                                                  borderRadius: BorderRadius.all(
+                                                      Radius.circular(10.0))),
+                                              focusedBorder: OutlineInputBorder(
+                                                  borderSide: BorderSide.none,
+                                                  borderRadius: BorderRadius.all(
+                                                      Radius.circular(10.0))),
+                                              errorBorder: OutlineInputBorder(
+                                                  borderSide: BorderSide.none,
+                                                  borderRadius: BorderRadius.all(
+                                                      Radius.circular(10.0))),
+                                              contentPadding: EdgeInsets.all(10),
+                                              prefixIcon: Icon(
+                                                Icons.person,
+                                              ),
+                                              suffixIcon: Icon(Icons
+                                                  .keyboard_arrow_down_outlined)),
+                                          validator: (value) {
+                                            if (value == null ||
+                                                value.isEmpty ||
+                                                selectedType == '') {
+                                              return "value can't be empty";
+                                            }
+                                            return null;
+                                          },
+                                        ),
                                       ),
+                                    )
+                                  ],
+                                ),
+
+
+                          SizedBox(
+                            height: 20,
+                          ),
+                          Text(
+                            'Select your screening tests',
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          SizedBox(
+                            height: 10,
+                          ),
+                          SizedBox(
+                            height: 50,
+                            // width: Screen.deviceSize(
+                            //             context)
+                            //         .width *
+                            //     .3,
+                            child: DropdownButton2<String>(
+                              isExpanded: true,
+                              hint: SizedBox(
+                                child: Text('Select your test',
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                    )),
+                              ),
+                              items: DUMMY_DATA.availableTests
+                                  .map<DropdownMenuItem<String>>((test) {
+                                return DropdownMenuItem<String>(
+                                    value: test,
+                                    child: SizedBox(
+                                        child: Text(test,
+                                            style: TextStyle(
+                                              fontSize: 11,
+                                            ))));
+                              }).toList(),
+                              value: selectedTest,
+                              onChanged: (value) {
+                                setState(() {
+                                  selectedTest = value!;
+                                  if (selectedTest != "Others" &&
+                                      selectedTest!.isNotEmpty) {
+                                    var demoTest=Test(isDone: false, title: selectedTest!);
+                                    userAddedTests.add(demoTest);
+                                    DUMMY_DATA.availableTests
+                                        .remove(selectedTest!);
+                                  }
+                                  if (selectedTest == "Others") {
+                                    selectedOthers = true;
+                                  }
+                                  selectedTest = null;
+                                });
+                              },
+                              buttonStyleData: ButtonStyleData(
+                                  // height: deviceSize.height * .04,
+                                  // padding: EdgeInsets.only(left: 10, right: 10),
+                                  decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(5),
+                                      border: Border.all(
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .secondary))),
+                            ),
+                          ),
+                          // ListView.builder(
+                          //   itemCount: 10,
+                          //   itemBuilder: (cxt, index){
+
+                          // }) SizedBox(height: 20),
+                          selectedOthers
+                              ? Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    SizedBox(
+                                      height: 20,
                                     ),
-                                  ),
-                                ],
-                              )
-                            : SizedBox.shrink(),
-                        SizedBox(
-                          height: 20,
-                        ),
-                        userAddedTests.isNotEmpty
-                            ? Align(
-                                alignment: Alignment.topRight,
-                                child: GestureDetector(
-                                  onTap: () {
-                                    userAddedTests.clear();
-                                    setState(() {});
-                                  },
-                                  child: Chip(
-                                    backgroundColor: color12,
-                                    label: Text('Clear All',
+                                    Text('Test Title',
                                         style: TextStyle(
-                                          color: color7,
-                                          fontSize: 12,
                                           fontWeight: FontWeight.bold,
                                         )),
-                                  ),
-                                ),
-                              )
-                            : SizedBox.shrink(),
-                        SizedBox(
-                          height: 20,
-                        ),
-                        ListView.builder(
-                            itemCount: userAddedTests.length,
-                            shrinkWrap: true,
-                            itemBuilder: (context, index) {
-                              final test = userAddedTests[index];
-                              return Card(
-                                color: Colors.white,
-                                elevation: .5,
-                                child: ListTile(
-                                  title: Text(test),
-                                  trailing: IconButton(
-                                      onPressed: () {
+                                    SizedBox(
+                                      height: 10,
+                                    ),
+                                    TextFormField(
+                                      keyboardType: TextInputType.text,
+                                      onChanged: (value) {
                                         setState(() {
-                                          final removedTest =
-                                              userAddedTests.removeAt(index);
-                                          if (availableTests
-                                              .contains(removedTest)) {
-                                            availableTests.remove(removedTest);
-                                            availableTests.add(removedTest);
-                                          }
+                                          customTest = value;
                                         });
                                       },
-                                      icon: Icon(CupertinoIcons.delete,
-                                          color: color12)),
-                                ),
-                              );
-                            }),
-
-                        Padding(
-                            padding: EdgeInsets.symmetric(vertical: 20.0),
-                            child: SizedBox(
-                                height: 50.0,
-                                width: Screen.deviceSize(context).width,
-                                child: TextButton(
-                                  onPressed: userAddedTests.isEmpty
-                                      ? null
-                                      : () {
-                                          print('object');
+                                      // onSaved: (newValue) => APIs
+                                      //     .userInfo
+                                      //     .doctorContactInfo!
+                                      //     .clinicAddress = newValue ?? '',
+                                      // autovalidateMode:
+                                      //   AutovalidateMode.onUserInteraction,
+                                      decoration: InputDecoration(
+                                        filled: true,
+                                        fillColor: Colors.grey[200],
+                                        hintStyle: TextStyle(color: color8),
+                                        labelStyle: TextStyle(
+                                            color: color8,
+                                            fontFamily: 'Raleway-SemiBold',
+                                            fontSize: 15.0),
+                                        border: OutlineInputBorder(
+                                            borderSide: BorderSide.none,
+                                            borderRadius: BorderRadius.all(
+                                                Radius.circular(10.0))),
+                                        disabledBorder: OutlineInputBorder(
+                                            borderSide: BorderSide.none,
+                                            borderRadius: BorderRadius.all(
+                                                Radius.circular(10.0))),
+                                        focusedBorder: OutlineInputBorder(
+                                            borderSide: BorderSide.none,
+                                            borderRadius: BorderRadius.all(
+                                                Radius.circular(10.0))),
+                                        errorBorder: OutlineInputBorder(
+                                            borderSide: BorderSide.none,
+                                            borderRadius: BorderRadius.all(
+                                                Radius.circular(10.0))),
+                                        contentPadding: EdgeInsets.only(
+                                            top: 20,
+                                            left: 10,
+                                            right: 10,
+                                            bottom: 20),
+                                      ),
+                                      validator: (value) {
+                                        if (value == null || value.isEmpty) {
+                                          return "value can't be empty";
+                                        }
+                                        return null;
+                                      },
+                                    ),
+                                    SizedBox(
+                                      height: 20,
+                                    ),
+                                    Align(
+                                      alignment: Alignment.centerRight,
+                                      child: GestureDetector(
+                                        onTap: () {
+                                          String finalTest = customTest;
+                                          if (finalTest.isNotEmpty) {
+                                            var demoTest=Test(isDone: false, title: selectedTest!);
+                                            setState(() {
+                                              userAddedTests.add(demoTest);
+                                            });
+                                          }
+                                          customTest = "";
+                                          selectedOthers = false;
                                         },
-                                  style: TextButton.styleFrom(
-                                    backgroundColor: userAddedTests.isEmpty
-                                        ? color8
-                                        : color3,
+                                        child: Chip(
+                                          label: Text('Add',
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                              )),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                )
+                              : SizedBox.shrink(),
+                          SizedBox(
+                            height: 20,
+                          ),
+                          userAddedTests.isNotEmpty
+                              ? Align(
+                                  alignment: Alignment.topRight,
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      userAddedTests.clear();
+                                      setState(() {});
+                                    },
+                                    child: Chip(
+                                      backgroundColor: color12,
+                                      label: Text('Clear All',
+                                          style: TextStyle(
+                                            color: color7,
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.bold,
+                                          )),
+                                    ),
                                   ),
-                                  child: Text('Submit Application',
-                                      style: TextStyle(
-                                          color: color5,
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.bold)),
-                                )))
-                      ],
-                    ),
+                                )
+                              : SizedBox.shrink(),
+                          SizedBox(
+                            height: 20,
+                          ),
+                          ListView.builder(
+                              itemCount: userAddedTests.length,
+                              shrinkWrap: true,
+                              itemBuilder: (context, index) {
+                                final test = userAddedTests[index];
+                                return Card(
+                                  color: Colors.white,
+                                  elevation: .5,
+                                  child: ListTile(
+                                    title: Text(test.title),
+                                    trailing: IconButton(
+                                        onPressed: () {
+                                          setState(() {
+                                            final removedTest =
+                                                userAddedTests.removeAt(index);
+                                            if (availableTests
+                                                .contains(removedTest)) {
+                                              availableTests.remove(removedTest);
+                                              availableTests.add(removedTest.title);
+                                            }
+                                          });
+                                        },
+                                        icon: Icon(CupertinoIcons.delete,
+                                            color: color12)),
+                                  ),
+                                );
+                              }),
+
+                          Padding(
+                              padding: EdgeInsets.symmetric(vertical: 20.0),
+                              child: SizedBox(
+                                  height: 50.0,
+                                  width: Screen.deviceSize(context).width,
+                                  child: TextButton(
+                                    onPressed: userAddedTests.isEmpty
+                                        ? null
+                                        : () {
+                                      submitData();
+                                          },
+                                    style: TextButton.styleFrom(
+                                      backgroundColor: userAddedTests.isEmpty
+                                          ? color8
+                                          : color3,
+                                    ),
+                                    child: Text('Submit Application',
+                                        style: TextStyle(
+                                            color: color5,
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold)),
+                                  )))
+
             ],
           ),
+                  ),
         ),
-      ),
+      ):ErrorScreen(label: "An Error Occured"),
     );
   }
 
@@ -661,7 +738,7 @@ class _PatientRegistrationScreenState extends State<PatientRegistrationScreen> {
                               child: Row(
                                 children: [
                                   Text(
-                                    test.docName,
+                                    "${test!.docName??""}",
                                     style:
                                         TextStyle(fontWeight: FontWeight.bold),
                                   ),
@@ -671,7 +748,7 @@ class _PatientRegistrationScreenState extends State<PatientRegistrationScreen> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                DateUtil.formatRelativeTime(test.date),
+                               "${test.date==null?"No fill": DateUtil.formatRelativeTime(test.date!)}",
                                 style: TextStyle(
                                     fontSize: 13,
                                     fontWeight: FontWeight.w400,
@@ -681,7 +758,7 @@ class _PatientRegistrationScreenState extends State<PatientRegistrationScreen> {
                                 height: 5,
                               ),
                               Text(
-                                test.comment,
+                                "${test.comment==null?"No fill": test.comment}",
                                 softWrap: true,
                                 maxLines: 2,
                                 textAlign: TextAlign.justify,
@@ -693,7 +770,7 @@ class _PatientRegistrationScreenState extends State<PatientRegistrationScreen> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: <Widget>[
                               Text(
-                                DateUtil.formatRelativeTime(test.date),
+                                "${test.date==null?"No fill": DateUtil.formatRelativeTime(test.date!)}",
                                 style: TextStyle(
                                     fontSize: 13,
                                     fontWeight: FontWeight.w400,
@@ -702,7 +779,7 @@ class _PatientRegistrationScreenState extends State<PatientRegistrationScreen> {
                               Padding(
                                   padding: const EdgeInsets.only(bottom: 10),
                                   child: Text(
-                                    test.comment,
+                                    "${test.comment==null?"No fill": test.comment}",
                                     softWrap: true,
                                     textAlign: TextAlign.justify,
                                     overflow: TextOverflow.fade,
@@ -731,4 +808,32 @@ class _PatientRegistrationScreenState extends State<PatientRegistrationScreen> {
           );
         });
   }
+  final _keyForm = GlobalKey<FormState>();
+  void submitData() async{
+    if(!_keyForm.currentState!.validate()){
+      return;
+    }if(userAddedTests.isEmpty){
+      Dialogs.showSnackbar(context, 'You need to select your tests');
+      return;}
+    _keyForm.currentState!.save();
+    Dialogs.showProgressBar(context);
+    try{
+      final data= Medicals(
+          docName: selectedType=="Yes"?null:doctorInfo!.name,
+          docId:selectedType=="Yes"?null:doctorInfo!.id,
+school: selectedType=="Yes"?_school.text:null,
+          screeningDate: closestAvailableDateTime!,
+          patientId: APIs.userInfo.id,
+          patientName: APIs.userInfo.name,
+          test: userAddedTests);
+      await APIs.bioDataApplication(data);
+      Navigator.pop(context);
+      Dialogs.showSnackbar(context, "Application Sent Successfully");
+      Navigator.pop(context);
+    }catch(error){
+      Navigator.pop(context);
+      Dialogs.showSnackbar(context, error.toString());
+
+    }
+}
 }

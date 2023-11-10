@@ -162,7 +162,7 @@ class DateUtil {
   }
 
   static String formatDateTime(DateTime dateTime) {
-    final formatter = DateFormat('E, MMM, y \'at\' h.mm a');
+    final formatter = DateFormat('E, dd, MMM, y \'at\' h.mm a');
     return formatter.format(dateTime);
   }
 
@@ -175,4 +175,5 @@ class DateUtil {
     final formatter = DateFormat('dd/MM/yyyy');
     return formatter.format(dateTime);
   }
+
 }

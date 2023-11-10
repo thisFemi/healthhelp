@@ -56,7 +56,7 @@ dependencies:
   calendar_date_picker2: ^0.5.3
   dotted_decoration: ^2.0.0
   file_picker: ^6.0.0
-  simple_circular_progress_bar: ^1.0.2
+  percent_indicator: ^4.0.1
   path: ^1.8.3
 
 

@@ -47,7 +47,7 @@ class PatientCard extends StatelessWidget {
             ),
           ),
           title: Text(userInfo.name),
-          subtitle: Text('DateUtil.getBookingDate(medica'),
+          subtitle: Text(DateUtil.formatDateTime(medical.screeningDate)),
         ),
       ),
     );

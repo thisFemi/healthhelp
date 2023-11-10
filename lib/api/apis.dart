@@ -32,16 +32,19 @@ class APIs {
   static FirebaseStorage storage = FirebaseStorage.instance;
   static String userId = auth.currentUser!.uid;
   static FirebaseMessaging fMessaging = FirebaseMessaging.instance;
+
   static Future<bool> hasNetwork() async {
     try {
       final result = await InternetAddress.lookup('example.com');
       if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
         print('connected');
+        isConnected = true;
         return true;
       }
     } on SocketException catch (_) {
       print('not connected');
     }
+    isConnected = false;
     return false;
   }
 
@@ -61,8 +64,8 @@ class APIs {
     // });
   }
 
-  static Future<void> sendPushNotification(
-      user_model.UserInfo user, String msg) async {
+  static Future<void> sendPushNotification(user_model.UserInfo user,
+      String msg) async {
     try {
       final body = {
         "to": user.pushToken,
@@ -79,7 +82,7 @@ class APIs {
           headers: {
             HttpHeaders.contentTypeHeader: 'application/json',
             HttpHeaders.authorizationHeader:
-                'key=AAAAMCFDAGQ:APA91bGMO4epIlzU6LZ9IGp8qXTVQdqoOBjUJE_6um_2Ke9A2bJk4HZxST0G619EFHs9DRhY87Jy0m0AcVUEx6gyb3Q5Lm0QmrzJ7doPl2N9eArUbBDWtPRcC8jA380FP1snjrGwVLi1'
+            'key=AAAAMCFDAGQ:APA91bGMO4epIlzU6LZ9IGp8qXTVQdqoOBjUJE_6um_2Ke9A2bJk4HZxST0G619EFHs9DRhY87Jy0m0AcVUEx6gyb3Q5Lm0QmrzJ7doPl2N9eArUbBDWtPRcC8jA380FP1snjrGwVLi1'
           });
       print(response.statusCode);
       print(response.body);
@@ -95,7 +98,7 @@ class APIs {
 
       // Obtain the auth details from the request
       final GoogleSignInAuthentication? googleAuth =
-          await googleUser?.authentication;
+      await googleUser?.authentication;
       print('got here');
       // Create a new credential
       final credential = await GoogleAuthProvider.credential(
@@ -103,7 +106,7 @@ class APIs {
         idToken: googleAuth?.idToken,
       );
       final UserCredential userCredential =
-          await FirebaseAuth.instance.signInWithCredential(credential);
+      await FirebaseAuth.instance.signInWithCredential(credential);
       print('and here');
       print(userCredential);
       fetchUserDataFromFirestore(userCredential, context);
@@ -114,13 +117,13 @@ class APIs {
     }
   }
 
-  static Future<void> signInEmailPasswordLogin(
-      String email, String password, BuildContext context) async {
+  static Future<void> signInEmailPasswordLogin(String email, String password,
+      BuildContext context) async {
     try {
       print('trying login');
 
       final UserCredential userCredential =
-          await FirebaseAuth.instance.signInWithEmailAndPassword(
+      await FirebaseAuth.instance.signInWithEmailAndPassword(
         email: email,
         password: password,
       );
@@ -147,31 +150,31 @@ class APIs {
     }
   }
 
-  static Future<void> fetchUserDataFromFirestore(
-      UserCredential userCredential, BuildContext context) async {
+  static Future<void> fetchUserDataFromFirestore(UserCredential userCredential,
+      BuildContext context) async {
     final User? user = userCredential.user;
     final String userUID = user!.uid;
     print(' id: ${userUID}');
 
     // Check the "patients" collection
     DocumentSnapshot snapshot =
-        await firestore.collection('patients').doc(userUID).get();
+    await firestore.collection('patients').doc(userUID).get();
     print(snapshot);
     if (snapshot.exists) {
       Map<String, dynamic> patientData =
-          snapshot.data() as Map<String, dynamic>;
+      snapshot.data() as Map<String, dynamic>;
       print(patientData);
       String userType = patientData['user_type']; // "patient"
       print('printing userType');
       print(userType);
       final user_model.UserInfo userDataInfo =
-          user_model.UserInfo.fromJson(patientData);
+      user_model.UserInfo.fromJson(patientData);
       userInfo = userDataInfo;
       Prefs.saveUserInfoToPrefs(userInfo);
       Navigator.pushAndRemoveUntil(
         context,
         MaterialPageRoute(builder: (_) => Dashboard()),
-        (Route<dynamic> route) => false,
+            (Route<dynamic> route) => false,
       );
     } else {
       snapshot = await FirebaseFirestore.instance
@@ -181,11 +184,11 @@ class APIs {
 
       if (snapshot.exists) {
         Map<String, dynamic> doctorData =
-            snapshot.data() as Map<String, dynamic>;
+        snapshot.data() as Map<String, dynamic>;
         String userType = doctorData['user_type']; // "doctor"
         log(userType);
         final user_model.UserInfo userDataInfo =
-            user_model.UserInfo.fromJson(doctorData);
+        user_model.UserInfo.fromJson(doctorData);
         userInfo = userDataInfo;
         Prefs.saveUserInfoToPrefs(userInfo);
         Navigator.pushReplacement(
@@ -235,17 +238,17 @@ class APIs {
         'contact_info': userType.toLowerCase() == 'patient'
             ? {"address": "", "phone": ""}
             : {
-                'phone': "",
-                'clinic_address': "",
-                'total_avg_rating': 0,
-                'specialization': [],
-                'reviews': [],
-                'appointments': {},
-                'selected_duration': AvailabilityDuration.aMonth.name,
-                'is_verified': false,
-                'start_time': "",
-                'end_time': "",
-              }
+          'phone': "",
+          'clinic_address': "",
+          'total_avg_rating': 0,
+          'specialization': [],
+          'reviews': [],
+          'appointments': {},
+          'selected_duration': AvailabilityDuration.aMonth.name,
+          'is_verified': false,
+          'start_time': "",
+          'end_time': "",
+        }
         // Add other user-specific data here
       };
 
@@ -255,14 +258,14 @@ class APIs {
           .doc(userUID)
           .set(userData);
       final user_model.UserInfo userDataInfo =
-          user_model.UserInfo.fromJson(userData);
+      user_model.UserInfo.fromJson(userData);
       userInfo = userDataInfo;
       Prefs.saveUserInfoToPrefs(userInfo);
       Dialogs.showSnackbar(context, 'Registration Successful');
       Navigator.pushAndRemoveUntil(
         context,
         MaterialPageRoute(builder: (_) => Dashboard()),
-        (Route<dynamic> route) => false,
+            (Route<dynamic> route) => false,
       );
 
       print('registr don');
@@ -285,16 +288,16 @@ class APIs {
 
   static Future<void> getSelfInfo() async {
     DocumentSnapshot snapshot =
-        await firestore.collection('patients').doc(userId).get();
+    await firestore.collection('patients').doc(userId).get();
     print(snapshot);
     if (snapshot.exists) {
       Map<String, dynamic> patientData =
-          snapshot.data() as Map<String, dynamic>;
+      snapshot.data() as Map<String, dynamic>;
       print(patientData);
       String userType = patientData['user_type']; // "patient"
       log(userType);
       final user_model.UserInfo userDataInfo =
-          user_model.UserInfo.fromJson(patientData);
+      user_model.UserInfo.fromJson(patientData);
 
       userInfo = userDataInfo;
       Prefs.saveUserInfoToPrefs(userInfo);
@@ -308,11 +311,11 @@ class APIs {
 
       if (snapshot.exists) {
         Map<String, dynamic> doctorData =
-            snapshot.data() as Map<String, dynamic>;
+        snapshot.data() as Map<String, dynamic>;
         String userType = doctorData['user_type']; // "doctor"
         log(userType);
         final user_model.UserInfo userDataInfo =
-            user_model.UserInfo.fromJson(doctorData);
+        user_model.UserInfo.fromJson(doctorData);
 
         userInfo = userDataInfo;
         Prefs.saveUserInfoToPrefs(userInfo);
@@ -330,7 +333,7 @@ class APIs {
     Navigator.pushAndRemoveUntil(
       context,
       MaterialPageRoute(builder: (_) => LoginScreen()),
-      (Route<dynamic> route) => false,
+          (Route<dynamic> route) => false,
     );
   }
 
@@ -350,8 +353,8 @@ class APIs {
     }
   }
 
-  static Future<void> sendFirstMessage(
-      user_model.UserInfo chatUser, String msg, Type type) async {
+  static Future<void> sendFirstMessage(user_model.UserInfo chatUser, String msg,
+      Type type) async {
     await firestore
         .collection('${userInfo.userType.toLowerCase()}s')
         .doc(chatUser.id)
@@ -386,33 +389,33 @@ class APIs {
         "image": userInfo.image,
         "contact_info": userInfo.userType.toLowerCase() == 'patient'
             ? {
-                'phone': userInfo.patientContactInfo!.phone,
-                'address': userInfo.patientContactInfo!.clinicAddress,
-              }
+          'phone': userInfo.patientContactInfo!.phone,
+          'address': userInfo.patientContactInfo!.clinicAddress,
+        }
             : {
-                'phone': userInfo.phoneNumber,
-                'clinic_address': userInfo.doctorContactInfo!.clinicAddress,
-                'start_time': userInfo.doctorContactInfo!.startTime,
-                'end_time': userInfo.doctorContactInfo!.endTime,
-                'selected_duration':
-                    userInfo.doctorContactInfo!.selectedDuration.name,
-                'is_verified': userInfo.doctorContactInfo!.isVerified,
-                'appointments':
-                    userInfo.doctorContactInfo!.appointments.map((entry) {
-                  final date = entry.keys.first;
-                  final slots =
-                      entry.values.first.map((slot) => slot.toJson()).toList();
-                  return {
-                    date: slots,
-                  };
-                }).toList(),
-                'specializations': userInfo.doctorContactInfo!.specilizations
-                    .map((spec) => spec.title) // Extract titles
-                    .toList(),
-                'reviews': userInfo.doctorContactInfo!.reviews
-                    .map((review) => review.toJson())
-                    .toList(),
-              }
+          'phone': userInfo.phoneNumber,
+          'clinic_address': userInfo.doctorContactInfo!.clinicAddress,
+          'start_time': userInfo.doctorContactInfo!.startTime,
+          'end_time': userInfo.doctorContactInfo!.endTime,
+          'selected_duration':
+          userInfo.doctorContactInfo!.selectedDuration.name,
+          'is_verified': userInfo.doctorContactInfo!.isVerified,
+          'appointments':
+          userInfo.doctorContactInfo!.appointments.map((entry) {
+            final date = entry.keys.first;
+            final slots =
+            entry.values.first.map((slot) => slot.toJson()).toList();
+            return {
+              date: slots,
+            };
+          }).toList(),
+          'specializations': userInfo.doctorContactInfo!.specilizations
+              .map((spec) => spec.title) // Extract titles
+              .toList(),
+          'reviews': userInfo.doctorContactInfo!.reviews
+              .map((review) => review.toJson())
+              .toList(),
+        }
       });
     } on FirebaseAuthException catch (e) {
       // Handle registration errors
@@ -427,10 +430,12 @@ class APIs {
     }
   }
 
-  static Future<void> updateProfilePicture(
-      BuildContext context, File file) async {
+  static Future<void> updateProfilePicture(BuildContext context,
+      File file) async {
     print('started profile ');
-    final ext = file.path.split('.').last;
+    final ext = file.path
+        .split('.')
+        .last;
     print('Extenson: ${ext}');
     final ref = storage.ref().child('profile_pictures/${userInfo.id}.$ext');
     try {
@@ -457,13 +462,16 @@ class APIs {
     }
   }
 
-/**Chat Screen Related APIs */
+  static late bool isConnected;
+
+  /**Chat Screen Related APIs */
 
 //coverservation id
   static String getConversationID(String id) =>
       userInfo.id.hashCode <= id.hashCode
           ? '${userInfo.id}_$id'
           : '${id}_${userInfo.id}';
+
   //getting messages fo a specific conversatio from firestore db
   static Stream<QuerySnapshot<Map<String, dynamic>>> getAllMessages(
       user_model.UserInfo user) {
@@ -484,12 +492,17 @@ class APIs {
 
   static Future<void> initUser(BuildContext context) async {
     final result = await hasNetwork();
+
     if (result) {
       await getSelfInfo();
+
+      await fetchApplication();
+
+
       Navigator.pushAndRemoveUntil(
         context,
         MaterialPageRoute(builder: (_) => Dashboard()),
-        (Route<dynamic> route) => false,
+            (Route<dynamic> route) => false,
       );
     } else {
       final checker = await localDataExist();
@@ -497,13 +510,13 @@ class APIs {
         Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(builder: (_) => Dashboard()),
-          (Route<dynamic> route) => false,
+              (Route<dynamic> route) => false,
         );
       } else {
         Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(builder: (_) => LoginScreen()),
-          (Route<dynamic> route) => false,
+              (Route<dynamic> route) => false,
         );
       }
     }
@@ -527,10 +540,13 @@ class APIs {
     }
   }
 
-  static Future<void> sendMessage(
-      user_model.UserInfo user, String msg, Type type) async {
+  static Future<void> sendMessage(user_model.UserInfo user, String msg,
+      Type type) async {
     //messag esing time(also used as id)
-    final time = DateTime.now().millisecondsSinceEpoch.toString();
+    final time = DateTime
+        .now()
+        .millisecondsSinceEpoch
+        .toString();
     //meesage to send
     final Message message = Message(
         fromId: userId,
@@ -540,7 +556,7 @@ class APIs {
         toId: user.id,
         type: type);
     final ref =
-        firestore.collection('chats/${getConversationID(user.id)}/messages');
+    firestore.collection('chats/${getConversationID(user.id)}/messages');
     await ref.doc(time).set(message.toJson()).then((value) =>
         sendPushNotification(user, type == Type.text ? msg : 'Photo'));
   }
@@ -549,12 +565,13 @@ class APIs {
     firestore
         .collection('chats/${getConversationID(message.fromId)}/messages/')
         .doc(message.sent)
-        .update({'read': DateTime.now().millisecondsSinceEpoch.toString()});
+        .update({'read': DateTime
+        .now()
+        .millisecondsSinceEpoch
+        .toString()});
   }
 
-  static Stream<QuerySnapshot> getLastMessage(
-    user_model.UserInfo user,
-  ) {
+  static Stream<QuerySnapshot> getLastMessage(user_model.UserInfo user,) {
     return firestore
         .collection('chats/${getConversationID(user.id)}/messages')
         .orderBy('sent', descending: true)
@@ -563,10 +580,14 @@ class APIs {
   }
 
   static Future<void> sendChatImage(user_model.UserInfo user, File file) async {
-    final ext = file.path.split('.').last;
+    final ext = file.path
+        .split('.')
+        .last;
     print('Extenson: ${ext}');
     final ref = storage.ref().child(
-        'images/${getConversationID(user.id)}/${DateTime.now().millisecondsSinceEpoch}.$ext');
+        'images/${getConversationID(user.id)}/${DateTime
+            .now()
+            .millisecondsSinceEpoch}.$ext');
 
     await ref
         .putFile(file, SettableMetadata(contentType: 'image/${ext}'))
@@ -592,7 +613,10 @@ class APIs {
         .doc(userInfo.id)
         .update({
       "is_online": isOnline,
-      'last_active': DateTime.now().microsecondsSinceEpoch.toString(),
+      'last_active': DateTime
+          .now()
+          .microsecondsSinceEpoch
+          .toString(),
       'push_token': userInfo.pushToken,
     });
   }
@@ -624,7 +648,7 @@ class APIs {
 
   static Stream<List<Map<String, dynamic>>> getAllDoctors() {
     final StreamController<List<Map<String, dynamic>>> controller =
-        StreamController<List<Map<String, dynamic>>>.broadcast();
+    StreamController<List<Map<String, dynamic>>>.broadcast();
 
     firestore.collection('doctors').snapshots().listen((querySnapshot) {
       final List<QueryDocumentSnapshot<Map<String, dynamic>>> documents =
@@ -632,17 +656,17 @@ class APIs {
 
       final List<Map<String, dynamic>> verifiedDoctors = documents
           .where((doc) {
-            final data = doc.data();
-            if (data['user_type'].toLowerCase() == 'doctor') {
-              final doctorContactInfo =
-                  data['contact_info'] as Map<String, dynamic>;
-              if (doctorContactInfo != null) {
-                final isVerified = doctorContactInfo['is_verified'] as bool;
-                return isVerified == true;
-              }
-            }
-            return false;
-          })
+        final data = doc.data();
+        if (data['user_type'].toLowerCase() == 'doctor') {
+          final doctorContactInfo =
+          data['contact_info'] as Map<String, dynamic>;
+          if (doctorContactInfo != null) {
+            final isVerified = doctorContactInfo['is_verified'] as bool;
+            return isVerified == true;
+          }
+        }
+        return false;
+      })
           .map((doc) => doc.data())
           .toList();
 
@@ -657,7 +681,7 @@ class APIs {
     print('entered booking');
     String formattedDate = "${date.year}-${date.month}-${date.day}";
     final Appointment newAppointment =
-        Appointment(patientId: userInfo.id, time: time, isBooked: false);
+    Appointment(patientId: userInfo.id, time: time, isBooked: false);
 
     if (user.doctorContactInfo != null) {
       var doctorInfo = user.doctorContactInfo;
@@ -669,7 +693,7 @@ class APIs {
 
       // Check if the date exists in the availability list.
       var availabilityIndex = doctorInfo.appointments.indexWhere(
-        (entry) => entry.keys.first == formattedDate,
+            (entry) => entry.keys.first == formattedDate,
       );
 
       if (availabilityIndex != -1) {
@@ -705,7 +729,7 @@ class APIs {
             'appointments': doctorInfo.appointments.map((entry) {
               final date = entry.keys.first;
               final slots =
-                  entry.values.first.map((slot) => slot.toJson()).toList();
+              entry.values.first.map((slot) => slot.toJson()).toList();
               return {
                 date: slots,
               };
@@ -714,7 +738,7 @@ class APIs {
                 .map((spec) => spec.title) // Extract titles
                 .toList(),
             'reviews':
-                doctorInfo.reviews.map((review) => review.toJson()).toList(),
+            doctorInfo.reviews.map((review) => review.toJson()).toList(),
           },
         }).then((value) async {
           final userAppointment = UserAppointment(
@@ -743,7 +767,7 @@ class APIs {
     return firestore
         .collection('appointments')
         .where('${userInfo.userType == 'doctor' ? 'doctorId' : 'patientId'}',
-            isEqualTo: userInfo.id)
+        isEqualTo: userInfo.id)
         .snapshots()
         .map((querySnapshot) {
       List<UserAppointment> appointments = querySnapshot.docs.map((doc) {
@@ -765,9 +789,9 @@ class APIs {
     // Create a reference to the 'patients' or 'doctors' collection based on user type
     print(userId);
     CollectionReference collectionReference =
-        userInfo.userType.toLowerCase() == 'doctor'
-            ? firestore.collection('doctors')
-            : firestore.collection('doctors');
+    userInfo.userType.toLowerCase() == 'doctor'
+        ? firestore.collection('doctors')
+        : firestore.collection('doctors');
 
     return collectionReference.doc(userId).snapshots().map((documentSnapshot) {
       final data = documentSnapshot.data();
@@ -805,8 +829,12 @@ class APIs {
             appointment.patientId,
             appointment.time,
             newStatus == AppointmentStatus.approved ? true : false);
-      }).then((value) => sendPushNotification(userInfo,
-          'Hi, your appointment request has been ${newStatus == AppointmentStatus.approved ? 'approved' : 'rejected'}.Kindly open the for more info.'));
+      }).then((value) =>
+          sendPushNotification(userInfo,
+              'Hi, your appointment request has been ${newStatus ==
+                  AppointmentStatus.approved
+                  ? 'approved'
+                  : 'rejected'}.Kindly open the for more info.'));
     } else {
       // Handle the case where no matching document is found
       print('No matching appointment found.');
@@ -822,8 +850,8 @@ class APIs {
         for (final date in appointMentMap.keys) {
           final appointmentList = appointMentMap[date];
           final matchingAppointment = appointmentList!.firstWhere(
-              (appointment) =>
-                  appointment.patientId == patientId &&
+                  (appointment) =>
+              appointment.patientId == patientId &&
                   appointment.time == time);
           if (isApproved) {
             matchingAppointment.isBooked = true;
@@ -838,9 +866,11 @@ class APIs {
     await firestore.collection('doctors').doc(doctor.id).update(updatedData);
     print('done');
   }
-  static List<School>schoolList=[];
-  static Future<List<School>> fetchSchools(
-      String searchText, BuildContext context) async {
+
+  static List<School>schoolList = [];
+
+  static Future<List<School>> fetchSchools(String searchText,
+      BuildContext context) async {
     String apiUrl;
     if (searchText == "") {
       print('used 1');
@@ -850,8 +880,8 @@ class APIs {
     }
 
     try {
-      final response = await http.get(Uri.parse(apiUrl), headers:{
-         'Content-type': 'application/json',
+      final response = await http.get(Uri.parse(apiUrl), headers: {
+        'Content-type': 'application/json',
         'Accept': 'application/json',
       }).timeout(Duration(minutes: 3));
       print(response.statusCode);
@@ -859,8 +889,8 @@ class APIs {
         final List<dynamic> data = json.decode(response.body);
         print('ater');
         print(data);
-        final list= data.map((school) => School.fromJson(school)).toList();
-        schoolList=list;
+        final list = data.map((school) => School.fromJson(school)).toList();
+        schoolList = list;
         return schoolList;
       } else {
         throw Exception('Failed to load schools');
@@ -873,6 +903,7 @@ class APIs {
   static List<String> fetchAllTest() {
     return DUMMY_DATA.availableTests;
   }
+
 //   static Future<void> docApplication(DocReg doc)async{
 // try{
 // await  firestore.collection('verification').add({
@@ -886,35 +917,44 @@ class APIs {
 //   }
 
 
- static DocReg? docReg;
+  static DocReg? docReg;
 
   static Future<void> docApplication(DocReg doc) async {
     print('strted');
+    if (userInfo.userType != "doctor") {
+      throw("You're not eligible for this service");
+    }
     try {
-
       var docsCollection = firestore.collection('verification');
 
 
-        await docsCollection.doc(userInfo.id).set({
+      await docsCollection.doc(userInfo.id).set({
         'name': doc.name,
         'homeAddress': doc.homeAddress,
         'isUniStaff': doc.isUniStaff,
+        'status': doc.status.name,
         'schoolName': doc.schoolName,
         'officeAddress': doc.officeAddress,
       });
 
-      for (Certificate certificate in doc.certificates) {print(userInfo.email);
-        final ext = certificate.fileName.path.split('.').last;
-        Reference storageReference = FirebaseStorage.instance.ref().child('certificates/${userInfo.email}/${DateTime.now().millisecondsSinceEpoch}.$ext');
+      for (Certificate certificate in doc.certificates!) {
+        print(userInfo.email);
+        final ext = certificate.fileName.path
+            .split('.')
+            .last;
+        Reference storageReference = FirebaseStorage.instance.ref().child(
+            'certificates/${userInfo.email}/${DateTime
+                .now()
+                .millisecondsSinceEpoch}.$ext');
 
         UploadTask uploadTask = storageReference.putFile(certificate.fileName);
-print('sent');
+        print('sent');
         await uploadTask.whenComplete(() async {
           String downloadURL = await storageReference.getDownloadURL();
-         // CollectionReference certificatesCollection = docReference.collection('certificates');
+          // CollectionReference certificatesCollection = docReference.collection('certificates');
           print('fetched');
-          if(doc!=null){
-            docReg=doc;
+          if (doc != null) {
+            docReg = doc;
           }
 
           // Add certificate details along with the download URL to the 'certificates' subcollection
@@ -925,67 +965,151 @@ print('sent');
           // });
         });
       }
-    //   final ext = file.path.split('.').last;
-    //   print('Extenson: ${ext}');
-    //   final ref = storage.ref().child(
-    //       'images/${getConversationID(user.id)}/${DateTime.now().millisecondsSinceEpoch}.$ext');
-    //
-    //   await ref
-    //       .putFile(file, SettableMetadata(contentType: 'image/${ext}'))
-    //       .then((p0) {
-    //     print('Date Transffered: ${p0.bytesTransferred / 1000} kb ');
-    //   });
     } catch (e) {
       print('Error sending data to Firestore: $e');
-     throw(e);
-
+      throw(e);
     }
   }
 
-  //
-  // static Future<void> docApplication(DocReg doc) async {
-  // try {
-  // // Reference to the Firestore collection
-  // CollectionReference docsCollection = FirebaseFirestore.instance.collection('docs');
-  //
-  // // Add the DocReg object to the 'docs' collection
-  // DocumentReference docReference = await docsCollection.add({
-  // 'name': doc.name,
-  // 'homeAddress': doc.homeAddress,
-  // 'isUniStaff': doc.isUniStaff,
-  // 'schoolName': doc.schoolName,
-  // 'officeAddress': doc.officeAddress,
-  // });
-  //
-  // // Create a subcollection for certificates under the doc
-  // CollectionReference certificatesCollection = docReference.collection('certificates');
-  //
-  // // Upload each certificate file to Firebase Storage
-  // for (Certificate certificate in doc.certificates) {
-  // Reference storageReference = FirebaseStorage.instance.ref().child('certificates/${docReference.id}/${DateTime.now().millisecondsSinceEpoch}');
-  //
-  // if (certificate.fileName != null && certificate.fileName.existsSync()) {
-  // UploadTask uploadTask = storageReference.putFile(certificate.fileName);
-  //
-  // await uploadTask.whenComplete(() async {
-  // String downloadURL = await storageReference.getDownloadURL();
-  //
-  // // Add certificate details along with the download URL to the 'certificates' subcollection
-  // await certificatesCollection.add({
-  // 'type': certificate.type == FileType.img ? 'image' : 'pdf',
-  // 'date': certificate.date.toIso8601String(),
-  // 'downloadURL': downloadURL,
-  // });
-  // });
-  // }
-  // }
-  // } catch (e) {
-  // // Handle errors
-  // print('An Error Occured: $e');
-  // throw(e);
-  // }
-  // }
-  //
+  static Future<void> fetchApplication() async {
+    try {
+      if (userInfo.userType == "doctor") {
+        DocumentSnapshot snapshot =
+        await firestore.collection('verification').doc(userId).get();
+        print(snapshot);
+        if (snapshot.exists) {
+          Map<String, dynamic> data =
+          snapshot.data() as Map<String, dynamic>;
+          final DocReg docData = DocReg.fromJson(data);
+          if (docData != null) {
+            docReg = docData;
+          }
+        } else {
+          throw("Kindly  try again later");
+        }
+      } else {
+        DocumentSnapshot snapshot =
+        await firestore.collection('medicals').doc(userId).get();
+        print(snapshot);
+        if (snapshot.exists) {
+          print('here');
+          Map<String, dynamic> data =
+          snapshot.data() as Map<String, dynamic>;
+          print(data);
+          final Medicals medData = Medicals.fromJson(data);
+          if (medData != null) {
+            patientBio = medData;
+          }
+        } else {
+          throw("Kindly check try again later");
+        }
+      }
+    } catch (e) {
+      throw(e);
+    }
+  }
+
+  static Medicals? patientBio;
+
+  static Future<void> bioDataApplication(Medicals medicals) async {
+    if (userInfo.userType != "patient") {
+      throw("You're not eligible for this service");
+    }
+    try {
+      print('en fnc');
+      var medCollection = firestore.collection('medicals');
+      await medCollection.doc(userInfo.id).set({
+        'patientId': medicals.patientId,
+        'docName': medicals.docName,
+        'docId': medicals.docId,
+        'patientName': medicals.patientName,
+        "screeningDate": medicals.screeningDate.toIso8601String(),
+        'school': medicals.school,
+        'test': medicals.test?.map((test) => test.toJson()).toList(),
+      }).then((value) {
+        patientBio = medicals;
+        print('bio sent');
+      });
+    } catch (e) {
+      print('Error sending data to Firestore: $e');
+      throw(e);
+    }
+  }
+
+  static Stream<List<Medicals>> getMedicalRecords(String docId, bool isUniStaff,
+      String? school) {
+    CollectionReference<Map<String, dynamic>> medicalsCollection =
+    firestore.collection('medicals');
+
+    // Query for university staff
+    if (isUniStaff && school != null) {
+      print('using uni');
+      return medicalsCollection
+
+          .where('school', isEqualTo: school)
+          .snapshots()
+          .map((querySnapshot) =>
+          querySnapshot.docs
+              .map((documentSnapshot) =>
+              Medicals.fromJson(documentSnapshot.data()))
+              .toList()
+              .reversed
+              .toList());
+    }
+    // Query for non-university staff
+    else {
+      print('using doc');
+      return medicalsCollection
+          .where('docId', isEqualTo: docId)
+          .snapshots()
+          .map((querySnapshot) {
+        return querySnapshot.docs
+            .map(
+                (documentSnapshot) =>
+                Medicals.fromJson(documentSnapshot.data())
+
+        )
+            .toList()
+            .reversed
+            .toList();
+      });
+    }
+  }
+
+
+
+  static Future<void> updateRecords(String patientId, Test updatedTest) async {
+  try {
+  CollectionReference medCollection = firestore.collection('medicals');
+  QuerySnapshot querySnapshot = await medCollection.where('patientId', isEqualTo: patientId).get();
+
+  if (querySnapshot.docs.isNotEmpty) {
+  DocumentSnapshot documentSnapshot = querySnapshot.docs.first;
+  Map<String, dynamic> data = documentSnapshot.data() as Map<String, dynamic>;
+
+  // Find the index of the updated test in the certificates list
+  int testIndex = data['test'].indexWhere((test) => test['title'] == updatedTest.title);
+
+  if (testIndex != -1) {
+  // Update the 'test' field in the corresponding tests
+  data['test'][testIndex]= updatedTest.toJson();
+
+  // Update the record in Firebase
+  await medCollection.doc(documentSnapshot.id).update({'test': data['test']});
+  print('updated');
+  } else {
+  // Handle the case where the test is not found
+  print('Test not found in the certificates list.');
+  }
+  } else {
+  // Handle the case where the document with the specified ID is not found
+  print('Document not found with ID: $patientId');
+  }
+  } catch (error) {
+  print('Error updating records: $error');
+  throw error;
+  }
+  }
 
 }
 

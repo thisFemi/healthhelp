@@ -7,6 +7,8 @@ import 'package:HealthHelp/helper/utils/Colors.dart';
 import 'package:flutter_notification_channel/flutter_notification_channel.dart';
 import 'package:flutter_notification_channel/notification_importance.dart';
 
+import 'widgets/error_widget.dart';
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
@@ -29,6 +31,18 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    ErrorWidget.builder = (FlutterErrorDetails errorDetails) {
+      Widget error =
+      Text('......rendering error....: ${errorDetails.summary}');
+      // if (child is Scaffold || child is Navigator) {
+      //   error = Scaffold(
+      //     body: Center(
+      //       child: error,
+      //     ),
+      //   );
+      // }
+      return ErrorScreen(label: "Sorry, Page not found 😔",);
+    };
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
         statusBarColor: color7,
         systemNavigationBarColor: color7,

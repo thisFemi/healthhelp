@@ -1,15 +1,14 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../api/apis.dart';
 import '../../helper/utils/Colors.dart';
 import '../../helper/utils/Common.dart';
 import '../../helper/utils/Images.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:HealthHelp/screens/init/main_screen.dart';
 
-import '../Auth/login.dart';
-import '../dashboard.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({Key? key}) : super(key: key);
@@ -95,15 +94,30 @@ class _SplashScreenState extends State<SplashScreen> {
       //  Navigator.pushReplacement(
       //        context, MaterialPageRoute(builder: (_) => MainScreen()));
       //UserInfo? user = await SharedHelper.getUserInfo();
-      if (APIs.auth.currentUser != null) {
+
+
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      bool isFirstTime = prefs.getBool('first_time') ?? true;
+
+      if (isFirstTime) {
+        // First time opening the app, navigate to onboarding screen
+        prefs.setBool('first_time', false);
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => MainScreen()),
+        );
+      }else{
+
+
+
+     if (APIs.auth.currentUser != null) {
         APIs.initUser(context);
       } else {
-        Navigator.pushAndRemoveUntil(
+        Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (_) => LoginScreen()),
-          (Route<dynamic> route) => false,
+          MaterialPageRoute(builder: (_) => MainScreen()),
         );
-      }
+      }}
     });
   }
 }

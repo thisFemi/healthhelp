@@ -5,22 +5,30 @@ import 'package:HealthHelp/screens/chat_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import '../api/apis.dart';
+import '../helper/dialogs.dart';
 import '../helper/utils/Colors.dart';
 import '../helper/utils/Common.dart';
 import '../helper/utils/contants.dart';
+import '../helper/utils/date_util.dart';
 import '../models/others.dart';
 import '../models/user.dart';
 import '../widgets/resuables.dart';
 import '../widgets/test_info_card.dart';
 
-class PatientInfoScreen extends StatelessWidget {
+class PatientInfoScreen extends StatefulWidget {
   PatientInfoScreen({required this.patient, required this.record});
   final UserInfo patient;
   Medicals record;
 
   @override
+  State<PatientInfoScreen> createState() => _PatientInfoScreenState();
+}
+
+class _PatientInfoScreenState extends State<PatientInfoScreen> {
+  @override
   Widget build(BuildContext context) {
-    final number = parsePhoneNumber(patient.phoneNumber);
+    final number = parsePhoneNumber(widget.patient.phoneNumber);
     print('here');
     return Scaffold(
       appBar: AppBar(
@@ -41,7 +49,7 @@ class PatientInfoScreen extends StatelessWidget {
                       context,
                       MaterialPageRoute(
                           builder: (_) => ChatScreen(
-                                user: patient,
+                                user: widget.patient,
                               )));
                 },
                 icon: Icon(CupertinoIcons.chat_bubble_2, color: color3)),
@@ -80,7 +88,7 @@ class PatientInfoScreen extends StatelessWidget {
                                 width: 5,
                               ),
                               Text(
-                                patient.name,
+                                widget.patient.name,
                                 style: TextStyle(fontWeight: FontWeight.w700),
                               )
                             ],
@@ -110,15 +118,16 @@ class PatientInfoScreen extends StatelessWidget {
                           ),
                           Row(
                             children: [
-                              Text(
-                                'Address:',
+                             Text(
+                                '${ widget.record.school!=null?"Institution":"Doctor"}:',
                                 style: TextStyle(fontWeight: FontWeight.bold),
                               ),
                               SizedBox(
                                 width: 5,
                               ),
                               Text(
-                                ' widget.patient.doctorContactInfo.a',
+                                ' ${ widget.record.school!=null?"${widget.record.school}":"${widget.record.docName
+                                  }"}',
                                 style: TextStyle(fontWeight: FontWeight.w700),
                               )
                             ],
@@ -130,16 +139,16 @@ class PatientInfoScreen extends StatelessWidget {
                           Row(
                             children: [
                               Text(
-                                'Date Applied:',
+                                'Appointment Date:',
                                 style: TextStyle(fontWeight: FontWeight.bold),
                               ),
                               SizedBox(
                                 width: 5,
                               ),
-                              Text(
-                                DateTime.now().toString(),
+
+                                Text(DateUtil.formatDateTime(widget.record.screeningDate),
                                 style: TextStyle(fontWeight: FontWeight.w700),
-                              )
+                                )
                             ],
                           ),
                         ],
@@ -155,18 +164,39 @@ class PatientInfoScreen extends StatelessWidget {
               ),
               ListView.builder(
                   shrinkWrap: true,
-                  itemCount: record.test.length,
+                  itemCount: widget.record.test!.length,
                   itemBuilder: (ctx, index) {
-                    var test = record.test[index];
+                    var test = widget.record.test![index];
                     print(
-                      record.test.length,
+                      widget.record.test!.length,
                     );
-                    return MedTestCard(test: test);
+                    return MedTestCard(test: test, onSubmit:handleTestSubmission);
                   })
             ],
           ),
         ),
       ),
     );
+  }
+
+  void handleTestSubmission(Test updatedTest) async{
+    Dialogs.showProgressBar(context);
+    try{
+
+     await APIs.updateRecords(widget.record.patientId, updatedTest);
+     int index = widget.record.test!.indexWhere((test) => test.title == updatedTest.title);
+     if (index != -1) {
+       setState(() {
+         widget.record.test![index] = updatedTest;
+       });
+
+     }
+     Navigator.pop(context);
+    }catch(e){
+      Navigator.pop(context);
+      Dialogs.showSnackbar(context, e.toString());
+    }
+
+
   }
 }

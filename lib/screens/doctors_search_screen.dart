@@ -10,7 +10,8 @@ import '../widgets/doctor_card.dart';
 import '../widgets/resuables.dart';
 
 class ListOfDoctorsScreen extends StatefulWidget {
-  ListOfDoctorsScreen({super.key});
+  ListOfDoctorsScreen({super.key, required this.type});
+  NavigatorType type;
 
   @override
   State<ListOfDoctorsScreen> createState() => _ListOfDoctorsScreenState();
@@ -108,7 +109,7 @@ class _ListOfDoctorsScreenState extends State<ListOfDoctorsScreen> {
                           padding: EdgeInsets.only(top: 10),
                           itemCount: list.length,
                           itemBuilder: (context, index) {
-                            return DoctorCard(list[index]);
+                            return DoctorCard( doctor: list[index], navigatorType:  widget.type);
                           });
                     } else {
                       return Center(

@@ -151,9 +151,9 @@ bool isApproval(){
           child: !showReg()? Card(child: ListTile(title: Text('Licence Verification'),
             trailing: Chip(
                 backgroundColor: isApproval()?color10:color1,
-                label: Text("${isApproval()?"Approved":"Pending "}",style: TextStyle(
+                label: Text("${(isApproval()&&APIs.userInfo.doctorContactInfo!.isVerified)?"Approved":"Pending "}",style: TextStyle(
                     fontWeight: FontWeight.bold,
-                    color:isApproval()?color7:color3 ),)),
+                    color:color3 ),)),
 
           ),): Form(
             key: _keyForm,

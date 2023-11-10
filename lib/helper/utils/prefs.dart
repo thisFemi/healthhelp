@@ -23,4 +23,9 @@ class Prefs {
       return null;
     }
   }
+static Future<bool> isFirstTime()async{
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  return  prefs.getBool('first_time') ?? true;
+}
+
 }

@@ -7,6 +7,7 @@ import 'package:HealthHelp/screens/edit_profile_screen.dart';
 
 import '../../api/apis.dart';
 import '../../helper/utils/contants.dart';
+import '../helper/dialogs.dart';
 import 'patient_registration_screen.dart';
 import 'practitioner_registration_screen.dart';
 
@@ -21,7 +22,7 @@ class _AccountScreenState extends State<AccountScreen> {
   @override
   void initState() {
     super.initState();
-    APIs.getSelfInfo();
+    APIs.getSelfInfo();APIs.fetchApplication();
     print('updated');
   }
 
@@ -129,7 +130,7 @@ class _AccountScreenState extends State<AccountScreen> {
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
                     trailing: Container(
-                      child: !APIs.userInfo.doctorContactInfo!.isVerified
+                      child: APIs.userInfo.doctorContactInfo!.isVerified
                           ? Chip(
                               backgroundColor: color10,
                               padding: EdgeInsets.all(5),
@@ -158,6 +159,8 @@ class _AccountScreenState extends State<AccountScreen> {
                                 builder: (_) => PractitionerRegistrationScreen(
                                       APIs.userInfo,
                                     )));
+                      }else{
+                        Dialogs.showSnackbar(context, 'Lic');
                       }
                     },
                   ),
