@@ -44,7 +44,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     } else {
       number = parsePhoneNumber(APIs.userInfo.phoneNumber);
     }
-    if (widget.userInfo.userType == 'doctor') {
+    if (widget.userInfo.userType.toLowerCase() == 'doctor') {
       userSpecilizations = widget.userInfo.doctorContactInfo!.specilizations;
       selectedDuration = widget.userInfo.doctorContactInfo!.selectedDuration;
       if (selectedDuration == AvailabilityDuration.aMonth) {
@@ -303,7 +303,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                   TextFormField(
                                     keyboardType: TextInputType.text,
                                     initialValue: widget.userInfo.name,
-                                    onSaved: (newValue) =>
+                                    onChanged: (newValue) =>
                                         APIs.userInfo.name = newValue ?? '',
                                     autovalidateMode:
                                         AutovalidateMode.onUserInteraction,
@@ -451,7 +451,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                     },
                                   ),
                                   SizedBox(height: 10),
-                                  "patient" == widget.userInfo.userType
+                                  "patient" == widget.userInfo.userType.toLowerCase()
                                       ? Column(
                                           crossAxisAlignment:
                                               CrossAxisAlignment.start,
@@ -721,7 +721,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                                 height: 10,
                                               ),
                                               Container(
-                                                  width: double.infinity,
+                                                ////  width: double.infinity,
                                                   padding:
                                                       const EdgeInsets.all(10),
                                                   decoration: BoxDecoration(
@@ -959,64 +959,67 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                                                               ),
                                                                             ),
                                                                           ),
-                                                                        ])
+                                                                        ]),
+
                                                                   ],
                                                                 ))
                                                             : SizedBox.shrink()
-                                                      ]))
+                                                      ])),
+                                            SizedBox(height: 10),
+                                            Text('Office/Hospital Address '),
+                                            SizedBox(height: 10),
+                                            TextFormField(
+                                              keyboardType: TextInputType.text,
+                                              initialValue: widget.userInfo
+                                                  .doctorContactInfo!.clinicAddress ??
+                                                  "",
+                                              maxLines: 2,
+                                              onSaved: (newValue) => APIs
+                                                  .userInfo
+                                                  .doctorContactInfo!
+                                                  .clinicAddress = newValue ?? '',
+                                              autovalidateMode:
+                                              AutovalidateMode.onUserInteraction,
+                                              decoration: InputDecoration(
+                                                  filled: true,
+                                                  fillColor: Colors.grey[200],
+                                                  hintStyle: TextStyle(color: color8),
+                                                  labelStyle: TextStyle(
+                                                      color: color8,
+                                                      fontFamily: 'Raleway-SemiBold',
+                                                      fontSize: 15.0),
+                                                  border: OutlineInputBorder(
+                                                      borderSide: BorderSide.none,
+                                                      borderRadius: BorderRadius.all(
+                                                          Radius.circular(10.0))),
+                                                  disabledBorder: OutlineInputBorder(
+                                                      borderSide: BorderSide.none,
+                                                      borderRadius: BorderRadius.all(
+                                                          Radius.circular(10.0))),
+                                                  focusedBorder: OutlineInputBorder(
+                                                      borderSide: BorderSide.none,
+                                                      borderRadius: BorderRadius.all(
+                                                          Radius.circular(10.0))),
+                                                  errorBorder: OutlineInputBorder(
+                                                      borderSide: BorderSide.none,
+                                                      borderRadius: BorderRadius.all(
+                                                          Radius.circular(10.0))),
+                                                  contentPadding: EdgeInsets.only(
+                                                      top: 20,
+                                                      left: 10,
+                                                      right: 10,
+                                                      bottom: 20),
+                                                  prefixIcon: Icon(CupertinoIcons.home)),
+                                              validator: (value) {
+                                                if (value == null || value.isEmpty) {
+                                                  return "address can't be empty";
+                                                }
+                                                return null;
+                                              },
+                                            ),
                                             ]),
                                   SizedBox(height: 10),
-                                  Text('Office/Hospital Address '),
-                                  SizedBox(height: 10),
-                                  TextFormField(
-                                    keyboardType: TextInputType.text,
-                                    initialValue: widget.userInfo
-                                            .doctorContactInfo!.clinicAddress ??
-                                        "",
-                                    maxLines: 2,
-                                    onSaved: (newValue) => APIs
-                                        .userInfo
-                                        .doctorContactInfo!
-                                        .clinicAddress = newValue ?? '',
-                                    autovalidateMode:
-                                        AutovalidateMode.onUserInteraction,
-                                    decoration: InputDecoration(
-                                        filled: true,
-                                        fillColor: Colors.grey[200],
-                                        hintStyle: TextStyle(color: color8),
-                                        labelStyle: TextStyle(
-                                            color: color8,
-                                            fontFamily: 'Raleway-SemiBold',
-                                            fontSize: 15.0),
-                                        border: OutlineInputBorder(
-                                            borderSide: BorderSide.none,
-                                            borderRadius: BorderRadius.all(
-                                                Radius.circular(10.0))),
-                                        disabledBorder: OutlineInputBorder(
-                                            borderSide: BorderSide.none,
-                                            borderRadius: BorderRadius.all(
-                                                Radius.circular(10.0))),
-                                        focusedBorder: OutlineInputBorder(
-                                            borderSide: BorderSide.none,
-                                            borderRadius: BorderRadius.all(
-                                                Radius.circular(10.0))),
-                                        errorBorder: OutlineInputBorder(
-                                            borderSide: BorderSide.none,
-                                            borderRadius: BorderRadius.all(
-                                                Radius.circular(10.0))),
-                                        contentPadding: EdgeInsets.only(
-                                            top: 20,
-                                            left: 10,
-                                            right: 10,
-                                            bottom: 20),
-                                        prefixIcon: Icon(CupertinoIcons.home)),
-                                    validator: (value) {
-                                      if (value == null || value.isEmpty) {
-                                        return "address can't be empty";
-                                      }
-                                      return null;
-                                    },
-                                  ),
+
                                 ],
                               ),
                             ))

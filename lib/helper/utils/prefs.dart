@@ -27,5 +27,13 @@ static Future<bool> isFirstTime()async{
   SharedPreferences prefs = await SharedPreferences.getInstance();
   return  prefs.getBool('first_time') ?? true;
 }
-
+  static Future<void> clearUserData() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove('user_info');
+    print('User data cleared');
+  }
+  static Future<void> setFirstTime(bool value) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('first_time', value);
+  }
 }

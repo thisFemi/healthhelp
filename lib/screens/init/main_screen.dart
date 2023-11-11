@@ -108,6 +108,10 @@ class _MainScreenState extends State<MainScreen> {
               children: [
                 Expanded(
                   child: InkWell(
+           borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(10),
+              bottomRight: Radius.circular(10),
+              topRight: Radius.circular(10)),
                     onTap: () =>
                         Routes(context: context).navigate(LoginScreen()),
                     child: Container(
@@ -133,6 +137,10 @@ class _MainScreenState extends State<MainScreen> {
                 SizedBox(width: 20),
                 Expanded(
                   child: InkWell(
+                  borderRadius: BorderRadius.only(
+    topLeft: Radius.circular(10),
+    bottomRight: Radius.circular(10),
+    topRight: Radius.circular(10)),
                     onTap: () =>
                         Routes(context: context).navigate(RegistrationScreen()),
                     child: Container(

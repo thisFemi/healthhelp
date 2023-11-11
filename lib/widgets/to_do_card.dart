@@ -17,7 +17,7 @@ class ToDoCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
         borderRadius: BorderRadius.circular(10),
-        onTap: () => onTap,
+        onTap: () => onTap(),
         child: Card(
 elevation: 2,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),

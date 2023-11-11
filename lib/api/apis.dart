@@ -44,7 +44,7 @@ class APIs {
     } on SocketException catch (_) {
       print('not connected');
     }
-    isConnected = false;
+
     return false;
   }
 
@@ -112,7 +112,7 @@ class APIs {
       fetchUserDataFromFirestore(userCredential, context);
     } catch (e) {
       print('signInWithGoogle: ${e}');
-      Dialogs.showSnackbar(context,
+      throw(
           'Something went wrong, check internet connection and try again ');
     }
   }
@@ -141,12 +141,11 @@ class APIs {
       // Handle registration errors
       print('Registration error: $e');
       if (e.code == 'unknown') {
-        Dialogs.showSnackbar(context,
-            'Registration failed, kindly check your internet connection');
+        throw(' kindly check your internet connection');
       }
-      Dialogs.showSnackbar(context, 'Registration failed, ${e.message}');
+      throw(' ${e.message}');
     } catch (error) {
-      Dialogs.showSnackbar(context, 'Registration failed, ${error}');
+      throw(' ${error.toString()}');
     }
   }
 
@@ -171,11 +170,13 @@ class APIs {
       user_model.UserInfo.fromJson(patientData);
       userInfo = userDataInfo;
       Prefs.saveUserInfoToPrefs(userInfo);
+      isConnected=true;
       Navigator.pushAndRemoveUntil(
         context,
         MaterialPageRoute(builder: (_) => Dashboard()),
             (Route<dynamic> route) => false,
       );
+
     } else {
       snapshot = await FirebaseFirestore.instance
           .collection('doctors')
@@ -191,6 +192,7 @@ class APIs {
         user_model.UserInfo.fromJson(doctorData);
         userInfo = userDataInfo;
         Prefs.saveUserInfoToPrefs(userInfo);
+        isConnected=true;
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (_) => Dashboard()),
@@ -209,78 +211,83 @@ class APIs {
 
   static Future<void> registerWithEmailAndPassword(String name, String email,
       String password, String userType, BuildContext context) async {
+
+
     try {
       // Create a new user account with email and password
-      print(name);
-      print(email);
-      print(userType);
-      final UserCredential userCredential = await auth
-          .createUserWithEmailAndPassword(email: email, password: password);
-      await userCredential.user!.sendEmailVerification();
+      if(await hasNetwork()) {
+        print(name);
+        print(email);
+        print(userType);
+        final UserCredential userCredential = await auth
+            .createUserWithEmailAndPassword(email: email, password: password);
+        await userCredential.user!.sendEmailVerification();
 
-      print(userCredential);
+        print(userCredential);
 
-      // Get the user's UID
-      final String userUID = userCredential.user!.uid;
+        // Get the user's UID
+        final String userUID = userCredential.user!.uid;
 
-      // Create a Map containing user data (you can customize this based on your needs)
-      final Map<String, dynamic> userData = {
-        'name': name,
-        'user_type': userType, // "patient" or "doctor"
-        'email': email,
-        'id': userUID,
-        'created_at': DateTime.now().toString(),
-        'image': userCredential.user!.photoURL ?? '',
-        'is_online': true,
-        'last_active': '',
-        'phone_number': "",
-        'push_token': "",
-        'contact_info': userType.toLowerCase() == 'patient'
-            ? {"address": "", "phone": ""}
-            : {
-          'phone': "",
-          'clinic_address': "",
-          'total_avg_rating': 0,
-          'specialization': [],
-          'reviews': [],
-          'appointments': {},
-          'selected_duration': AvailabilityDuration.aMonth.name,
-          'is_verified': false,
-          'start_time': "",
-          'end_time': "",
-        }
-        // Add other user-specific data here
-      };
+        // Create a Map containing user data (you can customize this based on your needs)
+        final Map<String, dynamic> userData = {
+          'name': name,
+          'user_type': userType, // "patient" or "doctor"
+          'email': email,
+          'id': userUID,
+          'created_at': DateTime.now().toString(),
+          'image': userCredential.user!.photoURL ?? '',
+          'is_online': true,
+          'last_active': '',
+          'phone_number': "",
+          'push_token': "",
+          'contact_info': userType.toLowerCase() == 'patient'
+              ? {"address": "", "phone": ""}
+              : {
+            'phone': "",
+            'clinic_address': "",
+            'total_avg_rating': 0,
+            'specialization': [],
+            'reviews': [],
+            'appointments': {},
+            'selected_duration': AvailabilityDuration.aMonth.name,
+            'is_verified': false,
+            'start_time': "",
+            'end_time': "",
+          }
+          // Add other user-specific data here
+        };
 
-      // Add the user data to the Firestore collection based on userType
-      await firestore
-          .collection('${userType.toLowerCase()}s')
-          .doc(userUID)
-          .set(userData);
-      final user_model.UserInfo userDataInfo =
-      user_model.UserInfo.fromJson(userData);
-      userInfo = userDataInfo;
-      Prefs.saveUserInfoToPrefs(userInfo);
-      Dialogs.showSnackbar(context, 'Registration Successful');
-      Navigator.pushAndRemoveUntil(
-        context,
-        MaterialPageRoute(builder: (_) => Dashboard()),
-            (Route<dynamic> route) => false,
-      );
-
+        // Add the user data to the Firestore collection based on userType
+        await firestore
+            .collection('${userType.toLowerCase()}s')
+            .doc(userUID)
+            .set(userData);
+        final user_model.UserInfo userDataInfo =
+        user_model.UserInfo.fromJson(userData);
+        userInfo = userDataInfo;
+        Prefs.saveUserInfoToPrefs(userInfo);
+        Dialogs.showSnackbar(context, 'Registration Successful');
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (_) => Dashboard()),
+              (Route<dynamic> route) => false,
+        );
+      }else{
+        throw("Check your internet connection");
+      }
       print('registr don');
     } on FirebaseAuthException catch (e) {
       // Handle registration errors
       print('Registration error: $e');
       if (e.code == 'unknown') {
-        Dialogs.showSnackbar(context,
+       throw(
             'Registration failed, kindly check your internet connection');
       } else {
-        Dialogs.showSnackbar(context, 'Registration failed, ${e.message}');
+        throw('Registration failed, ${e.message}');
       }
     } catch (error) {
       print(error);
-      Dialogs.showSnackbar(context, 'Registration failed, ${error}');
+      throw( 'Registration failed, ${error}');
     }
   }
 
@@ -288,7 +295,7 @@ class APIs {
 
   static Future<void> getSelfInfo() async {
     DocumentSnapshot snapshot =
-    await firestore.collection('patients').doc(userId).get();
+    await firestore.collection('patients').doc(userInfo.id).get();
     print(snapshot);
     if (snapshot.exists) {
       Map<String, dynamic> patientData =
@@ -302,11 +309,11 @@ class APIs {
       userInfo = userDataInfo;
       Prefs.saveUserInfoToPrefs(userInfo);
       await getFirebaseMessagingToken();
-      APIs.updateActiveStatus(true);
+     updateActiveStatus(true);
     } else {
       snapshot = await FirebaseFirestore.instance
           .collection('doctors')
-          .doc(userId)
+          .doc(userInfo.id)
           .get();
 
       if (snapshot.exists) {
@@ -320,7 +327,7 @@ class APIs {
         userInfo = userDataInfo;
         Prefs.saveUserInfoToPrefs(userInfo);
         await getFirebaseMessagingToken();
-        APIs.updateActiveStatus(true);
+     updateActiveStatus(true);
       }
     }
   }
@@ -328,8 +335,12 @@ class APIs {
   static Future<void> logOut(BuildContext context) async {
     await updateActiveStatus(false);
     await auth.signOut();
-    await GoogleSignIn().signOut();
+    // await GoogleSignIn().signOut();
 
+
+    await Prefs.clearUserData();
+    docReg=null;
+    patientBio=null;
     Navigator.pushAndRemoveUntil(
       context,
       MaterialPageRoute(builder: (_) => LoginScreen()),
@@ -417,6 +428,7 @@ class APIs {
               .toList(),
         }
       });
+      Prefs.saveUserInfoToPrefs(userInfo);
     } on FirebaseAuthException catch (e) {
       // Handle registration errors
       print('Registration error: $e');
@@ -449,6 +461,7 @@ class APIs {
           .collection('${userInfo.userType}s')
           .doc(userInfo.id)
           .update({"image": userInfo.image});
+      Prefs.saveUserInfoToPrefs(userInfo);
     } on FirebaseException catch (e) {
       // Handle registration errors
       print('Registration error: $e');
@@ -462,7 +475,7 @@ class APIs {
     }
   }
 
-  static late bool isConnected;
+  static  bool isConnected=false;
 
   /**Chat Screen Related APIs */
 
@@ -485,12 +498,14 @@ class APIs {
     final data = await Prefs.getUserInfoFromPrefs();
     if (data != null) {
       userInfo = data;
+      print('data exist');
       return true;
     }
+    print('no data ');
     return false;
   }
 
-  static Future<void> initUser(BuildContext context) async {
+  static Future<void> initUser() async {
     final result = await hasNetwork();
 
     if (result) {
@@ -499,27 +514,25 @@ class APIs {
       await fetchApplication();
 
 
-      Navigator.pushAndRemoveUntil(
-        context,
-        MaterialPageRoute(builder: (_) => Dashboard()),
-            (Route<dynamic> route) => false,
-      );
-    } else {
-      final checker = await localDataExist();
-      if (checker) {
-        Navigator.pushAndRemoveUntil(
-          context,
-          MaterialPageRoute(builder: (_) => Dashboard()),
-              (Route<dynamic> route) => false,
-        );
-      } else {
-        Navigator.pushAndRemoveUntil(
-          context,
-          MaterialPageRoute(builder: (_) => LoginScreen()),
-              (Route<dynamic> route) => false,
-        );
-      }
+
     }
+
+    // else {
+    //   final checker = await localDataExist();
+    //   if (checker) {
+    //     Navigator.pushAndRemoveUntil(
+    //       context,
+    //       MaterialPageRoute(builder: (_) => Dashboard()),
+    //           (Route<dynamic> route) => false,
+    //     );
+    //   } else {
+    //     Navigator.pushAndRemoveUntil(
+    //       context,
+    //       MaterialPageRoute(builder: (_) => LoginScreen()),
+    //           (Route<dynamic> route) => false,
+    //     );
+    //   }
+    // }
   }
 
   static Future<bool> addChatUser(String email) async {
@@ -608,19 +621,20 @@ class APIs {
 
   //update online or last active status of user
   static Future<void> updateActiveStatus(bool isOnline) async {
-    firestore
-        .collection('${userInfo.userType.toLowerCase()}s')
-        .doc(userInfo.id)
-        .update({
-      "is_online": isOnline,
-      'last_active': DateTime
-          .now()
-          .microsecondsSinceEpoch
-          .toString(),
-      'push_token': userInfo.pushToken,
-    });
+    if (await hasNetwork()) {
+      firestore
+          .collection('${userInfo.userType.toLowerCase()}s')
+          .doc(userInfo.id)
+          .update({
+        "is_online": isOnline,
+        'last_active': DateTime
+            .now()
+            .microsecondsSinceEpoch
+            .toString(),
+        'push_token': userInfo.pushToken,
+      });
+    }
   }
-
   static Future<void> deleteMessage(Message message) async {
     await firestore
         .collection('chats/${getConversationID(message.toId)}/messages/')

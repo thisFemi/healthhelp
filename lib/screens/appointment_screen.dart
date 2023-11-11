@@ -100,7 +100,7 @@ class _AppointmentScreenState extends State<AppointmentScreen>
                       ),
                     ),
                   ),
-                  !isDoctor
+                  isDoctor
                       ? Tab(
                           child: SizedBox(
                             child: Text(
@@ -141,14 +141,18 @@ class _AppointmentScreenState extends State<AppointmentScreen>
                   }
 
                   if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                    return Center(
-                      child: Text(
-                          'No appointments found.'), // Display a message when there are no appointments
+                    return EmptyList(
+                     label:
+                          'No appointments found.'// Display a message when there are no appointments
                     );
                   }
                   final userStreams = snapshot.data!.map((appointment) {
                     return APIs.getUserInfoById(appointment.patientId);
                   }).toList();
+                  requestAppointments.clear();
+                  upcomingAppointments.clear();
+                  cancelledAppointments.clear();
+                  completedAppointments.clear();
                   for (var appointment in snapshot.data!) {
                     switch (appointment.status) {
                       case AppointmentStatus.pending:
@@ -191,9 +195,9 @@ class _AppointmentScreenState extends State<AppointmentScreen>
                         }
 
                         if (!snapshot.hasData) {
-                          return Center(
-                            child: Text(
-                                'No user details found.'), // Display a message when there are no user details
+                          return EmptyList(
+                           label:
+                                'No user details found.' // Display a message when there are no user details
                           );
                         }
                         final userInfos = snapshot.data as List<UserInfo>;

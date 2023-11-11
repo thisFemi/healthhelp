@@ -50,7 +50,7 @@ class _LoginScreenState extends State<LoginScreen> {
       });
     } catch (e) {
       print('signInWithEmailAndPassword: ${e}');
-      Dialogs.showSnackbar(context, 'Login failed, check your credentials.');
+      Dialogs.showSnackbar(context, e.toString());
       setState(() {
         _isLoading = false;
       });
@@ -261,7 +261,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                             height: 50.0,
                                             width: displaySize.width,
                                             child: TextButton(
-                                              onPressed: () {
+                                              onPressed:_isLoading?null: () {
                                                 _handleEmailPasswordLogin();
                                               },
                                               style: TextButton.styleFrom(

@@ -8,6 +8,7 @@ import 'package:HealthHelp/screens/edit_profile_screen.dart';
 import '../../api/apis.dart';
 import '../../helper/utils/contants.dart';
 import '../helper/dialogs.dart';
+import 'init/coming_soon_screen.dart';
 import 'patient_registration_screen.dart';
 import 'practitioner_registration_screen.dart';
 
@@ -107,8 +108,22 @@ class _AccountScreenState extends State<AccountScreen> {
                 setState(() {});
               }
             }),
-            profileTiles(CupertinoIcons.bell, 'Notification', () {}),
-            profileTiles(Icons.settings_outlined, 'Security', () {}),
+            profileTiles(CupertinoIcons.bell, 'Notification', () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (_) => ComingSoon(
+                        label: 'Notification ',
+                      )));
+            }),
+            profileTiles(Icons.settings_outlined, 'Security', () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (_) => ComingSoon(
+                        label: 'Security ',
+                      )));
+            }),
             APIs.userInfo.userType.toLowerCase() == 'patient'
                 ? profileTiles(CupertinoIcons.bandage, 'Medical registration',
                     () {
@@ -152,22 +167,33 @@ class _AccountScreenState extends State<AccountScreen> {
                             ),
                     ),
                     onTap: () {
-                      if ((APIs.userInfo.doctorContactInfo!.isVerified)) {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (_) => PractitionerRegistrationScreen(
-                                      APIs.userInfo,
-                                    )));
-                      }else{
-                        Dialogs.showSnackbar(context, 'Lic');
-                      }
-                    },
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (_) =>
+                                  PractitionerRegistrationScreen(
+                                    APIs.userInfo,
+                                  )));
+                    }
                   ),
 
-            profileTiles(CupertinoIcons.phone, 'Help center', () {}),
+            profileTiles(CupertinoIcons.phone, 'Help center', () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (_) => ComingSoon(
+                        label: 'Help Center ',
+                      )));
+            }),
             // profileTiles(CupertinoIcons.person_3, 'Invite friends', () {}),
-            profileTiles(CupertinoIcons.info, 'App info', () {}),
+            profileTiles(CupertinoIcons.info, 'App info', () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (_) => ComingSoon(
+                        label: 'App Info',
+                      )));
+            }),
 
             ListTile(
               minLeadingWidth: 2,
@@ -218,6 +244,7 @@ class _AccountScreenState extends State<AccountScreen> {
       builder: (_) {
         return AlertDialog(
           alignment: Alignment.center,
+
           actionsPadding: EdgeInsets.only(bottom: 11, left: 10, right: 10),
           titlePadding: EdgeInsets.only(top: 20, bottom: 1),
           title: Text(

@@ -50,8 +50,8 @@ class _DoctorInfoScreenState extends State<DoctorInfoScreen> {
     '4.00 PM',
     '5.00 PM',
   ];
-  final loremIpsum =
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.";
+  String loremIpsum ="";
+
   List<String> filterWorkHoursByAvailability() {
     final List<String> filteredWorkHours = [];
 
@@ -94,6 +94,9 @@ class _DoctorInfoScreenState extends State<DoctorInfoScreen> {
   String? selectedHour;
   @override
   Widget build(BuildContext context) {
+    loremIpsum =
+    "Welcome to Helth Help! We are pleased to introduce you to ${widget.doctor.name}.A dedicated and experienced healthcare professional committed to providing high-quality care and service.";
+
     final List<String> filteredWorkHours = filterWorkHoursByAvailability();
     bool showBooking = widget.doctor.doctorContactInfo!.selectedDuration !=
             AvailabilityDuration.notAvailable ||

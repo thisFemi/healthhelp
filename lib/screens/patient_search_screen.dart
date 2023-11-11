@@ -33,7 +33,7 @@ class _ListOfPatientScreenState extends State<ListOfPatientScreen> {
   List<Medicals> _searchList = [];
   bool isSearching = false;
   bool isEligble(){
-    if(APIs.docReg!=null||APIs.docReg!.isUniStaff){
+    if(APIs.docReg!=null){
       return true;
 
     }return false;
@@ -99,7 +99,7 @@ class _ListOfPatientScreenState extends State<ListOfPatientScreen> {
                 //           userInfo: APIs.userInfo, medical: list[index]);
                 //     })
                 StreamBuilder<List<Medicals>>(
-                    stream: APIs.getMedicalRecords(APIs.userInfo.id, APIs.docReg!.isUniStaff, APIs.docReg!.schoolName),
+                    stream: APIs.getMedicalRecords(APIs.userInfo.id, APIs.docReg!.isUniStaff, APIs.docReg!.schoolName??null),
                     builder: (context, snapshot) {
                       switch (snapshot.connectionState) {
                         case ConnectionState.waiting:
@@ -117,9 +117,9 @@ class _ListOfPatientScreenState extends State<ListOfPatientScreen> {
                         );
                       }
                       if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                        return Center(
-                          child: Text(
-                              'No patient found.'), // Display a message when there are no appointments
+                        return EmptyList(
+                          label:
+                              'No patient found.'// Display a message when there are no appointments
                         );
                       }
                       final userStreams = snapshot.data!.map((appointment) {
@@ -155,17 +155,12 @@ class _ListOfPatientScreenState extends State<ListOfPatientScreen> {
                               );
                             }
                             if (!snapshot.hasData) {
-                              return Center(
-                                child: Text(
-                                    'No user details found.'), // Display a message when there are no user details
+                              return EmptyList(
+                                  label:
+                                  'No User found.'// Display a message when there are no appointments
                               );
                             }
-                            if (!snapshot.hasData) {
-                              return Center(
-                                child: Text(
-                                    'No user details found.'), // Display a message when there are no user details
-                              );
-                            }
+
                             final userInfos = snapshot.data as List<UserInfo>;
                             if (list.isNotEmpty && userInfos.isNotEmpty) {
                               return ListView.builder(

@@ -7,6 +7,7 @@ import '../helper/utils/Colors.dart';
 import '../helper/utils/contants.dart';
 import '../models/user.dart';
 import 'chat_user_card.dart';
+import 'empty_list.dart';
 
 // ignore: must_be_immutable
 class ChatTabContent extends StatefulWidget {
@@ -109,8 +110,8 @@ class _ChatTabContentState extends State<ChatTabContent> {
                                 isSearching ? _searchList[index] : list[index]);
                           });
                     } else {
-                      return Center(
-                        child: Text('No Messages yet'),
+                      return EmptyList(
+                        label: 'No Messages yet',
                       );
                     }
                   });
@@ -119,3 +120,5 @@ class _ChatTabContentState extends State<ChatTabContent> {
     );
   }
 }
+
+

@@ -8,7 +8,8 @@ import '../../helper/utils/Common.dart';
 import '../../helper/utils/Images.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:HealthHelp/screens/init/main_screen.dart';
-
+import 'package:HealthHelp/screens/Auth/login.dart';
+import 'package:HealthHelp/screens/dashboard.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({Key? key}) : super(key: key);
@@ -91,33 +92,30 @@ class _SplashScreenState extends State<SplashScreen> {
     _timer = Timer.periodic(const Duration(seconds: 5), (timer) async {
       isTimerInitialized = true;
       _timer.cancel();
-      //  Navigator.pushReplacement(
-      //        context, MaterialPageRoute(builder: (_) => MainScreen()));
-      //UserInfo? user = await SharedHelper.getUserInfo();
-
-
       SharedPreferences prefs = await SharedPreferences.getInstance();
       bool isFirstTime = prefs.getBool('first_time') ?? true;
+     if (await APIs.localDataExist()) {
 
-      if (isFirstTime) {
-        // First time opening the app, navigate to onboarding screen
-        prefs.setBool('first_time', false);
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (_) => MainScreen()),
-        );
-      }else{
+       Navigator.pushReplacement(
+         context,
+         MaterialPageRoute(builder: (_) => Dashboard()),
+       );
+     await APIs.initUser();
 
-
-
-     if (APIs.auth.currentUser != null) {
-        APIs.initUser(context);
       } else {
+       if (isFirstTime) {
+         // First time opening the app, navigate to onboarding screen
+
+         Navigator.pushReplacement(
+           context,
+           MaterialPageRoute(builder: (_) => MainScreen()),
+         );
+         prefs.setBool('first_time', false);
+       }else{
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (_) => MainScreen()),
+          MaterialPageRoute(builder: (_) => LoginScreen()),
         );
-      }}
-    });
+    }}});
   }
 }

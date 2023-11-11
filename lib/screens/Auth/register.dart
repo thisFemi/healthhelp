@@ -73,6 +73,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
           body: SingleChildScrollView(
             child: Container(
               width: displaySize.width,
+              height:  displaySize.height,
               decoration: BoxDecoration(
                   image: DecorationImage(
                       fit: BoxFit.fill,
@@ -146,7 +147,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                                 crossAxisAlignment:
                                                     CrossAxisAlignment.start,
                                                 children: [
-                                                  Text('Full Name'),
+                                                  Text('Full Name', style: TextStyle(fontWeight:FontWeight.bold),),
                                                   SizedBox(height: 5),
                                                   TextFormField(
                                                     controller: _name,
@@ -209,7 +210,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                                 crossAxisAlignment:
                                                     CrossAxisAlignment.start,
                                                 children: [
-                                                  Text('Email'),
+                                                  Text('Email', style: TextStyle(fontWeight:FontWeight.bold),),
                                                   SizedBox(height: 5),
                                                   TextFormField(
                                                     keyboardType: TextInputType
@@ -274,7 +275,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                                 crossAxisAlignment:
                                                     CrossAxisAlignment.start,
                                                 children: [
-                                                  Text('Account Type'),
+                                                  Text('Account Type', style: TextStyle(fontWeight:FontWeight.bold),),
                                                   SizedBox(height: 5),
                                                   GestureDetector(
                                                     onTap: () =>
@@ -286,7 +287,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                                             AutovalidateMode
                                                                 .onUserInteraction,
                                                         decoration: InputDecoration(
-                                                            enabled: false,
+
                                                             filled: true,
                                                             fillColor: Colors
                                                                 .grey[200],
@@ -338,33 +339,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                                 ],
                                               ),
                                             ),
-                                            // Row(
-                                            //   children: [
-                                            //     RoleOption(
-                                            //       role: 'Patient',
-                                            //       isSelected:
-                                            //           selectedType == 'Patient',
-                                            //       onSelect: () {
-                                            //         setState(() {
-                                            //           selectedType = 'Patient';
-                                            //         });
-                                            //       },
-                                            //     ),
-                                            //     SizedBox(
-                                            //         width:
-                                            //             16), // Spacer between containers
-                                            //     RoleOption(
-                                            //       role: 'Doctor',
-                                            //       isSelected:
-                                            //           selectedType == 'Doctor',
-                                            //       onSelect: () {
-                                            //         setState(() {
-                                            //           selectedType = 'Doctor';
-                                            //         });
-                                            //       },
-                                            //     ),
-                                            //   ],
-                                            // ),
+
                                             Padding(
                                               padding: EdgeInsets.only(
                                                 right: 1,
@@ -375,7 +350,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                                 crossAxisAlignment:
                                                     CrossAxisAlignment.start,
                                                 children: [
-                                                  Text('Password'),
+                                                  Text('Password', style: TextStyle(fontWeight:FontWeight.bold),),
                                                   SizedBox(height: 5),
                                                   TextFormField(
                                                     keyboardType:
@@ -463,7 +438,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                                 crossAxisAlignment:
                                                     CrossAxisAlignment.start,
                                                 children: [
-                                                  Text('Confirm Password'),
+                                                  Text('Confirm Password', style: TextStyle(fontWeight:FontWeight.bold),),
                                                   SizedBox(height: 5),
                                                   TextFormField(
                                                     keyboardType:
@@ -540,12 +515,12 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                             ),
                                             Padding(
                                                 padding: EdgeInsets.symmetric(
-                                                    vertical: 10.0),
+                                                    vertical: 40.0),
                                                 child: SizedBox(
                                                     height: 50.0,
                                                     width: displaySize.width,
                                                     child: TextButton(
-                                                      onPressed: () {
+                                                      onPressed:_isLoading?null: () {
                                                         _handleEmailPasswordRegister();
                                                       },
                                                       style:

@@ -232,7 +232,7 @@ class _ChatScreenState extends State<ChatScreen> {
                       },
                       icon: Icon(
                         CupertinoIcons.smiley,
-                        color: Colors.blueAccent,
+                        color: color3,
                         size: 26,
                       )),
                   Expanded(
@@ -268,7 +268,7 @@ class _ChatScreenState extends State<ChatScreen> {
                       },
                       icon: Icon(
                         Icons.image,
-                        color: Colors.blueAccent,
+                        color: color3,
                         size: 26,
                       )),
                   IconButton(
@@ -291,14 +291,14 @@ class _ChatScreenState extends State<ChatScreen> {
                       },
                       icon: Icon(
                         CupertinoIcons.camera,
-                        color: Colors.blueAccent,
+                        color: color3,
                         size: 26,
                       )),
                 ],
               ),
             ),
           ),
-          MaterialButton(
+                textController.text.isNotEmpty?  MaterialButton(
             onPressed: () {
               if (textController.text.isNotEmpty) {
                 if (_list.isEmpty) {
@@ -313,13 +313,13 @@ class _ChatScreenState extends State<ChatScreen> {
             shape: CircleBorder(),
             minWidth: 0,
             padding: EdgeInsets.only(top: 10, bottom: 10, right: 5, left: 10),
-            color: Colors.blueAccent,
+            color: color3,
             child: Icon(
               Icons.send,
               color: color7,
               size: 28,
             ),
-          )
+          ):SizedBox.shrink()
         ],
       ),
     );
