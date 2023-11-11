@@ -6,20 +6,29 @@ import 'package:HealthHelp/screens/init/splash_screen.dart';
 import 'package:HealthHelp/helper/utils/Colors.dart';
 import 'package:flutter_notification_channel/flutter_notification_channel.dart';
 import 'package:flutter_notification_channel/notification_importance.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 
 import 'widgets/error_widget.dart';
-
-Future<void> main() async {
-  WidgetsFlutterBinding.ensureInitialized();
+Future<void> _firebaseMessagingBackgroundHandler(message) async {
   await Firebase.initializeApp();
-  var result = await FlutterNotificationChannel.registerNotificationChannel(
+
+  await FlutterNotificationChannel.registerNotificationChannel(
     description: 'For showing message nofitications',
     id: 'chats',
     importance: NotificationImportance.IMPORTANCE_HIGH,
     name: 'Chats',
   );
-  print('notification channel result: ${result}');
-
+}
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  
+  SystemChrome.setPreferredOrientations(<DeviceOrientation>[
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown,
+  ]);
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+ // print('notification channel result: ${result}');
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   runApp(
     MyApp(),
   );
