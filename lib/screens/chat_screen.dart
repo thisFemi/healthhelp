@@ -298,28 +298,32 @@ class _ChatScreenState extends State<ChatScreen> {
               ),
             ),
           ),
-                textController.text.isNotEmpty?  MaterialButton(
-            onPressed: () {
-              if (textController.text.isNotEmpty) {
-                if (_list.isEmpty) {
-                  APIs.sendFirstMessage(
-                      widget.user, textController.text, Type.text);
-                } else {
-                  APIs.sendMessage(widget.user, textController.text, Type.text);
-                  textController.text = '';
-                }
-              }
-            },
-            shape: CircleBorder(),
-            minWidth: 0,
-            padding: EdgeInsets.only(top: 10, bottom: 10, right: 5, left: 10),
-            color: color3,
-            child: Icon(
-              Icons.send,
-              color: color7,
-              size: 28,
-            ),
-          ):SizedBox.shrink()
+          textController.text.isNotEmpty
+              ? MaterialButton(
+                  onPressed: () {
+                    if (textController.text.isNotEmpty) {
+                      if (_list.isEmpty) {
+                        APIs.sendFirstMessage(
+                            widget.user, textController.text, Type.text);
+                      } else {
+                        APIs.sendMessage(
+                            widget.user, textController.text, Type.text);
+                        textController.text = '';
+                      }
+                    }
+                  },
+                  shape: CircleBorder(),
+                  minWidth: 0,
+                  padding:
+                      EdgeInsets.only(top: 10, bottom: 10, right: 5, left: 10),
+                  color: color3,
+                  child: Icon(
+                    Icons.send,
+                    color: color7,
+                    size: 28,
+                  ),
+                )
+              : SizedBox.shrink()
         ],
       ),
     );
