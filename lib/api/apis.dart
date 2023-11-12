@@ -5,12 +5,16 @@ import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 
+import 'package:HealthHelp/main.dart';
 import 'package:HealthHelp/providers/DUMMY_DATA.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_notification_channel/flutter_notification_channel.dart';
+import 'package:flutter_notification_channel/notification_importance.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:HealthHelp/models/message.dart';
 import 'package:HealthHelp/screens/Auth/register.dart';
@@ -48,10 +52,38 @@ class APIs {
     return false;
   }
 
+   Future<void> initNofication()async{
+
+
+    initPushNotifiation();
+    registerChannel();
+  }
+
+  void handleMessage(RemoteMessage? message)async{
+    if(message==null)return;
+    print("gotten");
+  }
+
+Future initPushNotifiation() async{
+    fMessaging.getInitialMessage().then(handleMessage);
+    FirebaseMessaging.onMessageOpenedApp.listen(handleMessage);
+    //FirebaseMessaging.onBackgroundMessage(backgroundHandler);
+}
+Future<void> registerChannel()async{
+  await FlutterNotificationChannel.registerNotificationChannel(
+    description: 'For showing message nofitications',
+    id: 'chats',
+    importance: NotificationImportance.IMPORTANCE_HIGH,
+    name: 'Chats',
+  );
+  print('channel register');
+}
+
   static Future<void> getFirebaseMessagingToken() async {
     await fMessaging.requestPermission();
     fMessaging.getToken().then((token) {
       if (token != null) {
+        print(token);
         userInfo.pushToken = token;
         print('Push Token: ${token}');
       }
@@ -768,7 +800,7 @@ class APIs {
               .add(userAppointment.toJson());
           print('sent to appts.');
           sendPushNotification(
-              user, '${user.name} just booked an appointment with you.');
+              user, '${userInfo.name} just booked an appointment with you.');
         });
       } catch (error) {
         print(error);
@@ -1126,5 +1158,3 @@ class APIs {
   }
 
 }
-
-

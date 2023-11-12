@@ -28,12 +28,12 @@ class ComingSoon extends StatelessWidget {
           scale: 1,
         ),
         SizedBox(height: 2,),
-        Text("${label} are coming soon", style:TextStyle(
+        Text("${label} is coming soon", style:TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.bold)),
 
         SizedBox(height: 5,),
-            Text("We'll let you know when they're ready", style:TextStyle(
+            Text("We'll let you know when it is ready", style:TextStyle(
 
                 color: Colors.grey[300],
                 fontWeight: FontWeight.bold)),

@@ -254,27 +254,24 @@ List<ToDoItem> _todo=[
                               ];
                               final List<String> titles = [
                                 'Medical Records',
-                                'Setup An Appointment',
+                                'Instant Messaging',
                                 'General Checkup',
                                 'Instant Messaging',
                               ];
                               final List<String> descs = [
                                 'Home Visit from doctor',
-                                'Setup An Appointment',
-                                'General Checkup',
-                                'Instant Messaging',
+                                'Experience Real-time messaging',
+
                               ];
                               final List<Color> bGcolors = [
                                 Colors.blue.shade50,
-                                Colors.purple.shade50,
-                                Colors.orange.shade100,
                                 Colors.green.shade100,
+
                               ];
                               final List<Color> colors = [
                                 Colors.blue,
-                                Colors.purple,
-                                Colors.orange,
                                 Colors.green,
+
                               ];
                               final List<Function> functions = [
                                 () {
@@ -283,15 +280,12 @@ List<ToDoItem> _todo=[
                                       MaterialPageRoute(
                                           builder: (_) => ListOfPatientScreen()));
                                 },
-                                () {
-                                  print('hi');
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (_) => ListOfDoctorsScreen(type: NavigatorType.toDetails,)));
-                                },
-                                () {},
-                                () {}
+    () {
+    Navigator.push(context,
+    MaterialPageRoute(builder: (_) => MessagesScreen()));
+    }
+                                ,
+
                               ];
                               return ServiceCard(
                                   iconData: icons[index],

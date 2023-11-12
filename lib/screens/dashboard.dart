@@ -23,7 +23,10 @@ class _DashboardState extends State<Dashboard> {
   @override
   void initState() {
     super.initState();
-     
+    if(APIs.isConnected){
+      APIs.fetchApplication();
+    }
+
     SystemChannels.lifecycle.setMessageHandler((message) {
       if (APIs.auth.currentUser != null) {
         if (message.toString().contains('resume')) {

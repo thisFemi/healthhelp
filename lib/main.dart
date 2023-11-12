@@ -8,27 +8,29 @@ import 'package:flutter_notification_channel/flutter_notification_channel.dart';
 import 'package:flutter_notification_channel/notification_importance.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 
+import 'api/apis.dart';
 import 'widgets/error_widget.dart';
 Future<void> _firebaseMessagingBackgroundHandler(message) async {
   await Firebase.initializeApp();
 
-  await FlutterNotificationChannel.registerNotificationChannel(
-    description: 'For showing message nofitications',
-    id: 'chats',
-    importance: NotificationImportance.IMPORTANCE_HIGH,
-    name: 'Chats',
-  );
+  print('Handling a background message ${message.messageId}');
 }
+final navigattorKey=GlobalKey<NavigatorState>();
+
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  
+
   SystemChrome.setPreferredOrientations(<DeviceOrientation>[
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
   ]);
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
- // print('notification channel result: ${result}');
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+
+  await APIs().initNofication();
+
   runApp(
     MyApp(),
   );
@@ -60,6 +62,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Health-Help ',
       theme: ThemeData(primarySwatch: Colors.cyan, fontFamily: 'Raleway'),
+        navigatorKey:navigattorKey,
       home: SplashScreen(),
     );
   }

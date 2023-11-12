@@ -240,6 +240,7 @@ class _ChatScreenState extends State<ChatScreen> {
                     keyboardType: TextInputType.multiline,
                     controller: textController,
                     maxLines: null,
+
                     onTap: () {
                       if (_showEmoji) {
                         setState(() {
@@ -298,8 +299,7 @@ class _ChatScreenState extends State<ChatScreen> {
               ),
             ),
           ),
-          textController.text.isNotEmpty
-              ? MaterialButton(
+         MaterialButton(
                   onPressed: () {
                     if (textController.text.isNotEmpty) {
                       if (_list.isEmpty) {
@@ -323,7 +323,7 @@ class _ChatScreenState extends State<ChatScreen> {
                     size: 28,
                   ),
                 )
-              : SizedBox.shrink()
+
         ],
       ),
     );
