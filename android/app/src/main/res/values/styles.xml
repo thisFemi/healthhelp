@@ -15,4 +15,10 @@
     <style name="NormalTheme" parent="@android:style/Theme.Light.NoTitleBar">
         <item name="android:windowBackground">?android:colorBackground</item>
     </style>
+      <string name="app_name">HealthHelp</string>
+    <string name="title_activity_main">HealthHelp</string>
+    <string name="package_name">com.example.HealthHelp</string>
+    <string name="custom_url_scheme">com.example.HealthHelp</string>
+    <string name="default_notification_channel_id">com.example.HealthHelp.urgent</string>
+
 </resources>
