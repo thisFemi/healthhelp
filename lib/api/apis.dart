@@ -114,7 +114,7 @@ Future<void> registerChannel()async{
           headers: {
             HttpHeaders.contentTypeHeader: 'application/json',
             HttpHeaders.authorizationHeader:
-            'key=AAAAMCFDAGQ:APA91bGMO4epIlzU6LZ9IGp8qXTVQdqoOBjUJE_6um_2Ke9A2bJk4HZxST0G619EFHs9DRhY87Jy0m0AcVUEx6gyb3Q5Lm0QmrzJ7doPl2N9eArUbBDWtPRcC8jA380FP1snjrGwVLi1'
+            'key=PUT YOUR SERVER KEY HERE'
           });
       print(response.statusCode);
       print(response.body);
