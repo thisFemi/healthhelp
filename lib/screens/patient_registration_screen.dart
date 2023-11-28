@@ -98,7 +98,7 @@ class _PatientRegistrationScreenState extends State<PatientRegistrationScreen> {
 
       APIs.isConnected? SingleChildScrollView(
         child: Container(
-          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
           child: !showReg()? Column(
             crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -107,7 +107,7 @@ class _PatientRegistrationScreenState extends State<PatientRegistrationScreen> {
                     color: Colors.white,
                     child: Container(
                         padding:
-                        EdgeInsets.all(10),
+                        const EdgeInsets.all(10),
                         // height: Screen.deviceSize(context).width * .4,
                         child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -138,18 +138,18 @@ class _PatientRegistrationScreenState extends State<PatientRegistrationScreen> {
                                     children: [
                                       Chip(
                                           backgroundColor: color15,
-                                          label: Text(
+                                          label: const Text(
                                             ' Completed',
                                             style: TextStyle(
                                                 fontWeight:
                                                 FontWeight.bold),
                                           )),
-                                      SizedBox(
+                                      const SizedBox(
                                         height: 5,
                                       ),
                                       GestureDetector(
                                         onTap: (){},
-                                        child: Row(
+                                        child: const Row(
                                           mainAxisAlignment:
                                           MainAxisAlignment.end,
                                           children: [
@@ -184,12 +184,12 @@ class _PatientRegistrationScreenState extends State<PatientRegistrationScreen> {
                                             FontWeight.bold),
                                       )),
                         SizedBox(child: Text("Appointment:\n${DateUtil.formatDateTime(APIs.patientBio!.screeningDate,)}", textAlign: TextAlign.right,
-                            style:TextStyle(fontWeight: FontWeight.bold)))
+                            style:const TextStyle(fontWeight: FontWeight.bold)))
                       ],
                     ),)
                             ]))),
 
-                                      SizedBox(height: 20),
+                                      const SizedBox(height: 20),
                                       ListView.builder(
                                           itemCount: medTest.length,
                                           shrinkWrap: true,
@@ -226,14 +226,14 @@ class _PatientRegistrationScreenState extends State<PatientRegistrationScreen> {
                     child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          SizedBox(
+                          const SizedBox(
                             height: 20,
                           ),
                           const Text(
                             'Are you currently enrolled in an institution?',
                             style: TextStyle(fontWeight: FontWeight.bold),
                           ),
-                          SizedBox(height: 5),
+                          const SizedBox(height: 5),
                           GestureDetector(
                             onTap: () => _showUsertTypes(),
                             child: AbsorbPointer(
@@ -248,31 +248,31 @@ class _PatientRegistrationScreenState extends State<PatientRegistrationScreen> {
                                         TextStyle(color: color8, fontSize: 12),
 
                                     counterStyle:
-                                        TextStyle(height: double.minPositive),
+                                        const TextStyle(height: double.minPositive),
                                     labelStyle: TextStyle(
                                         color: color8,
                                         fontFamily: 'Raleway-SemiBold',
                                         fontSize: 15.0),
-                                    border: OutlineInputBorder(
+                                    border: const OutlineInputBorder(
                                         borderSide: BorderSide.none,
                                         borderRadius: BorderRadius.all(
                                             Radius.circular(10.0))),
-                                    disabledBorder: OutlineInputBorder(
+                                    disabledBorder: const OutlineInputBorder(
                                         borderSide: BorderSide.none,
                                         borderRadius: BorderRadius.all(
                                             Radius.circular(10.0))),
-                                    focusedBorder: OutlineInputBorder(
+                                    focusedBorder: const OutlineInputBorder(
                                         borderSide: BorderSide.none,
                                         borderRadius: BorderRadius.all(
                                             Radius.circular(10.0))),
-                                    errorBorder: OutlineInputBorder(
+                                    errorBorder: const OutlineInputBorder(
                                         borderSide: BorderSide.none,
                                         borderRadius: BorderRadius.all(
                                             Radius.circular(10.0))),
-                                    contentPadding: EdgeInsets.all(10),
-                                    prefixIcon: Icon(Icons.person),
+                                    contentPadding: const EdgeInsets.all(10),
+                                    prefixIcon: const Icon(Icons.person),
                                     suffixIcon:
-                                        Icon(Icons.keyboard_arrow_down_outlined)),
+                                        const Icon(Icons.keyboard_arrow_down_outlined)),
                                 validator: (value) {
                                   if (value == null ||
                                       value.isEmpty ||
@@ -293,7 +293,7 @@ class _PatientRegistrationScreenState extends State<PatientRegistrationScreen> {
                                      Text(
                                       '${selectedType == 'Yes'?"Select Institution":"Select Your Doctor"}',
                                       style:
-                                          TextStyle(fontWeight: FontWeight.bold),
+                                          const TextStyle(fontWeight: FontWeight.bold),
                                     ),
                                     const SizedBox(
                                       height: 10,
@@ -306,7 +306,7 @@ class _PatientRegistrationScreenState extends State<PatientRegistrationScreen> {
                                         final selectedInstitution = await Navigator.push(
                                           context,
                                           MaterialPageRoute(
-                                            builder: (_) => ListOfInstitutionScreen(),
+                                            builder: (_) => const ListOfInstitutionScreen(),
                                           ),
                                         );
 
@@ -359,33 +359,33 @@ class _PatientRegistrationScreenState extends State<PatientRegistrationScreen> {
                                               hintStyle: TextStyle(
                                                   color: color8, fontSize: 12),
 
-                                              counterStyle: TextStyle(
+                                              counterStyle: const TextStyle(
                                                   height: double.minPositive),
                                               labelStyle: TextStyle(
                                                   color: color8,
                                                   fontFamily: 'Raleway-SemiBold',
                                                   fontSize: 15.0),
-                                              border: OutlineInputBorder(
+                                              border: const OutlineInputBorder(
                                                   borderSide: BorderSide.none,
                                                   borderRadius: BorderRadius.all(
                                                       Radius.circular(10.0))),
-                                              disabledBorder: OutlineInputBorder(
+                                              disabledBorder: const OutlineInputBorder(
                                                   borderSide: BorderSide.none,
                                                   borderRadius: BorderRadius.all(
                                                       Radius.circular(10.0))),
-                                              focusedBorder: OutlineInputBorder(
+                                              focusedBorder: const OutlineInputBorder(
                                                   borderSide: BorderSide.none,
                                                   borderRadius: BorderRadius.all(
                                                       Radius.circular(10.0))),
-                                              errorBorder: OutlineInputBorder(
+                                              errorBorder: const OutlineInputBorder(
                                                   borderSide: BorderSide.none,
                                                   borderRadius: BorderRadius.all(
                                                       Radius.circular(10.0))),
-                                              contentPadding: EdgeInsets.all(10),
-                                              prefixIcon: Icon(
+                                              contentPadding: const EdgeInsets.all(10),
+                                              prefixIcon: const Icon(
                                                 Icons.person,
                                               ),
-                                              suffixIcon: Icon(Icons
+                                              suffixIcon: const Icon(Icons
                                                   .keyboard_arrow_down_outlined)),
                                           validator: (value) {
                                             if (value == null ||
@@ -402,14 +402,14 @@ class _PatientRegistrationScreenState extends State<PatientRegistrationScreen> {
                                 ),
 
 
-                          SizedBox(
+                          const SizedBox(
                             height: 20,
                           ),
-                          Text(
+                          const Text(
                             'Select your screening tests',
                             style: TextStyle(fontWeight: FontWeight.bold),
                           ),
-                          SizedBox(
+                          const SizedBox(
                             height: 10,
                           ),
                           SizedBox(
@@ -420,7 +420,7 @@ class _PatientRegistrationScreenState extends State<PatientRegistrationScreen> {
                             //     .3,
                             child: DropdownButton2<String>(
                               isExpanded: true,
-                              hint: SizedBox(
+                              hint: const SizedBox(
                                 child: Text('Select your test',
                                     style: TextStyle(
                                       fontSize: 12,
@@ -432,7 +432,7 @@ class _PatientRegistrationScreenState extends State<PatientRegistrationScreen> {
                                     value: test,
                                     child: SizedBox(
                                         child: Text(test,
-                                            style: TextStyle(
+                                            style: const TextStyle(
                                               fontSize: 11,
                                             ))));
                               }).toList(),
@@ -473,14 +473,14 @@ class _PatientRegistrationScreenState extends State<PatientRegistrationScreen> {
                               ? Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    SizedBox(
+                                    const SizedBox(
                                       height: 20,
                                     ),
-                                    Text('Test Title',
+                                    const Text('Test Title',
                                         style: TextStyle(
                                           fontWeight: FontWeight.bold,
                                         )),
-                                    SizedBox(
+                                    const SizedBox(
                                       height: 10,
                                     ),
                                     TextFormField(
@@ -504,23 +504,23 @@ class _PatientRegistrationScreenState extends State<PatientRegistrationScreen> {
                                             color: color8,
                                             fontFamily: 'Raleway-SemiBold',
                                             fontSize: 15.0),
-                                        border: OutlineInputBorder(
+                                        border: const OutlineInputBorder(
                                             borderSide: BorderSide.none,
                                             borderRadius: BorderRadius.all(
                                                 Radius.circular(10.0))),
-                                        disabledBorder: OutlineInputBorder(
+                                        disabledBorder: const OutlineInputBorder(
                                             borderSide: BorderSide.none,
                                             borderRadius: BorderRadius.all(
                                                 Radius.circular(10.0))),
-                                        focusedBorder: OutlineInputBorder(
+                                        focusedBorder: const OutlineInputBorder(
                                             borderSide: BorderSide.none,
                                             borderRadius: BorderRadius.all(
                                                 Radius.circular(10.0))),
-                                        errorBorder: OutlineInputBorder(
+                                        errorBorder: const OutlineInputBorder(
                                             borderSide: BorderSide.none,
                                             borderRadius: BorderRadius.all(
                                                 Radius.circular(10.0))),
-                                        contentPadding: EdgeInsets.only(
+                                        contentPadding: const EdgeInsets.only(
                                             top: 20,
                                             left: 10,
                                             right: 10,
@@ -533,7 +533,7 @@ class _PatientRegistrationScreenState extends State<PatientRegistrationScreen> {
                                         return null;
                                       },
                                     ),
-                                    SizedBox(
+                                    const SizedBox(
                                       height: 20,
                                     ),
                                     Align(
@@ -550,7 +550,7 @@ class _PatientRegistrationScreenState extends State<PatientRegistrationScreen> {
                                           customTest = "";
                                           selectedOthers = false;
                                         },
-                                        child: Chip(
+                                        child: const Chip(
                                           label: Text('Add',
                                               style: TextStyle(
                                                 fontWeight: FontWeight.bold,
@@ -560,8 +560,8 @@ class _PatientRegistrationScreenState extends State<PatientRegistrationScreen> {
                                     ),
                                   ],
                                 )
-                              : SizedBox.shrink(),
-                          SizedBox(
+                              : const SizedBox.shrink(),
+                          const SizedBox(
                             height: 20,
                           ),
                           userAddedTests.isNotEmpty
@@ -583,8 +583,8 @@ class _PatientRegistrationScreenState extends State<PatientRegistrationScreen> {
                                     ),
                                   ),
                                 )
-                              : SizedBox.shrink(),
-                          SizedBox(
+                              : const SizedBox.shrink(),
+                          const SizedBox(
                             height: 20,
                           ),
                           ListView.builder(
@@ -616,7 +616,7 @@ class _PatientRegistrationScreenState extends State<PatientRegistrationScreen> {
                               }),
 
                           Padding(
-                              padding: EdgeInsets.symmetric(vertical: 20.0),
+                              padding: const EdgeInsets.symmetric(vertical: 20.0),
                               child: SizedBox(
                                   height: 50.0,
                                   width: Screen.deviceSize(context).width,
@@ -649,13 +649,13 @@ class _PatientRegistrationScreenState extends State<PatientRegistrationScreen> {
   void _showUsertTypes() {
     showModalBottomSheet(
         context: context,
-        shape: RoundedRectangleBorder(
+        shape: const RoundedRectangleBorder(
             borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(20), topRight: Radius.circular(20))),
         builder: (_) => Wrap(
               children: [
-                Padding(
-                  padding: const EdgeInsets.only(top: 10.0),
+                const Padding(
+                  padding: EdgeInsets.only(top: 10.0),
                   child: Align(
                     alignment: Alignment.topCenter,
                     child: Text(
@@ -666,11 +666,11 @@ class _PatientRegistrationScreenState extends State<PatientRegistrationScreen> {
                   ),
                 ),
                 ListView(
-                  padding: EdgeInsets.symmetric(vertical: 20, horizontal: 20),
+                  padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
                   shrinkWrap: true,
                   children: [
                     ListTile(
-                      title: Text('Yes'),
+                      title: const Text('Yes'),
                       onTap: () {
                         setState(() {
                           selectedType = 'Yes';
@@ -685,7 +685,7 @@ class _PatientRegistrationScreenState extends State<PatientRegistrationScreen> {
                         });
                         Navigator.pop(context);
                       },
-                      title: Text('No'),
+                      title: const Text('No'),
                     )
                   ],
                 )
@@ -734,13 +734,13 @@ class _PatientRegistrationScreenState extends State<PatientRegistrationScreen> {
                             tapBodyToCollapse: true,
                           ),
                           header: Padding(
-                              padding: EdgeInsets.all(10),
+                              padding: const EdgeInsets.all(10),
                               child: Row(
                                 children: [
                                   Text(
                                     "${test!.docName??""}",
                                     style:
-                                        TextStyle(fontWeight: FontWeight.bold),
+                                        const TextStyle(fontWeight: FontWeight.bold),
                                   ),
                                 ],
                               )),
@@ -754,7 +754,7 @@ class _PatientRegistrationScreenState extends State<PatientRegistrationScreen> {
                                     fontWeight: FontWeight.w400,
                                     color: color8),
                               ),
-                              SizedBox(
+                              const SizedBox(
                                 height: 5,
                               ),
                               Text(
