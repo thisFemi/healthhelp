@@ -33,7 +33,7 @@ class ServiceCard extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-           //mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            //mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Container(
                   padding: const EdgeInsets.all(5),
@@ -56,6 +56,7 @@ class ServiceCard extends StatelessWidget {
               SizedBox(
                 child: Text(
                   desc,
+                  overflow: TextOverflow.ellipsis,
                   style: TextStyle(
                       fontWeight: FontWeight.w500,
                       fontSize: 10.0,

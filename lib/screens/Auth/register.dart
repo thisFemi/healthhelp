@@ -74,7 +74,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
             child: Container(
               width: displaySize.width,
               height:  displaySize.height,
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                   image: DecorationImage(
                       fit: BoxFit.fill,
                       image: AssetImage('assets/images/bg5.png'))),
@@ -82,16 +82,16 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Padding(
-                    padding: EdgeInsets.only(
+                    padding: const EdgeInsets.only(
                       top: 10,
                     ),
                     child: Align(
                         alignment: Alignment.centerLeft,
                         child: IconButton(
                           onPressed: () => Navigator.of(context).pop(),
-                          icon: Icon(
+                          icon: const Icon(
                             CupertinoIcons.back,
-                            color: const Color.fromARGB(255, 33, 43, 42),
+                            color: Color.fromARGB(255, 33, 43, 42),
                             size: 20,
                           ),
                         )),
@@ -99,7 +99,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                   Center(
                     child: SingleChildScrollView(
                       child: Container(
-                        padding: EdgeInsets.only(
+                        padding: const EdgeInsets.only(
                           left: 20,
                           top: 20,
                           right: 20,
@@ -116,7 +116,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(
+                                const Text(
                                   'Sign Up',
                                   style: TextStyle(
                                       fontSize: 32,
@@ -132,13 +132,13 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                   ),
                                 ),
                                 Padding(
-                                    padding: EdgeInsets.only(top: 20),
+                                    padding: const EdgeInsets.only(top: 20),
                                     child: Form(
                                         key: _keyForm,
                                         child: Column(
                                           children: [
                                             Padding(
-                                              padding: EdgeInsets.only(
+                                              padding: const EdgeInsets.only(
                                                   left: 1,
                                                   top: 10,
                                                   bottom: 10,
@@ -147,8 +147,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                                 crossAxisAlignment:
                                                     CrossAxisAlignment.start,
                                                 children: [
-                                                  Text('Full Name', style: TextStyle(fontWeight:FontWeight.bold),),
-                                                  SizedBox(height: 5),
+                                                  const Text('Full Name', style: TextStyle(fontWeight:FontWeight.bold),),
+                                                  const SizedBox(height: 5),
                                                   TextFormField(
                                                     controller: _name,
                                                     autovalidateMode:
@@ -163,7 +163,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                                             fontSize: 12),
                                                         hintText:
                                                             "enter your name",
-                                                        counterStyle: TextStyle(
+                                                        counterStyle: const TextStyle(
                                                             height: double
                                                                 .minPositive),
                                                         labelStyle: TextStyle(
@@ -171,23 +171,23 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                                             fontFamily:
                                                                 'Raleway-SemiBold',
                                                             fontSize: 15.0),
-                                                        border: OutlineInputBorder(
+                                                        border: const OutlineInputBorder(
                                                             borderSide:
                                                                 BorderSide.none,
                                                             borderRadius:
                                                                 BorderRadius.all(
                                                                     Radius.circular(
                                                                         10.0))),
-                                                        enabledBorder: OutlineInputBorder(
+                                                        enabledBorder: const OutlineInputBorder(
                                                             borderSide:
                                                                 BorderSide.none,
                                                             borderRadius:
                                                                 BorderRadius.all(
                                                                     Radius.circular(10.0))),
-                                                        focusedBorder: OutlineInputBorder(borderSide: BorderSide.none, borderRadius: BorderRadius.all(Radius.circular(10.0))),
-                                                        errorBorder: OutlineInputBorder(borderSide: BorderSide.none, borderRadius: BorderRadius.all(Radius.circular(10.0))),
-                                                        contentPadding: EdgeInsets.all(10),
-                                                        prefixIcon: Icon(Icons.person)),
+                                                        focusedBorder: const OutlineInputBorder(borderSide: BorderSide.none, borderRadius: BorderRadius.all(Radius.circular(10.0))),
+                                                        errorBorder: const OutlineInputBorder(borderSide: BorderSide.none, borderRadius: BorderRadius.all(Radius.circular(10.0))),
+                                                        contentPadding: const EdgeInsets.all(10),
+                                                        prefixIcon: const Icon(Icons.person)),
                                                     validator: (value) {
                                                       if (value == null ||
                                                           value.isEmpty ||
@@ -201,7 +201,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                               ),
                                             ),
                                             Padding(
-                                              padding: EdgeInsets.only(
+                                              padding: const EdgeInsets.only(
                                                   left: 1,
                                                   top: 5,
                                                   bottom: 10,
@@ -210,8 +210,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                                 crossAxisAlignment:
                                                     CrossAxisAlignment.start,
                                                 children: [
-                                                  Text('Email', style: TextStyle(fontWeight:FontWeight.bold),),
-                                                  SizedBox(height: 5),
+                                                  const Text('Email', style: TextStyle(fontWeight:FontWeight.bold),),
+                                                  const SizedBox(height: 5),
                                                   TextFormField(
                                                     keyboardType: TextInputType
                                                         .emailAddress,
@@ -228,7 +228,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                                             fontSize: 12),
                                                         hintText:
                                                             "enter your email",
-                                                        counterStyle: TextStyle(
+                                                        counterStyle: const TextStyle(
                                                             height: double
                                                                 .minPositive),
                                                         labelStyle: TextStyle(
@@ -236,23 +236,23 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                                             fontFamily:
                                                                 'Raleway-SemiBold',
                                                             fontSize: 15.0),
-                                                        border: OutlineInputBorder(
+                                                        border: const OutlineInputBorder(
                                                             borderSide:
                                                                 BorderSide.none,
                                                             borderRadius:
                                                                 BorderRadius.all(
                                                                     Radius.circular(
                                                                         10.0))),
-                                                        enabledBorder: OutlineInputBorder(
+                                                        enabledBorder: const OutlineInputBorder(
                                                             borderSide:
                                                                 BorderSide.none,
                                                             borderRadius:
                                                                 BorderRadius.all(
                                                                     Radius.circular(10.0))),
-                                                        focusedBorder: OutlineInputBorder(borderSide: BorderSide.none, borderRadius: BorderRadius.all(Radius.circular(10.0))),
-                                                        errorBorder: OutlineInputBorder(borderSide: BorderSide.none, borderRadius: BorderRadius.all(Radius.circular(10.0))),
-                                                        contentPadding: EdgeInsets.all(10),
-                                                        prefixIcon: Icon(Icons.mail)),
+                                                        focusedBorder: const OutlineInputBorder(borderSide: BorderSide.none, borderRadius: BorderRadius.all(Radius.circular(10.0))),
+                                                        errorBorder: const OutlineInputBorder(borderSide: BorderSide.none, borderRadius: BorderRadius.all(Radius.circular(10.0))),
+                                                        contentPadding: const EdgeInsets.all(10),
+                                                        prefixIcon: const Icon(Icons.mail)),
                                                     validator: (value) {
                                                       if (value == null ||
                                                           value.isEmpty ||
@@ -267,7 +267,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                               ),
                                             ),
                                             Padding(
-                                              padding: EdgeInsets.only(
+                                              padding: const EdgeInsets.only(
                                                 left: 1,
                                                 top: 5,
                                               ),
@@ -275,8 +275,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                                 crossAxisAlignment:
                                                     CrossAxisAlignment.start,
                                                 children: [
-                                                  Text('Account Type', style: TextStyle(fontWeight:FontWeight.bold),),
-                                                  SizedBox(height: 5),
+                                                  const Text('Account Type', style: TextStyle(fontWeight:FontWeight.bold),),
+                                                  const SizedBox(height: 5),
                                                   GestureDetector(
                                                     onTap: () =>
                                                         _showUsertTypes(),
@@ -296,7 +296,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                                                 fontSize: 12),
                                                             hintText:
                                                                 "select your user type",
-                                                            counterStyle: TextStyle(
+                                                            counterStyle: const TextStyle(
                                                                 height: double
                                                                     .minPositive),
                                                             labelStyle: TextStyle(
@@ -304,7 +304,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                                                 fontFamily:
                                                                     'Raleway-SemiBold',
                                                                 fontSize: 15.0),
-                                                            border: OutlineInputBorder(
+                                                            border: const OutlineInputBorder(
                                                                 borderSide:
                                                                     BorderSide
                                                                         .none,
@@ -313,17 +313,17 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                                                         Radius.circular(
                                                                             10.0))),
                                                             disabledBorder:
-                                                                OutlineInputBorder(
+                                                                const OutlineInputBorder(
                                                                     borderSide:
                                                                         BorderSide
                                                                             .none,
                                                                     borderRadius:
                                                                         BorderRadius.all(Radius.circular(10.0))),
-                                                            focusedBorder: OutlineInputBorder(borderSide: BorderSide.none, borderRadius: BorderRadius.all(Radius.circular(10.0))),
-                                                            errorBorder: OutlineInputBorder(borderSide: BorderSide.none, borderRadius: BorderRadius.all(Radius.circular(10.0))),
-                                                            contentPadding: EdgeInsets.all(10),
-                                                            prefixIcon: Icon(Icons.person),
-                                                            suffixIcon: Icon(Icons.keyboard_arrow_down_outlined)),
+                                                            focusedBorder: const OutlineInputBorder(borderSide: BorderSide.none, borderRadius: BorderRadius.all(Radius.circular(10.0))),
+                                                            errorBorder: const OutlineInputBorder(borderSide: BorderSide.none, borderRadius: BorderRadius.all(Radius.circular(10.0))),
+                                                            contentPadding: const EdgeInsets.all(10),
+                                                            prefixIcon: const Icon(Icons.person),
+                                                            suffixIcon: const Icon(Icons.keyboard_arrow_down_outlined)),
                                                         validator: (value) {
                                                           if (value == null ||
                                                               value.isEmpty ||
@@ -341,7 +341,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                             ),
 
                                             Padding(
-                                              padding: EdgeInsets.only(
+                                              padding: const EdgeInsets.only(
                                                 right: 1,
                                                 left: 1,
                                                 top: 5,
@@ -350,8 +350,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                                 crossAxisAlignment:
                                                     CrossAxisAlignment.start,
                                                 children: [
-                                                  Text('Password', style: TextStyle(fontWeight:FontWeight.bold),),
-                                                  SizedBox(height: 5),
+                                                  const Text('Password', style: TextStyle(fontWeight:FontWeight.bold),),
+                                                  const SizedBox(height: 5),
                                                   TextFormField(
                                                     keyboardType:
                                                         TextInputType.text,
@@ -370,8 +370,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                                         hintText:
                                                             "enter your password",
                                                         contentPadding:
-                                                            EdgeInsets.all(10),
-                                                        counterStyle: TextStyle(
+                                                            const EdgeInsets.all(10),
+                                                        counterStyle: const TextStyle(
                                                             height: double
                                                                 .minPositive),
                                                         labelStyle: TextStyle(
@@ -379,7 +379,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                                             fontFamily:
                                                                 'Raleway-SemiBold',
                                                             fontSize: 15.0),
-                                                        border: OutlineInputBorder(
+                                                        border: const OutlineInputBorder(
                                                             borderSide:
                                                                 BorderSide.none,
                                                             borderRadius:
@@ -387,16 +387,16 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                                                     Radius.circular(
                                                                         10.0))),
                                                         disabledBorder:
-                                                            OutlineInputBorder(
+                                                            const OutlineInputBorder(
                                                                 borderSide:
                                                                     BorderSide
                                                                         .none,
                                                                 borderRadius:
                                                                     BorderRadius.all(
                                                                         Radius.circular(10.0))),
-                                                        focusedBorder: OutlineInputBorder(borderSide: BorderSide.none, borderRadius: BorderRadius.all(Radius.circular(10.0))),
-                                                        errorBorder: OutlineInputBorder(borderSide: BorderSide.none, borderRadius: BorderRadius.all(Radius.circular(10.0))),
-                                                        prefixIcon: Icon(
+                                                        focusedBorder: const OutlineInputBorder(borderSide: BorderSide.none, borderRadius: BorderRadius.all(Radius.circular(10.0))),
+                                                        errorBorder: const OutlineInputBorder(borderSide: BorderSide.none, borderRadius: BorderRadius.all(Radius.circular(10.0))),
+                                                        prefixIcon: const Icon(
                                                           Icons.lock,
                                                           size: 18,
                                                         ),
@@ -429,7 +429,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                               ),
                                             ),
                                             Padding(
-                                              padding: EdgeInsets.only(
+                                              padding: const EdgeInsets.only(
                                                 right: 1,
                                                 left: 1,
                                                 top: 5,
@@ -438,8 +438,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                                 crossAxisAlignment:
                                                     CrossAxisAlignment.start,
                                                 children: [
-                                                  Text('Confirm Password', style: TextStyle(fontWeight:FontWeight.bold),),
-                                                  SizedBox(height: 5),
+                                                  const Text('Confirm Password', style: TextStyle(fontWeight:FontWeight.bold),),
+                                                  const SizedBox(height: 5),
                                                   TextFormField(
                                                     keyboardType:
                                                         TextInputType.text,
@@ -456,8 +456,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                                         hintText:
                                                             "confirm your password",
                                                         contentPadding:
-                                                            EdgeInsets.all(10),
-                                                        counterStyle: TextStyle(
+                                                            const EdgeInsets.all(10),
+                                                        counterStyle: const TextStyle(
                                                             height: double
                                                                 .minPositive),
                                                         labelStyle: TextStyle(
@@ -465,7 +465,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                                             fontFamily:
                                                                 'Raleway-SemiBold',
                                                             fontSize: 15.0),
-                                                        border: OutlineInputBorder(
+                                                        border: const OutlineInputBorder(
                                                             borderSide:
                                                                 BorderSide.none,
                                                             borderRadius:
@@ -473,16 +473,16 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                                                     Radius.circular(
                                                                         10.0))),
                                                         disabledBorder:
-                                                            OutlineInputBorder(
+                                                            const OutlineInputBorder(
                                                                 borderSide:
                                                                     BorderSide
                                                                         .none,
                                                                 borderRadius:
                                                                     BorderRadius.all(
                                                                         Radius.circular(10.0))),
-                                                        focusedBorder: OutlineInputBorder(borderSide: BorderSide.none, borderRadius: BorderRadius.all(Radius.circular(10.0))),
-                                                        errorBorder: OutlineInputBorder(borderSide: BorderSide.none, borderRadius: BorderRadius.all(Radius.circular(10.0))),
-                                                        prefixIcon: Icon(
+                                                        focusedBorder: const OutlineInputBorder(borderSide: BorderSide.none, borderRadius: BorderRadius.all(Radius.circular(10.0))),
+                                                        errorBorder: const OutlineInputBorder(borderSide: BorderSide.none, borderRadius: BorderRadius.all(Radius.circular(10.0))),
+                                                        prefixIcon: const Icon(
                                                           Icons.lock,
                                                           size: 18,
                                                         ),
@@ -514,7 +514,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                               ),
                                             ),
                                             Padding(
-                                                padding: EdgeInsets.symmetric(
+                                                padding: const EdgeInsets.symmetric(
                                                     vertical: 40.0),
                                                 child: SizedBox(
                                                     height: 50.0,
@@ -548,7 +548,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                                   onTap: () {
                                                     Routes(context: context)
                                                         .navigate(
-                                                            LoginScreen());
+                                                            const LoginScreen());
                                                   },
                                                   child: Row(
                                                     crossAxisAlignment:
@@ -596,13 +596,13 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   void _showUsertTypes() {
     showModalBottomSheet(
         context: context,
-        shape: RoundedRectangleBorder(
+        shape: const RoundedRectangleBorder(
             borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(20), topRight: Radius.circular(20))),
         builder: (_) => Wrap(
               children: [
-                Padding(
-                  padding: const EdgeInsets.only(top: 10.0),
+                const Padding(
+                  padding: EdgeInsets.only(top: 10.0),
                   child: Align(
                     alignment: Alignment.topCenter,
                     child: Text(
@@ -613,12 +613,12 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                   ),
                 ),
                 ListView(
-                  padding: EdgeInsets.symmetric(vertical: 20, horizontal: 20),
+                  padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
                   shrinkWrap: true,
                   children: [
                     ListTile(
-                      leading: Icon(Icons.person),
-                      title: Text('Patient'),
+                      leading: const Icon(Icons.person),
+                      title: const Text('Patient'),
                       onTap: () {
                         setState(() {
                           selectedType = 'Patient';
@@ -633,8 +633,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                         });
                         Navigator.pop(context);
                       },
-                      leading: Icon(Icons.people),
-                      title: Text('Medical Practitioner'),
+                      leading: const Icon(Icons.people),
+                      title: const Text('Medical Practitioner'),
                     )
                   ],
                 )

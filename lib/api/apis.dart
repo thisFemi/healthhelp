@@ -114,7 +114,7 @@ Future<void> registerChannel()async{
           headers: {
             HttpHeaders.contentTypeHeader: 'application/json',
             HttpHeaders.authorizationHeader:
-            'key= PUT YOUR SERVER KEY'
+            'PUT YOUR FIREBASE SERVER KEY HERE'
           });
       print(response.statusCode);
       print(response.body);

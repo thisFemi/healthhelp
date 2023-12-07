@@ -315,16 +315,16 @@ List<ToDoItem> _todo=[
                                 CupertinoIcons.chat_bubble_2,
                               ];
                               final List<String> titles = [
-                                'Home Visit from doctor',
+                                'Health Tips',
                                 'Setup An Appointment',
                                 'General Checkup',
                                 'Instant Messaging',
                               ];
                               final List<String> descs = [
-                                'Home Visit from doctor',
-                                'Setup An Appointment',
-                                'General Checkup',
-                                'Instant Messaging',
+                                'Common health tips',
+                                'Setup an appointment',
+                                'General checkup',
+                                'Instant messaging',
                               ];
                               final List<Color> bGcolors = [
                                 Colors.blue.shade50,
@@ -344,11 +344,11 @@ List<ToDoItem> _todo=[
                                       context,
                                       MaterialPageRoute(
                                           builder: (_) => ComingSoon(
-                                            label: 'Home Visit',
+                                            label: 'Health Tips',
                                           )));
                                 },
                                 () {
-                                  print('hi');
+                            
                                   Navigator.push(
                                       context,
                                       MaterialPageRoute(
