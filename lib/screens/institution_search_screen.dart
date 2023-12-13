@@ -44,7 +44,7 @@ setState(() {
 
   @override
   Widget build(BuildContext context) {
-    print(_filteredInstitutions.length);
+    _filteredInstitutions.sort((a, b) => a.name.compareTo(b.name));
  
     return Scaffold(
       appBar: AppBar(

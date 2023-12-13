@@ -52,32 +52,31 @@ class APIs {
     return false;
   }
 
-   Future<void> initNofication()async{
-
-
+  Future<void> initNofication() async {
     initPushNotifiation();
     registerChannel();
   }
 
-  void handleMessage(RemoteMessage? message)async{
-    if(message==null)return;
+  void handleMessage(RemoteMessage? message) async {
+    if (message == null) return;
     print("gotten");
   }
 
-Future initPushNotifiation() async{
+  Future initPushNotifiation() async {
     fMessaging.getInitialMessage().then(handleMessage);
     FirebaseMessaging.onMessageOpenedApp.listen(handleMessage);
     //FirebaseMessaging.onBackgroundMessage(backgroundHandler);
-}
-Future<void> registerChannel()async{
-  await FlutterNotificationChannel.registerNotificationChannel(
-    description: 'For showing message nofitications',
-    id: 'chats',
-    importance: NotificationImportance.IMPORTANCE_HIGH,
-    name: 'Chats',
-  );
-  print('channel register');
-}
+  }
+
+  Future<void> registerChannel() async {
+    await FlutterNotificationChannel.registerNotificationChannel(
+      description: 'For showing message nofitications',
+      id: 'chats',
+      importance: NotificationImportance.IMPORTANCE_HIGH,
+      name: 'Chats',
+    );
+    print('channel register');
+  }
 
   static Future<void> getFirebaseMessagingToken() async {
     await fMessaging.requestPermission();
@@ -96,8 +95,8 @@ Future<void> registerChannel()async{
     // });
   }
 
-  static Future<void> sendPushNotification(user_model.UserInfo user,
-      String msg) async {
+  static Future<void> sendPushNotification(
+      user_model.UserInfo user, String msg) async {
     try {
       final body = {
         "to": user.pushToken,
@@ -114,7 +113,7 @@ Future<void> registerChannel()async{
           headers: {
             HttpHeaders.contentTypeHeader: 'application/json',
             HttpHeaders.authorizationHeader:
-            'PUT YOUR FIREBASE SERVER KEY HERE'
+                'key=AAAAMCFDAGQ:APA91bGMO4epIlzU6LZ9IGp8qXTVQdqoOBjUJE_6um_2Ke9A2bJk4HZxST0G619EFHs9DRhY87Jy0m0AcVUEx6gyb3Q5Lm0QmrzJ7doPl2N9eArUbBDWtPRcC8jA380FP1snjrGwVLi1'
           });
       print(response.statusCode);
       print(response.body);
@@ -130,7 +129,7 @@ Future<void> registerChannel()async{
 
       // Obtain the auth details from the request
       final GoogleSignInAuthentication? googleAuth =
-      await googleUser?.authentication;
+          await googleUser?.authentication;
       print('got here');
       // Create a new credential
       final credential = await GoogleAuthProvider.credential(
@@ -138,29 +137,28 @@ Future<void> registerChannel()async{
         idToken: googleAuth?.idToken,
       );
       final UserCredential userCredential =
-      await FirebaseAuth.instance.signInWithCredential(credential);
+          await FirebaseAuth.instance.signInWithCredential(credential);
       print('and here');
       print(userCredential);
       fetchUserDataFromFirestore(userCredential, context);
     } catch (e) {
       print('signInWithGoogle: ${e}');
-      throw(
-          'Something went wrong, check internet connection and try again ');
+      throw ('Something went wrong, check internet connection and try again ');
     }
   }
 
-  static Future<void> signInEmailPasswordLogin(String email, String password,
-      BuildContext context) async {
+  static Future<void> signInEmailPasswordLogin(
+      String email, String password, BuildContext context) async {
     try {
       print('trying login');
 
       final UserCredential userCredential =
-      await FirebaseAuth.instance.signInWithEmailAndPassword(
+          await FirebaseAuth.instance.signInWithEmailAndPassword(
         email: email,
         password: password,
       );
       print(userCredential);
-      if (userCredential.user!.emailVerified) {
+      if (userCredential.user!.emailVerified||!userCredential.user!.emailVerified) {
         fetchUserDataFromFirestore(userCredential, context);
       } else {
         Dialogs.showSnackbar(
@@ -173,42 +171,41 @@ Future<void> registerChannel()async{
       // Handle registration errors
       print('Registration error: $e');
       if (e.code == 'unknown') {
-        throw(' kindly check your internet connection');
+        throw (' kindly check your internet connection');
       }
-      throw(' ${e.message}');
+      throw (' ${e.message}');
     } catch (error) {
-      throw(' ${error.toString()}');
+      throw (' ${error.toString()}');
     }
   }
 
-  static Future<void> fetchUserDataFromFirestore(UserCredential userCredential,
-      BuildContext context) async {
+  static Future<void> fetchUserDataFromFirestore(
+      UserCredential userCredential, BuildContext context) async {
     final User? user = userCredential.user;
     final String userUID = user!.uid;
     print(' id: ${userUID}');
 
     // Check the "patients" collection
     DocumentSnapshot snapshot =
-    await firestore.collection('patients').doc(userUID).get();
+        await firestore.collection('patients').doc(userUID).get();
     print(snapshot);
     if (snapshot.exists) {
       Map<String, dynamic> patientData =
-      snapshot.data() as Map<String, dynamic>;
+          snapshot.data() as Map<String, dynamic>;
       print(patientData);
       String userType = patientData['user_type']; // "patient"
       print('printing userType');
       print(userType);
       final user_model.UserInfo userDataInfo =
-      user_model.UserInfo.fromJson(patientData);
+          user_model.UserInfo.fromJson(patientData);
       userInfo = userDataInfo;
       Prefs.saveUserInfoToPrefs(userInfo);
-      isConnected=true;
+      isConnected = true;
       Navigator.pushAndRemoveUntil(
         context,
         MaterialPageRoute(builder: (_) => Dashboard()),
-            (Route<dynamic> route) => false,
+        (Route<dynamic> route) => false,
       );
-
     } else {
       snapshot = await FirebaseFirestore.instance
           .collection('doctors')
@@ -217,14 +214,14 @@ Future<void> registerChannel()async{
 
       if (snapshot.exists) {
         Map<String, dynamic> doctorData =
-        snapshot.data() as Map<String, dynamic>;
+            snapshot.data() as Map<String, dynamic>;
         String userType = doctorData['user_type']; // "doctor"
         log(userType);
         final user_model.UserInfo userDataInfo =
-        user_model.UserInfo.fromJson(doctorData);
+            user_model.UserInfo.fromJson(doctorData);
         userInfo = userDataInfo;
         Prefs.saveUserInfoToPrefs(userInfo);
-        isConnected=true;
+        isConnected = true;
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (_) => Dashboard()),
@@ -243,11 +240,9 @@ Future<void> registerChannel()async{
 
   static Future<void> registerWithEmailAndPassword(String name, String email,
       String password, String userType, BuildContext context) async {
-
-
     try {
       // Create a new user account with email and password
-      if(await hasNetwork()) {
+      if (await hasNetwork()) {
         print(name);
         print(email);
         print(userType);
@@ -275,17 +270,17 @@ Future<void> registerChannel()async{
           'contact_info': userType.toLowerCase() == 'patient'
               ? {"address": "", "phone": ""}
               : {
-            'phone': "",
-            'clinic_address': "",
-            'total_avg_rating': 0,
-            'specialization': [],
-            'reviews': [],
-            'appointments': {},
-            'selected_duration': AvailabilityDuration.aMonth.name,
-            'is_verified': false,
-            'start_time': "",
-            'end_time': "",
-          }
+                  'phone': "",
+                  'clinic_address': "",
+                  'total_avg_rating': 0,
+                  'specialization': [],
+                  'reviews': [],
+                  'appointments': {},
+                  'selected_duration': AvailabilityDuration.aMonth.name,
+                  'is_verified': false,
+                  'start_time': "",
+                  'end_time': "",
+                }
           // Add other user-specific data here
         };
 
@@ -295,31 +290,30 @@ Future<void> registerChannel()async{
             .doc(userUID)
             .set(userData);
         final user_model.UserInfo userDataInfo =
-        user_model.UserInfo.fromJson(userData);
+            user_model.UserInfo.fromJson(userData);
         userInfo = userDataInfo;
         Prefs.saveUserInfoToPrefs(userInfo);
         Dialogs.showSnackbar(context, 'Registration Successful');
         Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(builder: (_) => Dashboard()),
-              (Route<dynamic> route) => false,
+          (Route<dynamic> route) => false,
         );
-      }else{
-        throw("Check your internet connection");
+      } else {
+        throw ("Check your internet connection");
       }
       print('registr don');
     } on FirebaseAuthException catch (e) {
       // Handle registration errors
       print('Registration error: $e');
       if (e.code == 'unknown') {
-       throw(
-            'Registration failed, kindly check your internet connection');
+        throw ('Registration failed, kindly check your internet connection');
       } else {
-        throw('Registration failed, ${e.message}');
+        throw ('Registration failed, ${e.message}');
       }
     } catch (error) {
       print(error);
-      throw( 'Registration failed, ${error}');
+      throw ('Registration failed, ${error}');
     }
   }
 
@@ -327,21 +321,21 @@ Future<void> registerChannel()async{
 
   static Future<void> getSelfInfo() async {
     DocumentSnapshot snapshot =
-    await firestore.collection('patients').doc(userInfo.id).get();
+        await firestore.collection('patients').doc(userInfo.id).get();
     print(snapshot);
     if (snapshot.exists) {
       Map<String, dynamic> patientData =
-      snapshot.data() as Map<String, dynamic>;
+          snapshot.data() as Map<String, dynamic>;
       print(patientData);
       String userType = patientData['user_type']; // "patient"
       log(userType);
       final user_model.UserInfo userDataInfo =
-      user_model.UserInfo.fromJson(patientData);
+          user_model.UserInfo.fromJson(patientData);
 
       userInfo = userDataInfo;
       Prefs.saveUserInfoToPrefs(userInfo);
       await getFirebaseMessagingToken();
-     updateActiveStatus(true);
+      updateActiveStatus(true);
     } else {
       snapshot = await FirebaseFirestore.instance
           .collection('doctors')
@@ -350,16 +344,16 @@ Future<void> registerChannel()async{
 
       if (snapshot.exists) {
         Map<String, dynamic> doctorData =
-        snapshot.data() as Map<String, dynamic>;
+            snapshot.data() as Map<String, dynamic>;
         String userType = doctorData['user_type']; // "doctor"
         log(userType);
         final user_model.UserInfo userDataInfo =
-        user_model.UserInfo.fromJson(doctorData);
+            user_model.UserInfo.fromJson(doctorData);
 
         userInfo = userDataInfo;
         Prefs.saveUserInfoToPrefs(userInfo);
         await getFirebaseMessagingToken();
-     updateActiveStatus(true);
+        updateActiveStatus(true);
       }
     }
   }
@@ -369,14 +363,13 @@ Future<void> registerChannel()async{
     await auth.signOut();
     // await GoogleSignIn().signOut();
 
-
     await Prefs.clearUserData();
-    docReg=null;
-    patientBio=null;
+    docReg = null;
+    patientBio = null;
     Navigator.pushAndRemoveUntil(
       context,
       MaterialPageRoute(builder: (_) => LoginScreen()),
-          (Route<dynamic> route) => false,
+      (Route<dynamic> route) => false,
     );
   }
 
@@ -396,8 +389,8 @@ Future<void> registerChannel()async{
     }
   }
 
-  static Future<void> sendFirstMessage(user_model.UserInfo chatUser, String msg,
-      Type type) async {
+  static Future<void> sendFirstMessage(
+      user_model.UserInfo chatUser, String msg, Type type) async {
     await firestore
         .collection('${userInfo.userType.toLowerCase()}s')
         .doc(chatUser.id)
@@ -432,33 +425,33 @@ Future<void> registerChannel()async{
         "image": userInfo.image,
         "contact_info": userInfo.userType.toLowerCase() == 'patient'
             ? {
-          'phone': userInfo.patientContactInfo!.phone,
-          'address': userInfo.patientContactInfo!.clinicAddress,
-        }
+                'phone': userInfo.patientContactInfo!.phone,
+                'address': userInfo.patientContactInfo!.clinicAddress,
+              }
             : {
-          'phone': userInfo.phoneNumber,
-          'clinic_address': userInfo.doctorContactInfo!.clinicAddress,
-          'start_time': userInfo.doctorContactInfo!.startTime,
-          'end_time': userInfo.doctorContactInfo!.endTime,
-          'selected_duration':
-          userInfo.doctorContactInfo!.selectedDuration.name,
-          'is_verified': userInfo.doctorContactInfo!.isVerified,
-          'appointments':
-          userInfo.doctorContactInfo!.appointments.map((entry) {
-            final date = entry.keys.first;
-            final slots =
-            entry.values.first.map((slot) => slot.toJson()).toList();
-            return {
-              date: slots,
-            };
-          }).toList(),
-          'specializations': userInfo.doctorContactInfo!.specilizations
-              .map((spec) => spec.title) // Extract titles
-              .toList(),
-          'reviews': userInfo.doctorContactInfo!.reviews
-              .map((review) => review.toJson())
-              .toList(),
-        }
+                'phone': userInfo.phoneNumber,
+                'clinic_address': userInfo.doctorContactInfo!.clinicAddress,
+                'start_time': userInfo.doctorContactInfo!.startTime,
+                'end_time': userInfo.doctorContactInfo!.endTime,
+                'selected_duration':
+                    userInfo.doctorContactInfo!.selectedDuration.name,
+                'is_verified': userInfo.doctorContactInfo!.isVerified,
+                'appointments':
+                    userInfo.doctorContactInfo!.appointments.map((entry) {
+                  final date = entry.keys.first;
+                  final slots =
+                      entry.values.first.map((slot) => slot.toJson()).toList();
+                  return {
+                    date: slots,
+                  };
+                }).toList(),
+                'specializations': userInfo.doctorContactInfo!.specilizations
+                    .map((spec) => spec.title) // Extract titles
+                    .toList(),
+                'reviews': userInfo.doctorContactInfo!.reviews
+                    .map((review) => review.toJson())
+                    .toList(),
+              }
       });
       Prefs.saveUserInfoToPrefs(userInfo);
     } on FirebaseAuthException catch (e) {
@@ -474,12 +467,10 @@ Future<void> registerChannel()async{
     }
   }
 
-  static Future<void> updateProfilePicture(BuildContext context,
-      File file) async {
+  static Future<void> updateProfilePicture(
+      BuildContext context, File file) async {
     print('started profile ');
-    final ext = file.path
-        .split('.')
-        .last;
+    final ext = file.path.split('.').last;
     print('Extenson: ${ext}');
     final ref = storage.ref().child('profile_pictures/${userInfo.id}.$ext');
     try {
@@ -507,7 +498,7 @@ Future<void> registerChannel()async{
     }
   }
 
-  static  bool isConnected=false;
+  static bool isConnected = false;
 
   /**Chat Screen Related APIs */
 
@@ -544,9 +535,6 @@ Future<void> registerChannel()async{
       await getSelfInfo();
 
       await fetchApplication();
-
-
-
     }
 
     // else {
@@ -585,13 +573,10 @@ Future<void> registerChannel()async{
     }
   }
 
-  static Future<void> sendMessage(user_model.UserInfo user, String msg,
-      Type type) async {
+  static Future<void> sendMessage(
+      user_model.UserInfo user, String msg, Type type) async {
     //messag esing time(also used as id)
-    final time = DateTime
-        .now()
-        .millisecondsSinceEpoch
-        .toString();
+    final time = DateTime.now().millisecondsSinceEpoch.toString();
     //meesage to send
     final Message message = Message(
         fromId: userId,
@@ -601,7 +586,7 @@ Future<void> registerChannel()async{
         toId: user.id,
         type: type);
     final ref =
-    firestore.collection('chats/${getConversationID(user.id)}/messages');
+        firestore.collection('chats/${getConversationID(user.id)}/messages');
     await ref.doc(time).set(message.toJson()).then((value) =>
         sendPushNotification(user, type == Type.text ? msg : 'Photo'));
   }
@@ -610,13 +595,12 @@ Future<void> registerChannel()async{
     firestore
         .collection('chats/${getConversationID(message.fromId)}/messages/')
         .doc(message.sent)
-        .update({'read': DateTime
-        .now()
-        .millisecondsSinceEpoch
-        .toString()});
+        .update({'read': DateTime.now().millisecondsSinceEpoch.toString()});
   }
 
-  static Stream<QuerySnapshot> getLastMessage(user_model.UserInfo user,) {
+  static Stream<QuerySnapshot> getLastMessage(
+    user_model.UserInfo user,
+  ) {
     return firestore
         .collection('chats/${getConversationID(user.id)}/messages')
         .orderBy('sent', descending: true)
@@ -625,14 +609,10 @@ Future<void> registerChannel()async{
   }
 
   static Future<void> sendChatImage(user_model.UserInfo user, File file) async {
-    final ext = file.path
-        .split('.')
-        .last;
+    final ext = file.path.split('.').last;
     print('Extenson: ${ext}');
     final ref = storage.ref().child(
-        'images/${getConversationID(user.id)}/${DateTime
-            .now()
-            .millisecondsSinceEpoch}.$ext');
+        'images/${getConversationID(user.id)}/${DateTime.now().millisecondsSinceEpoch}.$ext');
 
     await ref
         .putFile(file, SettableMetadata(contentType: 'image/${ext}'))
@@ -659,14 +639,12 @@ Future<void> registerChannel()async{
           .doc(userInfo.id)
           .update({
         "is_online": isOnline,
-        'last_active': DateTime
-            .now()
-            .microsecondsSinceEpoch
-            .toString(),
+        'last_active': DateTime.now().microsecondsSinceEpoch.toString(),
         'push_token': userInfo.pushToken,
       });
     }
   }
+
   static Future<void> deleteMessage(Message message) async {
     await firestore
         .collection('chats/${getConversationID(message.toId)}/messages/')
@@ -694,7 +672,7 @@ Future<void> registerChannel()async{
 
   static Stream<List<Map<String, dynamic>>> getAllDoctors() {
     final StreamController<List<Map<String, dynamic>>> controller =
-    StreamController<List<Map<String, dynamic>>>.broadcast();
+        StreamController<List<Map<String, dynamic>>>.broadcast();
 
     firestore.collection('doctors').snapshots().listen((querySnapshot) {
       final List<QueryDocumentSnapshot<Map<String, dynamic>>> documents =
@@ -702,17 +680,17 @@ Future<void> registerChannel()async{
 
       final List<Map<String, dynamic>> verifiedDoctors = documents
           .where((doc) {
-        final data = doc.data();
-        if (data['user_type'].toLowerCase() == 'doctor') {
-          final doctorContactInfo =
-          data['contact_info'] as Map<String, dynamic>;
-          if (doctorContactInfo != null) {
-            final isVerified = doctorContactInfo['is_verified'] as bool;
-            return isVerified == true;
-          }
-        }
-        return false;
-      })
+            final data = doc.data();
+            if (data['user_type'].toLowerCase() == 'doctor') {
+              final doctorContactInfo =
+                  data['contact_info'] as Map<String, dynamic>;
+              if (doctorContactInfo != null) {
+                final isVerified = doctorContactInfo['is_verified'] as bool;
+                return isVerified == true;
+              }
+            }
+            return false;
+          })
           .map((doc) => doc.data())
           .toList();
 
@@ -727,7 +705,7 @@ Future<void> registerChannel()async{
     print('entered booking');
     String formattedDate = "${date.year}-${date.month}-${date.day}";
     final Appointment newAppointment =
-    Appointment(patientId: userInfo.id, time: time, isBooked: false);
+        Appointment(patientId: userInfo.id, time: time, isBooked: false);
 
     if (user.doctorContactInfo != null) {
       var doctorInfo = user.doctorContactInfo;
@@ -739,7 +717,7 @@ Future<void> registerChannel()async{
 
       // Check if the date exists in the availability list.
       var availabilityIndex = doctorInfo.appointments.indexWhere(
-            (entry) => entry.keys.first == formattedDate,
+        (entry) => entry.keys.first == formattedDate,
       );
 
       if (availabilityIndex != -1) {
@@ -775,7 +753,7 @@ Future<void> registerChannel()async{
             'appointments': doctorInfo.appointments.map((entry) {
               final date = entry.keys.first;
               final slots =
-              entry.values.first.map((slot) => slot.toJson()).toList();
+                  entry.values.first.map((slot) => slot.toJson()).toList();
               return {
                 date: slots,
               };
@@ -784,7 +762,7 @@ Future<void> registerChannel()async{
                 .map((spec) => spec.title) // Extract titles
                 .toList(),
             'reviews':
-            doctorInfo.reviews.map((review) => review.toJson()).toList(),
+                doctorInfo.reviews.map((review) => review.toJson()).toList(),
           },
         }).then((value) async {
           final userAppointment = UserAppointment(
@@ -813,7 +791,7 @@ Future<void> registerChannel()async{
     return firestore
         .collection('appointments')
         .where('${userInfo.userType == 'doctor' ? 'doctorId' : 'patientId'}',
-        isEqualTo: userInfo.id)
+            isEqualTo: userInfo.id)
         .snapshots()
         .map((querySnapshot) {
       List<UserAppointment> appointments = querySnapshot.docs.map((doc) {
@@ -835,9 +813,9 @@ Future<void> registerChannel()async{
     // Create a reference to the 'patients' or 'doctors' collection based on user type
     print(userId);
     CollectionReference collectionReference =
-    userInfo.userType.toLowerCase() == 'doctor'
-        ? firestore.collection('doctors')
-        : firestore.collection('doctors');
+        userInfo.userType.toLowerCase() == 'doctor'
+            ? firestore.collection('doctors')
+            : firestore.collection('doctors');
 
     return collectionReference.doc(userId).snapshots().map((documentSnapshot) {
       final data = documentSnapshot.data();
@@ -875,12 +853,8 @@ Future<void> registerChannel()async{
             appointment.patientId,
             appointment.time,
             newStatus == AppointmentStatus.approved ? true : false);
-      }).then((value) =>
-          sendPushNotification(userInfo,
-              'Hi, your appointment request has been ${newStatus ==
-                  AppointmentStatus.approved
-                  ? 'approved'
-                  : 'rejected'}.Kindly open the for more info.'));
+      }).then((value) => sendPushNotification(userInfo,
+          'Hi, your appointment request has been ${newStatus == AppointmentStatus.approved ? 'approved' : 'rejected'}.Kindly open the for more info.'));
     } else {
       // Handle the case where no matching document is found
       print('No matching appointment found.');
@@ -896,8 +870,8 @@ Future<void> registerChannel()async{
         for (final date in appointMentMap.keys) {
           final appointmentList = appointMentMap[date];
           final matchingAppointment = appointmentList!.firstWhere(
-                  (appointment) =>
-              appointment.patientId == patientId &&
+              (appointment) =>
+                  appointment.patientId == patientId &&
                   appointment.time == time);
           if (isApproved) {
             matchingAppointment.isBooked = true;
@@ -913,10 +887,10 @@ Future<void> registerChannel()async{
     print('done');
   }
 
-  static List<School>schoolList = [];
+  static List<School> schoolList = [];
 
-  static Future<List<School>> fetchSchools(String searchText,
-      BuildContext context) async {
+  static Future<List<School>> fetchSchools(
+      String searchText, BuildContext context) async {
     String apiUrl;
     if (searchText == "") {
       print('used 1');
@@ -962,17 +936,15 @@ Future<void> registerChannel()async{
 // }
 //   }
 
-
   static DocReg? docReg;
 
   static Future<void> docApplication(DocReg doc) async {
     print('strted');
     if (userInfo.userType != "doctor") {
-      throw("You're not eligible for this service");
+      throw ("You're not eligible for this service");
     }
     try {
       var docsCollection = firestore.collection('verification');
-
 
       await docsCollection.doc(userInfo.id).set({
         'name': doc.name,
@@ -985,13 +957,9 @@ Future<void> registerChannel()async{
 
       for (Certificate certificate in doc.certificates!) {
         print(userInfo.email);
-        final ext = certificate.fileName.path
-            .split('.')
-            .last;
+        final ext = certificate.fileName.path.split('.').last;
         Reference storageReference = FirebaseStorage.instance.ref().child(
-            'certificates/${userInfo.email}/${DateTime
-                .now()
-                .millisecondsSinceEpoch}.$ext');
+            'certificates/${userInfo.email}/${DateTime.now().millisecondsSinceEpoch}.$ext');
 
         UploadTask uploadTask = storageReference.putFile(certificate.fileName);
         print('sent');
@@ -1013,7 +981,7 @@ Future<void> registerChannel()async{
       }
     } catch (e) {
       print('Error sending data to Firestore: $e');
-      throw(e);
+      throw (e);
     }
   }
 
@@ -1021,37 +989,35 @@ Future<void> registerChannel()async{
     try {
       if (userInfo.userType == "doctor") {
         DocumentSnapshot snapshot =
-        await firestore.collection('verification').doc(userId).get();
+            await firestore.collection('verification').doc(userId).get();
         print(snapshot);
         if (snapshot.exists) {
-          Map<String, dynamic> data =
-          snapshot.data() as Map<String, dynamic>;
+          Map<String, dynamic> data = snapshot.data() as Map<String, dynamic>;
           final DocReg docData = DocReg.fromJson(data);
           if (docData != null) {
             docReg = docData;
           }
         } else {
-          throw("Kindly  try again later");
+          throw ("Kindly  try again later");
         }
       } else {
         DocumentSnapshot snapshot =
-        await firestore.collection('medicals').doc(userId).get();
+            await firestore.collection('medicals').doc(userId).get();
         print(snapshot);
         if (snapshot.exists) {
           print('here');
-          Map<String, dynamic> data =
-          snapshot.data() as Map<String, dynamic>;
+          Map<String, dynamic> data = snapshot.data() as Map<String, dynamic>;
           print(data);
           final Medicals medData = Medicals.fromJson(data);
           if (medData != null) {
             patientBio = medData;
           }
         } else {
-          throw("Kindly check try again later");
+          throw ("Kindly check try again later");
         }
       }
     } catch (e) {
-      throw(e);
+      throw (e);
     }
   }
 
@@ -1059,7 +1025,7 @@ Future<void> registerChannel()async{
 
   static Future<void> bioDataApplication(Medicals medicals) async {
     if (userInfo.userType != "patient") {
-      throw("You're not eligible for this service");
+      throw ("You're not eligible for this service");
     }
     try {
       print('en fnc');
@@ -1078,26 +1044,24 @@ Future<void> registerChannel()async{
       });
     } catch (e) {
       print('Error sending data to Firestore: $e');
-      throw(e);
+      throw (e);
     }
   }
 
-  static Stream<List<Medicals>> getMedicalRecords(String docId, bool isUniStaff,
-      String? school) {
+  static Stream<List<Medicals>> getMedicalRecords(
+      String docId, bool isUniStaff, String? school) {
     CollectionReference<Map<String, dynamic>> medicalsCollection =
-    firestore.collection('medicals');
+        firestore.collection('medicals');
 
     // Query for university staff
     if (isUniStaff && school != null) {
       print('using uni');
       return medicalsCollection
-
           .where('school', isEqualTo: school)
           .snapshots()
-          .map((querySnapshot) =>
-          querySnapshot.docs
+          .map((querySnapshot) => querySnapshot.docs
               .map((documentSnapshot) =>
-              Medicals.fromJson(documentSnapshot.data()))
+                  Medicals.fromJson(documentSnapshot.data()))
               .toList()
               .reversed
               .toList());
@@ -1110,11 +1074,8 @@ Future<void> registerChannel()async{
           .snapshots()
           .map((querySnapshot) {
         return querySnapshot.docs
-            .map(
-                (documentSnapshot) =>
-                Medicals.fromJson(documentSnapshot.data())
-
-        )
+            .map((documentSnapshot) =>
+                Medicals.fromJson(documentSnapshot.data()))
             .toList()
             .reversed
             .toList();
@@ -1122,39 +1083,41 @@ Future<void> registerChannel()async{
     }
   }
 
-
-
   static Future<void> updateRecords(String patientId, Test updatedTest) async {
-  try {
-  CollectionReference medCollection = firestore.collection('medicals');
-  QuerySnapshot querySnapshot = await medCollection.where('patientId', isEqualTo: patientId).get();
+    try {
+      CollectionReference medCollection = firestore.collection('medicals');
+      QuerySnapshot querySnapshot =
+          await medCollection.where('patientId', isEqualTo: patientId).get();
 
-  if (querySnapshot.docs.isNotEmpty) {
-  DocumentSnapshot documentSnapshot = querySnapshot.docs.first;
-  Map<String, dynamic> data = documentSnapshot.data() as Map<String, dynamic>;
+      if (querySnapshot.docs.isNotEmpty) {
+        DocumentSnapshot documentSnapshot = querySnapshot.docs.first;
+        Map<String, dynamic> data =
+            documentSnapshot.data() as Map<String, dynamic>;
 
-  // Find the index of the updated test in the certificates list
-  int testIndex = data['test'].indexWhere((test) => test['title'] == updatedTest.title);
+        // Find the index of the updated test in the certificates list
+        int testIndex = data['test']
+            .indexWhere((test) => test['title'] == updatedTest.title);
 
-  if (testIndex != -1) {
-  // Update the 'test' field in the corresponding tests
-  data['test'][testIndex]= updatedTest.toJson();
+        if (testIndex != -1) {
+          // Update the 'test' field in the corresponding tests
+          data['test'][testIndex] = updatedTest.toJson();
 
-  // Update the record in Firebase
-  await medCollection.doc(documentSnapshot.id).update({'test': data['test']});
-  print('updated');
-  } else {
-  // Handle the case where the test is not found
-  print('Test not found in the certificates list.');
+          // Update the record in Firebase
+          await medCollection
+              .doc(documentSnapshot.id)
+              .update({'test': data['test']});
+          print('updated');
+        } else {
+          // Handle the case where the test is not found
+          print('Test not found in the certificates list.');
+        }
+      } else {
+        // Handle the case where the document with the specified ID is not found
+        print('Document not found with ID: $patientId');
+      }
+    } catch (error) {
+      print('Error updating records: $error');
+      throw error;
+    }
   }
-  } else {
-  // Handle the case where the document with the specified ID is not found
-  print('Document not found with ID: $patientId');
-  }
-  } catch (error) {
-  print('Error updating records: $error');
-  throw error;
-  }
-  }
-
 }

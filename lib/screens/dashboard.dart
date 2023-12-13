@@ -60,6 +60,7 @@ class _DashboardState extends State<Dashboard> {
         ),
       ),
       bottomNavigationBar: BottomNavigationBar(
+        
         selectedItemColor: color3,
         unselectedItemColor: color8,
 

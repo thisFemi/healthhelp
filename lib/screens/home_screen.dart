@@ -255,7 +255,7 @@ List<ToDoItem> _todo=[
                               final List<String> titles = [
                                 'Medical Records',
                                 'Instant Messaging',
-                                'General Checkup',
+                                'Health Screening',
                                 'Instant Messaging',
                               ];
                               final List<String> descs = [
@@ -317,7 +317,7 @@ List<ToDoItem> _todo=[
                               final List<String> titles = [
                                 'Health Tips',
                                 'Setup An Appointment',
-                                'General Checkup',
+                                'Health Screening',
                                 'Instant Messaging',
                               ];
                               final List<String> descs = [
@@ -377,28 +377,28 @@ List<ToDoItem> _todo=[
                                   onTap: functions[index]);
                             },
                           ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 20.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            'My Appointments',
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 18),
-                          ),
-                          GestureDetector(
-                            onTap: () {},
-                            child: Text(
-                              'See All',
-                              style: TextStyle(
-                                  color: Colors.blue,
-                                  fontWeight: FontWeight.w600),
-                            ),
-                          )
-                        ],
-                      ),
-                    ),
+                    // Padding(
+                    //   padding: const EdgeInsets.symmetric(vertical: 20.0),
+                    //   child: Row(
+                    //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    //     children: [
+                    //       Text(
+                    //         'My Appointments',
+                    //         style: TextStyle(
+                    //             fontWeight: FontWeight.bold, fontSize: 18),
+                    //       ),
+                    //       GestureDetector(
+                    //         onTap: () {},
+                    //         child: Text(
+                    //           'See All',
+                    //           style: TextStyle(
+                    //               color: Colors.blue,
+                    //               fontWeight: FontWeight.w600),
+                    //         ),
+                    //       )
+                    //     ],
+                    //   ),
+                    // ),
 
                     _todo.isNotEmpty?  Text(
                             'To Do',

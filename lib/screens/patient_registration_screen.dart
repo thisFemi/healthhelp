@@ -76,6 +76,7 @@ class _PatientRegistrationScreenState extends State<PatientRegistrationScreen> {
 
   @override
   Widget build(BuildContext context) {
+
     _usertType.text = selectedType;
 
     return Scaffold(
@@ -718,11 +719,10 @@ class _PatientRegistrationScreenState extends State<PatientRegistrationScreen> {
                     ListTile(
                       title: const Text('Yes'),
                       onTap: () {
-                          medTest.clear();
-                          medTest.addAll(studentDefinedTest);
+                        medTest.clear();
+                        medTest.addAll(studentDefinedTest);
                         setState(() {
                           selectedType = 'Yes';
-                        
                         });
                         Navigator.pop(context);
                       },
