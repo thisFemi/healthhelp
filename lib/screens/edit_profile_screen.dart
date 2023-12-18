@@ -80,13 +80,18 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     if (!_keyForm.currentState!.validate()) {
       return;
     }
-    if (userSpecilizations.isEmpty) {
-      Dialogs.showSnackbar(context, 'You need to pick a specilization');
-      return;
-    }
-    if (selectedTo == null || selectedFrom == null || selectedPeriod == null) {
-      Dialogs.showSnackbar(context, 'You need to set your availability period');
-      return;
+    if (widget.userInfo.userType.toLowerCase() == "doctor") {
+      if (userSpecilizations.isEmpty) {
+        Dialogs.showSnackbar(context, 'You need to pick a specilization');
+        return;
+      }
+      if (selectedTo == null ||
+          selectedFrom == null ||
+          selectedPeriod == null) {
+        Dialogs.showSnackbar(
+            context, 'You need to set your availability period');
+        return;
+      }
     }
     Dialogs.showProgressBar(context);
     _keyForm.currentState!.save();
@@ -144,8 +149,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 onPressed: () {
                   Navigator.pop(context);
                 },
-                icon: Icon(CupertinoIcons.back)),
-            title: Text(
+                icon: const Icon(CupertinoIcons.back)),
+            title: const Text(
               'Edit Profile',
               style: TextStyle(
                   fontSize: 18, fontWeight: FontWeight.bold, letterSpacing: 1),
@@ -154,8 +159,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             actions: [
               GestureDetector(
                 onTap: () => _updateProfileClk(),
-                child: Padding(
-                  padding: const EdgeInsets.all(20.0),
+                child: const Padding(
+                  padding: EdgeInsets.all(20.0),
                   child: Text('Save'),
                 ),
               )
@@ -164,7 +169,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           body: SingleChildScrollView(
               child: Container(
                   // height: Screen.deviceSize(context).height,
-                  padding: EdgeInsets.only(top: 40, bottom: 20),
+                  padding: const EdgeInsets.only(top: 40, bottom: 20),
                   child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -225,7 +230,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                                   APIs.userInfo.image ?? "",
                                               errorWidget:
                                                   (context, url, error) =>
-                                                      CircleAvatar(
+                                                      const CircleAvatar(
                                                 child:
                                                     Icon(CupertinoIcons.person),
                                               ),
@@ -240,7 +245,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                           25.0, // Adjust the width as needed for the camera circle
                                       height:
                                           25.0, // Adjust the height as needed for the camera circle
-                                      decoration: BoxDecoration(
+                                      decoration: const BoxDecoration(
                                         color: Colors.white,
                                         shape: BoxShape.circle,
                                       ),
@@ -266,7 +271,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                         children: [
                                           Text(
                                               '${widget.userInfo.doctorContactInfo!.isVerified ? 'Verified' : 'Unverified'}'),
-                                          SizedBox(
+                                          const SizedBox(
                                             width: 5,
                                           ),
                                           Icon(
@@ -286,20 +291,20 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                         ],
                                       ),
                                     )
-                                  : SizedBox.shrink()
+                                  : const SizedBox.shrink()
                             ],
                           ),
                         ),
                         Padding(
                             padding:
-                                EdgeInsets.only(top: 20, left: 10, right: 10),
+                                const EdgeInsets.only(top: 20, left: 10, right: 10),
                             child: Form(
                               key: _keyForm,
                               child: ListView(
                                 shrinkWrap: true,
                                 children: [
-                                  Text('Full Name'),
-                                  SizedBox(height: 10),
+                                  const Text('Full Name'),
+                                  const SizedBox(height: 10),
                                   TextFormField(
                                     keyboardType: TextInputType.text,
                                     initialValue: widget.userInfo.name,
@@ -316,25 +321,25 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                             color: color8,
                                             fontFamily: 'Raleway-SemiBold',
                                             fontSize: 15.0),
-                                        border: OutlineInputBorder(
+                                        border: const OutlineInputBorder(
                                             borderSide: BorderSide.none,
                                             borderRadius: BorderRadius.all(
                                                 Radius.circular(10.0))),
-                                        enabledBorder: OutlineInputBorder(
+                                        enabledBorder: const OutlineInputBorder(
                                             borderSide: BorderSide.none,
                                             borderRadius: BorderRadius.all(
                                                 Radius.circular(10.0))),
-                                        focusedBorder: OutlineInputBorder(
+                                        focusedBorder: const OutlineInputBorder(
                                             borderSide: BorderSide.none,
                                             borderRadius: BorderRadius.all(
                                                 Radius.circular(10.0))),
-                                        errorBorder: OutlineInputBorder(
+                                        errorBorder: const OutlineInputBorder(
                                             borderSide: BorderSide.none,
                                             borderRadius: BorderRadius.all(
                                                 Radius.circular(10.0))),
                                         // focusColor: Colors.grey[300],
-                                        contentPadding: EdgeInsets.all(10),
-                                        prefixIcon: Icon(Icons.person)),
+                                        contentPadding: const EdgeInsets.all(10),
+                                        prefixIcon: const Icon(Icons.person)),
                                     validator: (value) {
                                       if (value == null || value.isEmpty) {
                                         return "name can't be empty";
@@ -344,9 +349,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                       return null;
                                     },
                                   ),
-                                  SizedBox(height: 10),
-                                  Text('Email Address'),
-                                  SizedBox(height: 10),
+                                  const SizedBox(height: 10),
+                                  const Text('Email Address'),
+                                  const SizedBox(height: 10),
                                   TextFormField(
                                     keyboardType: TextInputType.emailAddress,
                                     initialValue: widget.userInfo.email,
@@ -363,24 +368,24 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                             color: color8,
                                             fontFamily: 'Raleway-SemiBold',
                                             fontSize: 15.0),
-                                        border: OutlineInputBorder(
+                                        border: const OutlineInputBorder(
                                             borderSide: BorderSide.none,
                                             borderRadius: BorderRadius.all(
                                                 Radius.circular(10.0))),
-                                        disabledBorder: OutlineInputBorder(
+                                        disabledBorder: const OutlineInputBorder(
                                             borderSide: BorderSide.none,
                                             borderRadius: BorderRadius.all(
                                                 Radius.circular(10.0))),
-                                        focusedBorder: OutlineInputBorder(
+                                        focusedBorder: const OutlineInputBorder(
                                             borderSide: BorderSide.none,
                                             borderRadius: BorderRadius.all(
                                                 Radius.circular(10.0))),
-                                        errorBorder: OutlineInputBorder(
+                                        errorBorder: const OutlineInputBorder(
                                             borderSide: BorderSide.none,
                                             borderRadius: BorderRadius.all(
                                                 Radius.circular(10.0))),
-                                        contentPadding: EdgeInsets.all(10),
-                                        prefixIcon: Icon(CupertinoIcons.mail)),
+                                        contentPadding: const EdgeInsets.all(10),
+                                        prefixIcon: const Icon(CupertinoIcons.mail)),
                                     validator: (value) {
                                       if (value == null || value.isEmpty) {
                                         return "email can't be empty";
@@ -392,8 +397,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                   ),
                                   // ignore: prefer_const_constructors
                                   SizedBox(height: 10),
-                                  Text('Phone Number'),
-                                  SizedBox(height: 10),
+                                  const Text('Phone Number'),
+                                  const SizedBox(height: 10),
                                   InternationalPhoneNumberInput(
                                     spaceBetweenSelectorAndTextField: .1,
                                     inputDecoration: InputDecoration(
@@ -404,23 +409,23 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                           color: color8,
                                           fontFamily: 'Raleway-SemiBold',
                                           fontSize: 15.0),
-                                      border: OutlineInputBorder(
+                                      border: const OutlineInputBorder(
                                           borderSide: BorderSide.none,
                                           borderRadius: BorderRadius.all(
                                               Radius.circular(10.0))),
-                                      disabledBorder: OutlineInputBorder(
+                                      disabledBorder: const OutlineInputBorder(
                                           borderSide: BorderSide.none,
                                           borderRadius: BorderRadius.all(
                                               Radius.circular(10.0))),
-                                      focusedBorder: OutlineInputBorder(
+                                      focusedBorder: const OutlineInputBorder(
                                           borderSide: BorderSide.none,
                                           borderRadius: BorderRadius.all(
                                               Radius.circular(10.0))),
-                                      errorBorder: OutlineInputBorder(
+                                      errorBorder: const OutlineInputBorder(
                                           borderSide: BorderSide.none,
                                           borderRadius: BorderRadius.all(
                                               Radius.circular(10.0))),
-                                      contentPadding: EdgeInsets.all(10),
+                                      contentPadding: const EdgeInsets.all(10),
                                     ),
                                     onInputChanged: (PhoneNumber number) {
                                       print(number.phoneNumber);
@@ -428,20 +433,20 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                     onInputValidated: (bool value) {
                                       print(value);
                                     },
-                                    selectorConfig: SelectorConfig(
+                                    selectorConfig: const SelectorConfig(
                                       selectorType:
                                           PhoneInputSelectorType.BOTTOM_SHEET,
                                     ),
                                     ignoreBlank: false,
                                     autoValidateMode: AutovalidateMode.disabled,
                                     selectorTextStyle:
-                                        TextStyle(color: Colors.black),
+                                        const TextStyle(color: Colors.black),
                                     initialValue: number,
                                     formatInput: true,
                                     keyboardType:
-                                        TextInputType.numberWithOptions(
+                                        const TextInputType.numberWithOptions(
                                             signed: true, decimal: true),
-                                    inputBorder: OutlineInputBorder(
+                                    inputBorder: const OutlineInputBorder(
                                         borderSide: BorderSide.none,
                                         borderRadius: BorderRadius.all(
                                             Radius.circular(10.0))),
@@ -450,14 +455,15 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                           number.toString();
                                     },
                                   ),
-                                  SizedBox(height: 10),
-                                  "patient" == widget.userInfo.userType.toLowerCase()
+                                  const SizedBox(height: 10),
+                                  "patient" ==
+                                          widget.userInfo.userType.toLowerCase()
                                       ? Column(
                                           crossAxisAlignment:
                                               CrossAxisAlignment.start,
                                           children: [
-                                              Text('Home Address '),
-                                              SizedBox(height: 10),
+                                              const Text('Home Address '),
+                                              const SizedBox(height: 10),
                                               TextFormField(
                                                 keyboardType:
                                                     TextInputType.text,
@@ -485,24 +491,24 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                                         fontFamily:
                                                             'Raleway-SemiBold',
                                                         fontSize: 15.0),
-                                                    border: OutlineInputBorder(
+                                                    border: const OutlineInputBorder(
                                                         borderSide:
                                                             BorderSide.none,
                                                         borderRadius: BorderRadius.all(
                                                             Radius.circular(
                                                                 10.0))),
-                                                    disabledBorder: OutlineInputBorder(
+                                                    disabledBorder: const OutlineInputBorder(
                                                         borderSide:
                                                             BorderSide.none,
                                                         borderRadius: BorderRadius.all(
                                                             Radius.circular(
                                                                 10.0))),
-                                                    focusedBorder: OutlineInputBorder(
+                                                    focusedBorder: const OutlineInputBorder(
                                                         borderSide: BorderSide.none,
                                                         borderRadius: BorderRadius.all(Radius.circular(10.0))),
-                                                    errorBorder: OutlineInputBorder(borderSide: BorderSide.none, borderRadius: BorderRadius.all(Radius.circular(10.0))),
-                                                    contentPadding: EdgeInsets.only(top: 20, left: 10, right: 10, bottom: 20),
-                                                    prefixIcon: Icon(CupertinoIcons.home)),
+                                                    errorBorder: const OutlineInputBorder(borderSide: BorderSide.none, borderRadius: BorderRadius.all(Radius.circular(10.0))),
+                                                    contentPadding: const EdgeInsets.only(top: 20, left: 10, right: 10, bottom: 20),
+                                                    prefixIcon: const Icon(CupertinoIcons.home)),
                                                 validator: (value) {
                                                   if (value == null ||
                                                       value.isEmpty) {
@@ -518,7 +524,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                           children: [
                                               MultipleSearchSelection<
                                                   Specialization>.creatable(
-                                                title: Text(
+                                                title: const Text(
                                                   'Specialization',
                                                 ),
 
@@ -601,7 +607,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                                               10),
                                                       child: Text(
                                                         country.title,
-                                                        style: TextStyle(
+                                                        style: const TextStyle(
                                                             color:
                                                                 Colors.white),
                                                       ),
@@ -621,7 +627,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                                       fontFamily:
                                                           'Raleway-SemiBold',
                                                       fontSize: 15.0),
-                                                  border: OutlineInputBorder(
+                                                  border: const OutlineInputBorder(
                                                       borderSide:
                                                           BorderSide.none,
                                                       borderRadius:
@@ -629,7 +635,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                                               Radius.circular(
                                                                   10.0))),
                                                   disabledBorder:
-                                                      OutlineInputBorder(
+                                                      const OutlineInputBorder(
                                                           borderSide:
                                                               BorderSide.none,
                                                           borderRadius:
@@ -637,14 +643,14 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                                                   Radius.circular(
                                                                       10.0))),
                                                   focusedBorder:
-                                                      OutlineInputBorder(
+                                                      const OutlineInputBorder(
                                                           borderSide: BorderSide
                                                               .none,
                                                           borderRadius:
                                                               BorderRadius.all(
                                                                   Radius.circular(
                                                                       10.0))),
-                                                  errorBorder: OutlineInputBorder(
+                                                  errorBorder: const OutlineInputBorder(
                                                       borderSide:
                                                           BorderSide.none,
                                                       borderRadius:
@@ -652,7 +658,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                                               Radius.circular(
                                                                   10.0))),
                                                   contentPadding:
-                                                      EdgeInsets.all(10),
+                                                      const EdgeInsets.all(10),
                                                 ),
                                                 sortShowedItems: true,
                                                 sortPickedItems: true,
@@ -664,9 +670,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                                       border: Border.all(
                                                           color: Colors.blue),
                                                     ),
-                                                    child: Padding(
+                                                    child: const Padding(
                                                       padding:
-                                                          const EdgeInsets.all(
+                                                          EdgeInsets.all(
                                                               8.0),
                                                       child: Text(
                                                         'Select All',
@@ -683,9 +689,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                                       border: Border.all(
                                                           color: Colors.red),
                                                     ),
-                                                    child: Padding(
+                                                    child: const Padding(
                                                       padding:
-                                                          const EdgeInsets.all(
+                                                          EdgeInsets.all(
                                                               8.0),
                                                       child: Text(
                                                         'Clear All',
@@ -707,21 +713,21 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                                 clearSearchFieldOnSelect: true,
                                                 maxSelectedItems: 5,
                                                 showItemsButton:
-                                                    Icon(Icons.clear),
+                                                    const Icon(Icons.clear),
 
                                                 // This trailing comma makes auto-formatting nicer for build methods.
                                               ),
-                                              SizedBox(
+                                              const SizedBox(
                                                 height: 10,
                                               ),
-                                              Text(
+                                              const Text(
                                                 'Schedules',
                                               ),
-                                              SizedBox(
+                                              const SizedBox(
                                                 height: 10,
                                               ),
                                               Container(
-                                                ////  width: double.infinity,
+                                                  ////  width: double.infinity,
                                                   padding:
                                                       const EdgeInsets.all(10),
                                                   decoration: BoxDecoration(
@@ -742,7 +748,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                                                 CrossAxisAlignment
                                                                     .start,
                                                             children: [
-                                                              Text(
+                                                              const Text(
                                                                   'Available Period',
                                                                   style:
                                                                       TextStyle(
@@ -752,7 +758,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                                                         FontWeight
                                                                             .bold,
                                                                   )),
-                                                              SizedBox(
+                                                              const SizedBox(
                                                                 height: 10,
                                                               ),
                                                               SizedBox(
@@ -770,7 +776,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                                                   isExpanded:
                                                                       true,
                                                                   hint:
-                                                                      SizedBox(
+                                                                      const SizedBox(
                                                                     child: Text(
                                                                         'Period',
                                                                         style:
@@ -789,7 +795,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                                                             period,
                                                                         child: SizedBox(
                                                                             child: Text(period,
-                                                                                style: TextStyle(
+                                                                                style: const TextStyle(
                                                                                   fontSize: 11,
                                                                                 ))));
                                                                   }).toList(),
@@ -841,13 +847,13 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                                                 ),
                                                               ),
                                                             ]),
-                                                        Spacer(),
+                                                        const Spacer(),
                                                         selectedDuration !=
                                                                 AvailabilityDuration
                                                                     .notAvailable
                                                             ? Container(
                                                                 margin:
-                                                                    EdgeInsets
+                                                                    const EdgeInsets
                                                                         .only(
                                                                   left: 10,
                                                                 ),
@@ -856,7 +862,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                                                       CrossAxisAlignment
                                                                           .start,
                                                                   children: [
-                                                                    Text(
+                                                                    const Text(
                                                                         'Daily Time Availability',
                                                                         style:
                                                                             TextStyle(
@@ -865,7 +871,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                                                           fontWeight:
                                                                               FontWeight.bold,
                                                                         )),
-                                                                    SizedBox(
+                                                                    const SizedBox(
                                                                       height:
                                                                           10,
                                                                     ),
@@ -882,7 +888,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                                                                 DropdownButtonHideUnderline(
                                                                               child: DropdownButton2<String>(
                                                                                 isExpanded: true,
-                                                                                hint: SizedBox(
+                                                                                hint: const SizedBox(
                                                                                   child: Text('From',
                                                                                       style: TextStyle(
                                                                                         fontSize: 12,
@@ -893,7 +899,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                                                                       value: period,
                                                                                       child: SizedBox(
                                                                                           child: Text(period,
-                                                                                              style: TextStyle(
+                                                                                              style: const TextStyle(
                                                                                                 fontSize: 11,
                                                                                               ))));
                                                                                 }).toList(),
@@ -913,7 +919,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                                                               ),
                                                                             ),
                                                                           ),
-                                                                          SizedBox(
+                                                                          const SizedBox(
                                                                               width: 10),
                                                                           SizedBox(
                                                                             height:
@@ -924,7 +930,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                                                                 DropdownButtonHideUnderline(
                                                                               child: DropdownButton2<String>(
                                                                                 isExpanded: true,
-                                                                                hint: SizedBox(
+                                                                                hint: const SizedBox(
                                                                                   child: Text('To',
                                                                                       style: TextStyle(
                                                                                         fontSize: 14,
@@ -937,7 +943,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                                                                           child: SizedBox(
                                                                                             child: Text(
                                                                                               period,
-                                                                                              style: TextStyle(
+                                                                                              style: const TextStyle(
                                                                                                 fontSize: 12,
                                                                                               ),
                                                                                             ),
@@ -960,66 +966,68 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                                                             ),
                                                                           ),
                                                                         ]),
-
                                                                   ],
                                                                 ))
-                                                            : SizedBox.shrink()
+                                                            : const SizedBox.shrink()
                                                       ])),
-                                            SizedBox(height: 10),
-                                            Text('Office/Hospital Address '),
-                                            SizedBox(height: 10),
-                                            TextFormField(
-                                              keyboardType: TextInputType.text,
-                                              initialValue: widget.userInfo
-                                                  .doctorContactInfo!.clinicAddress ??
-                                                  "",
-                                              maxLines: 2,
-                                              onSaved: (newValue) => APIs
-                                                  .userInfo
-                                                  .doctorContactInfo!
-                                                  .clinicAddress = newValue ?? '',
-                                              autovalidateMode:
-                                              AutovalidateMode.onUserInteraction,
-                                              decoration: InputDecoration(
-                                                  filled: true,
-                                                  fillColor: Colors.grey[200],
-                                                  hintStyle: TextStyle(color: color8),
-                                                  labelStyle: TextStyle(
-                                                      color: color8,
-                                                      fontFamily: 'Raleway-SemiBold',
-                                                      fontSize: 15.0),
-                                                  border: OutlineInputBorder(
-                                                      borderSide: BorderSide.none,
-                                                      borderRadius: BorderRadius.all(
-                                                          Radius.circular(10.0))),
-                                                  disabledBorder: OutlineInputBorder(
-                                                      borderSide: BorderSide.none,
-                                                      borderRadius: BorderRadius.all(
-                                                          Radius.circular(10.0))),
-                                                  focusedBorder: OutlineInputBorder(
-                                                      borderSide: BorderSide.none,
-                                                      borderRadius: BorderRadius.all(
-                                                          Radius.circular(10.0))),
-                                                  errorBorder: OutlineInputBorder(
-                                                      borderSide: BorderSide.none,
-                                                      borderRadius: BorderRadius.all(
-                                                          Radius.circular(10.0))),
-                                                  contentPadding: EdgeInsets.only(
-                                                      top: 20,
-                                                      left: 10,
-                                                      right: 10,
-                                                      bottom: 20),
-                                                  prefixIcon: Icon(CupertinoIcons.home)),
-                                              validator: (value) {
-                                                if (value == null || value.isEmpty) {
-                                                  return "address can't be empty";
-                                                }
-                                                return null;
-                                              },
-                                            ),
+                                              const SizedBox(height: 10),
+                                              const Text('Office/Hospital Address '),
+                                              const SizedBox(height: 10),
+                                              TextFormField(
+                                                keyboardType:
+                                                    TextInputType.text,
+                                                initialValue: widget
+                                                        .userInfo
+                                                        .doctorContactInfo!
+                                                        .clinicAddress ??
+                                                    "",
+                                                maxLines: 2,
+                                                onSaved: (newValue) => APIs
+                                                        .userInfo
+                                                        .doctorContactInfo!
+                                                        .clinicAddress =
+                                                    newValue ?? '',
+                                                autovalidateMode:
+                                                    AutovalidateMode
+                                                        .onUserInteraction,
+                                                decoration: InputDecoration(
+                                                    filled: true,
+                                                    fillColor: Colors.grey[200],
+                                                    hintStyle: TextStyle(
+                                                        color: color8),
+                                                    labelStyle: TextStyle(
+                                                        color: color8,
+                                                        fontFamily:
+                                                            'Raleway-SemiBold',
+                                                        fontSize: 15.0),
+                                                    border: const OutlineInputBorder(
+                                                        borderSide:
+                                                            BorderSide.none,
+                                                        borderRadius: BorderRadius.all(
+                                                            Radius.circular(
+                                                                10.0))),
+                                                    disabledBorder: const OutlineInputBorder(
+                                                        borderSide:
+                                                            BorderSide.none,
+                                                        borderRadius: BorderRadius.all(
+                                                            Radius.circular(
+                                                                10.0))),
+                                                    focusedBorder: const OutlineInputBorder(
+                                                        borderSide: BorderSide.none,
+                                                        borderRadius: BorderRadius.all(Radius.circular(10.0))),
+                                                    errorBorder: const OutlineInputBorder(borderSide: BorderSide.none, borderRadius: BorderRadius.all(Radius.circular(10.0))),
+                                                    contentPadding: const EdgeInsets.only(top: 20, left: 10, right: 10, bottom: 20),
+                                                    prefixIcon: const Icon(CupertinoIcons.home)),
+                                                validator: (value) {
+                                                  if (value == null ||
+                                                      value.isEmpty) {
+                                                    return "address can't be empty";
+                                                  }
+                                                  return null;
+                                                },
+                                              ),
                                             ]),
-                                  SizedBox(height: 10),
-
+                                  const SizedBox(height: 10),
                                 ],
                               ),
                             ))
@@ -1039,7 +1047,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   top: Screen.deviceSize(context).height * 0.03,
                   bottom: Screen.deviceSize(context).height * 0.05),
               children: [
-                Text(
+                const Text(
                   'Pick Profile Picture',
                   textAlign: TextAlign.center,
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
@@ -1053,7 +1061,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     ElevatedButton(
                         style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.white,
-                            shape: CircleBorder(),
+                            shape: const CircleBorder(),
                             fixedSize: Size(
                               Screen.deviceSize(context).width * .3,
                               Screen.deviceSize(context).height * .15,
@@ -1076,7 +1084,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     ElevatedButton(
                         style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.white,
-                            shape: CircleBorder(),
+                            shape: const CircleBorder(),
                             fixedSize: Size(
                               Screen.deviceSize(context).width * .3,
                               Screen.deviceSize(context).height * .15,
