@@ -158,7 +158,8 @@ class APIs {
         password: password,
       );
       print(userCredential);
-      if (userCredential.user!.emailVerified||!userCredential.user!.emailVerified) {
+      if (userCredential.user!.emailVerified ||
+          !userCredential.user!.emailVerified) {
         fetchUserDataFromFirestore(userCredential, context);
       } else {
         Dialogs.showSnackbar(
@@ -392,7 +393,9 @@ class APIs {
   static Future<void> sendFirstMessage(
       user_model.UserInfo chatUser, String msg, Type type) async {
     await firestore
-        .collection('${userInfo.userType.toLowerCase()}s')
+        .collection(userInfo.userType.toLowerCase() == "doctor"
+            ? "patients"
+            : "doctors")
         .doc(chatUser.id)
         .collection('my_users')
         .doc(userInfo.id)
@@ -586,7 +589,7 @@ class APIs {
         toId: user.id,
         type: type);
     final ref =
-        firestore.collection('chats/${getConversationID(user.id)}/messages');
+        firestore.collection('chats/${getConversationID(user.id)}/messages/');
     await ref.doc(time).set(message.toJson()).then((value) =>
         sendPushNotification(user, type == Type.text ? msg : 'Photo'));
   }
@@ -812,10 +815,7 @@ class APIs {
   static Stream<user_model.UserInfo> getUserInfoById(String userId) {
     // Create a reference to the 'patients' or 'doctors' collection based on user type
     print(userId);
-    CollectionReference collectionReference =
-        userInfo.userType.toLowerCase() == 'doctor'
-            ? firestore.collection('doctors')
-            : firestore.collection('doctors');
+    CollectionReference collectionReference = firestore.collection('patients');
 
     return collectionReference.doc(userId).snapshots().map((documentSnapshot) {
       final data = documentSnapshot.data();
