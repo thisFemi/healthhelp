@@ -81,6 +81,7 @@ class _ChatTabContentState extends State<ChatTabContent> {
                   stream: APIs.getAllUsers(
                       snapshot.data?.docs.map((e) => e.id).toList() ?? []),
                   builder: (context, snapshot) {
+                 
                     switch (snapshot.connectionState) {
                       case ConnectionState.waiting:
                       case ConnectionState.none:
